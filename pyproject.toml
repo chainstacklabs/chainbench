@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "chainbench"
+version = "0.1.0"
+description = ""
+authors = ["Egor Molodik <egor.molodik@chainstack.com>"]
+readme = "README.md"
+packages = [{include = "chainbench"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+httpx = "^0.24.0"
+locust = "^2.15.0"
+click = "^8.1.3"
+fastapi = "^0.95.0"
+uvicorn = "^0.21.1"
+pydantic = "^1.10.7"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+mypy = "^1.2.0"
+pre-commit = "^3.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
