@@ -29,6 +29,7 @@ PROFILES = [
     "bsc",
     "ethereum",
     "polygon",
+    "oasis",
 ]
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
 

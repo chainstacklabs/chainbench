@@ -77,7 +77,7 @@ class AvalancheProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory_latest(),
         ),
 
     @task(10)
