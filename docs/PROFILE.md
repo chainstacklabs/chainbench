@@ -404,3 +404,11 @@ class OasisProfile(EVMBenchUser):
 ```
 
 You can find the full version of the profile [here](../chainbench/profile/oasis.py).
+
+### Step 9: Run the benchmark
+
+Now we can run the benchmark:
+
+```bash
+python3 -m chainbench start --profile oasis --users 50 --workers 2 --test-time 1h --target https://node-url --headless --autoquit
+```
