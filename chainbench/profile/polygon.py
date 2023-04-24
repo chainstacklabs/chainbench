@@ -89,7 +89,7 @@ class PolygonProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory_latest(),
         ),
 
     # TODO: introduce tags to make it possible to filter out unsupported methods

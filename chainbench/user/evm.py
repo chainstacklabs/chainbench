@@ -23,11 +23,20 @@ class EVMBenchUser(BaseBenchUser):
     def _transaction_by_hash_params_factory(self):
         return [self.test_data.get_random_tx_hash()]
 
+    def _random_block_number_params_factory(self):
+        return [self.test_data.get_random_block_number_hex()]
+
     def _block_by_number_params_factory(self):
         return [self.test_data.get_random_block_number_hex(), random_bool()]
 
     def _block_by_hash_params_factory(self):
         return [self.test_data.get_random_block_hash(), random_bool()]
 
-    def _get_balance_params_factory(self):
+    def _get_balance_params_factory_latest(self):
         return [self.test_data.get_random_account(), "latest"]
+
+    def _get_balance_params_factory(self):
+        return [
+            self.test_data.get_random_account(),
+            self.test_data.get_random_block_number_hex(),
+        ]

@@ -32,7 +32,7 @@ python3 -m chainbench start --profile bsc --users 50 --workers 2 --test-time 12h
 ````
 
 ### Parameters and Flags
-- `--profile`: This flag specifies the profile to use for the benchmark. Available profiles are `ethereum`, `bsc`, `polygon` and `avalanche`.
+- `--profile`: This flag specifies the profile to use for the benchmark. Available profiles are `ethereum`, `bsc`, `polygon`, `oasis`, and `avalanche`.
 - `--users`: This flag sets the number of simulated users to use for the benchmark.
 - `--workers`: This flag sets the number of worker threads to use for the benchmark.
 - `--test-time`: This flag sets the duration of the test to run.
@@ -59,3 +59,7 @@ python3 -m chainbench start --profile bsc --workers 4 --users 100 --test-time 1h
 ```
 
 It will run a load test for BSC with 4 workers, 100 users and 1 hour test time.
+
+## Custom Profiles
+
+For a tutorial on how to create custom profiles, please refer to [this document](docs/PROFILE.md).
