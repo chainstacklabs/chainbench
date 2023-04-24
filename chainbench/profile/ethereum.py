@@ -15,8 +15,9 @@ pie title Methods Distribution
     "Others" : 12
 ```
 """
-from chainbench.user.evm import EVMBenchUser
 from locust import task
+
+from chainbench.user.evm import EVMBenchUser
 
 
 class EthereumProfile(EVMBenchUser):
@@ -28,7 +29,7 @@ class EthereumProfile(EVMBenchUser):
             params=[
                 {
                     "to": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-                    "data": "0x70a082310000000000000000000000009696f59E4d72E237BE84fFD425DCaD154Bf96976",
+                    "data": "0x70a082310000000000000000000000009696f59E4d72E237BE84fFD425DCaD154Bf96976",  # noqa: E501
                 },
                 "latest",
             ],

@@ -1,7 +1,8 @@
 """
 Polygon profile.
 
-Note, that eth_sendRawTransaction is excluded from the test because it requires building a transaction and signing it.
+Note, that eth_sendRawTransaction is excluded from the test because it requires
+building a transaction and signing it.
 
 Chart:
 ```mermaid
@@ -17,8 +18,9 @@ pie title Methods Distribution
     "Others" : 9
 ```
 """
-from chainbench.user.evm import EVMBenchUser
 from locust import task
+
+from chainbench.user.evm import EVMBenchUser
 
 
 class PolygonProfile(EVMBenchUser):
@@ -30,7 +32,7 @@ class PolygonProfile(EVMBenchUser):
             params=[
                 {
                     "to": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-                    "data": "0x70a08231000000000000000000000000F977814e90dA44bFA03b6295A0616a897441aceC",
+                    "data": "0x70a08231000000000000000000000000F977814e90dA44bFA03b6295A0616a897441aceC",  # noqa: E501
                 },
                 "latest",
             ],

@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 from locust import events
 from locust.runners import MasterRunner, WorkerRunner

@@ -1,5 +1,6 @@
+from locust import between, task
+
 from chainbench.user.evm import EVMBenchUser
-from locust import task, between
 
 
 class OasisProfile(EVMBenchUser):
