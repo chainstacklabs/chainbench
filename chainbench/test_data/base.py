@@ -1,13 +1,11 @@
 import logging
 import random
+import typing as t
 from dataclasses import dataclass, field
 from secrets import token_hex
 
-from gevent.lock import Semaphore as GeventSemaphore
-
 import httpx
-
-import typing as t
+from gevent.lock import Semaphore as GeventSemaphore
 
 Account = str
 Accounts = list[Account]

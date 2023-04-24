@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from chainbench.util.notify import Notifier, NoopNotifier
+from chainbench.util.notify import NoopNotifier, Notifier
 
 
 def get_profile_path(profile: str, src_path: str | Path) -> Path:
@@ -48,8 +48,9 @@ def get_master_command(
         f"locust -f {profile_path} --master --host {host} "
         f"--master-bind-host {host} --master-bind-port {port} "
         f"-u {users} -r {spawn_rate} --run-time {test_time} "
-        f"--html {results_path}/report.html --csv {results_path}/report.csv"
-        f" --logfile {results_path}/report.log --loglevel {log_level} --expect-workers {workers}"
+        f"--html {results_path}/report.html --csv {results_path}/report.csv "
+        f"--logfile {results_path}/report.log "
+        f"--loglevel {log_level} --expect-workers {workers}"
     )
 
     if target is not None:
