@@ -20,49 +20,52 @@ MASTER_HOST = "127.0.0.1"
 MASTER_PORT = "5557"
 WORKER_COUNT = 16
 TEST_TIME = "1h"
-USERS = 10000
+USERS = 1000
 SPAWN_RATE = 10
 LOG_LEVEL = "DEBUG"
 DEFAULT_PROFILE = "ethereum"
-PROFILES = [
-    "avalanche",
-    "bsc",
-    "ethereum",
-    "polygon",
-    "oasis",
-]
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
 
 logger = logging.getLogger(__name__)
 
 
 @click.group(
-    help="Locust CLI",
+    help="Tool for flexible blockchain infrastructure benchmarking.",
 )
 @click.pass_context
 def cli(ctx: click.Context):
     ctx.obj = ContextData()
 
 
-@cli.command()
+@cli.command(
+    help="Start the test using the configured profile. "
+    "By default, the results are saved in the "
+    "./results/{profile}/{YYYY-mm-dd_HH-MM-SS} directory.",
+)
 @click.option(
     "--profile",
     default=DEFAULT_PROFILE,
-    type=click.Choice(PROFILES, case_sensitive=False),
     help="Profile to run",
+    show_default=True,
 )
-@click.option("--host", default=MASTER_HOST, help="Host to run")
-@click.option("--port", default=MASTER_PORT, help="Port to run")
-@click.option("--workers", default=WORKER_COUNT, help="Number of workers to run")
-@click.option("--test-time", default=TEST_TIME, help="Test time in seconds")
-@click.option("--users", default=USERS, help="Number of users")
-@click.option("--spawn-rate", default=SPAWN_RATE, help="Spawn rate")
-@click.option("--log-level", default=LOG_LEVEL, help="Log level")
+@click.option("--host", default=MASTER_HOST, help="Host to run on", show_default=True)
+@click.option("--port", default=MASTER_PORT, help="Port to run on", show_default=True)
+@click.option(
+    "--workers",
+    default=WORKER_COUNT,
+    help="Number of workers to run",
+    show_default=True,
+)
+@click.option("--test-time", default=TEST_TIME, help="Test time", show_default=True)
+@click.option("--users", default=USERS, help="Number of users", show_default=True)
+@click.option("--spawn-rate", default=SPAWN_RATE, help="Spawn rate", show_default=True)
+@click.option("--log-level", default=LOG_LEVEL, help="Log level", show_default=True)
 @click.option(
     "--results-dir",
     default=Path("results"),
     help="Results directory",
     type=click.Path(),
+    show_default=True,
 )
 @click.option("--headless", is_flag=True, help="Run in headless mode")
 @click.option("--autoquit", is_flag=True, help="Auto quit after test")

@@ -124,21 +124,7 @@ class OasisProfile(EVMBenchUser):
 
 We inherit `EVMBenchUser` because it contains methods for benchmarking an EVM-based blockchain.
 
-### Step 2: Add the profile to the list of available profiles
-
-In the [`chainbench/main.py`](../chainbench/main.py) file, add the profile name to the `PROFILES` list:
-
-```python
-PROFILES = [
-    "avalanche",
-    "bsc",
-    "ethereum",
-    "polygon",
-    "oasis",
-]
-```
-
-### Step 3: Configure wait time
+### Step 2: Configure wait time
 `EVMBenchUser` is a subclass of `FastHttpUser` from the [Locust](https://docs.locust.io/en/stable/) library. So defining wait time is straightforward:
 
 ```python
@@ -149,7 +135,7 @@ class OasisProfile(EVMBenchUser):
     wait_time = between(0.1, 1.5)
 ```
 
-### Step 4: Add `get_block_by_number` task
+### Step 3: Add `get_block_by_number` task
 
 `on_start` in the original locustfile is used to get the latest block number and the latest block. 
 But `EVMBenchUser` comes with `EVMTestData` class that handles this. Basically, before each worker starts spawning users
@@ -181,7 +167,7 @@ class OasisProfile(EVMBenchUser):
 `_block_by_number_params_factory` returns a random list of parameters for the `eth_getBlockByNumber` method. See the 
 [`chainbench/user/evm.py`](../chainbench/user/evm.py) file for all supported param factories.
 
-### Step 5: Add `get_syncing` task
+### Step 4: Add `get_syncing` task
 
 Adding task for a call with static parameters is as simple as:
 
@@ -232,7 +218,7 @@ class BscProfile(EVMBenchUser):
 ```
 If we want tasks to have different weights, we can use the `@task` decorator with a weight argument.
 
-### Step 6: Add `get_transaction_by_hash` task
+### Step 5: Add `get_transaction_by_hash` task
 
 For `eth_getTransactionByHash` we can use the `_transaction_by_hash_params_factory` method:
 
@@ -268,7 +254,7 @@ class OasisProfile(EVMBenchUser):
         ),
 ```
 
-### Step 7: Add `get_code`, `get_balance`, and `get_transaction_cound` tasks
+### Step 6: Add `get_code`, `get_balance`, and `get_transaction_cound` tasks
 
 `eth_getCode`, `eth_getBalance`, and `eth_getTransactionCount` share the same parameters format, so we can use the `_get_balance_params_factory` method:
 
@@ -328,7 +314,7 @@ class OasisProfile(EVMBenchUser):
         ),
 ```
 
-### Step 8: Add the rest of the tasks
+### Step 7: Add the rest of the tasks
 
 Here's the final version of the profile:
 
@@ -403,9 +389,9 @@ class OasisProfile(EVMBenchUser):
         ),
 ```
 
-You can find the full version of the profile [here](../chainbench/profile/oasis.py).
+You can also find the full version of the profile [here](../chainbench/profile/oasis.py).
 
-### Step 9: Run the benchmark
+### Step 8: Run the benchmark
 
 Now we can run the benchmark:
 
