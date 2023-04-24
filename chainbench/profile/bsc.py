@@ -14,8 +14,9 @@ pie title Methods Distribution
     "Others" : 20
 ```
 """
-from chainbench.user.evm import EVMBenchUser
 from locust import task
+
+from chainbench.user.evm import EVMBenchUser
 
 
 class BscProfile(EVMBenchUser):
@@ -27,7 +28,7 @@ class BscProfile(EVMBenchUser):
             params=[
                 {
                     "to": "0x55d398326f99059fF775485246999027B3197955",
-                    "data": "0x70a08231000000000000000000000000f977814e90da44bfa03b6295a0616a897441acec",
+                    "data": "0x70a08231000000000000000000000000f977814e90da44bfa03b6295a0616a897441acec",  # noqa: E501
                 },
                 "latest",
             ],

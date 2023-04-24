@@ -7,13 +7,13 @@ from pathlib import Path
 import click
 
 from chainbench.util.cli import (
-    get_profile_path,
+    ContextData,
     ensure_results_dir,
     get_master_command,
+    get_profile_path,
     get_worker_command,
-    ContextData,
 )
-from chainbench.util.notify import Notifier, NoopNotifier
+from chainbench.util.notify import NoopNotifier, Notifier
 
 # Default values for arguments
 MASTER_HOST = "127.0.0.1"

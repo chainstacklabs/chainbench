@@ -52,7 +52,7 @@ class BaseBenchUser(FastHttpUser):
         if response.status_code != 200:
             self.logger.info(f"Request failed with {response.status_code} code")
             self.logger.debug(
-                f"Request to {response.url} failed with {response.status_code} code: {response.text}"
+                f"Request to {response.url} failed with {response.status_code} code: {response.text}"  # noqa: E501
             )
             self.check_fatal(response)
             response.failure(f"Request failed with {response.status_code} code")

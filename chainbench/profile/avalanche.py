@@ -15,8 +15,9 @@ pie title Methods Distribution
     "Others" : 28
 ```
 """
-from chainbench.user.evm import EVMBenchUser
 from locust import task
+
+from chainbench.user.evm import EVMBenchUser
 
 
 class AvalancheProfile(EVMBenchUser):
@@ -28,7 +29,7 @@ class AvalancheProfile(EVMBenchUser):
             params=[
                 {
                     "to": "0x7325e3564B89968D102B3261189EA44c0f5f1a8e",
-                    "data": "0x18160ddd0000000000000000000000000000000000000000000000000000000000000000",
+                    "data": "0x18160ddd0000000000000000000000000000000000000000000000000000000000000000",  # noqa: E501
                 },
                 "latest",
             ],

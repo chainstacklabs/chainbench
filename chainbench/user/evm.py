@@ -1,7 +1,7 @@
 import random
 
-from chainbench.user.base import BaseBenchUser
 from chainbench.test_data import EVMTestData
+from chainbench.user.base import BaseBenchUser
 
 
 def random_bool():

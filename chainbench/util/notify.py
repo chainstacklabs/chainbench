@@ -1,10 +1,9 @@
+import typing as t
+from dataclasses import InitVar, dataclass, field
+from enum import IntEnum
 from pathlib import Path
 
 import httpx
-from enum import IntEnum
-from dataclasses import dataclass, field, InitVar
-
-import typing as t
 
 DEFAULT_NTFY_SERVER = "https://ntfy.sh"
 
