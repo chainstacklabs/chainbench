@@ -3,7 +3,7 @@ name: Checks
 on: pull_request
 
 jobs:
-  test:
+  checks:
     runs-on: ubuntu-latest
     steps:
       #----------------------------------------------
@@ -65,7 +65,7 @@ jobs:
       #              run flake8
       #----------------------------------------------
       - name: Run Flake8
-        run: poetry run flake8 .
+        run: poetry run flake8 chainbench
       #----------------------------------------------
       #              run isort
       #----------------------------------------------
