@@ -1,0 +1,77 @@
+name: Build and publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11']
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      id: setup-python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Load cached Poetry installation
+      id: cached-poetry
+      uses: actions/cache@v3
+      with:
+        path: ~/.local  # the path depends on the OS
+        key: poetry-1.4.0-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}
+    - name: Install Poetry
+      if: steps.cached-poetry.outputs.cache-hit != 'true'
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.4.0
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+        installer-parallel: true
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Install dependencies
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --no-interaction --no-root
+    - name: Build package
+      run: poetry build
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist-${{ matrix.python-version }}
+        path: dist
+
+  pypi-publish:
+    name: Upload release to PyPI
+    runs-on: ubuntu-latest
+    environment:
+      name: release
+      url: https://pypi.org/project/chainbench
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: dist-3.10
+        path: dist
+
+    - name: Download artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: dist-3.11
+        path: dist
+
+    - name: Publish package distributions to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
