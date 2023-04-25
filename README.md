@@ -22,6 +22,10 @@
 </p>
 
 # Chainbench
+![checks status](https://github.com/chainstacklabs/chainbench/actions/workflows/checks.yml/badge.svg) 
+![build status](https://github.com/chainstacklabs/chainbench/actions/workflows/python-publish.yml/badge.svg)
+![version](https://img.shields.io/pypi/v/chainbench)
+![license](https://img.shields.io/github/license/chainstacklabs/chainbench)
 
 This project allows you to benchmark your blockchain infrastructure. It uses [Locust](https://docs.locust.io/en/stable/index.html) under the hood.
 
@@ -47,7 +51,14 @@ Check out the [docs](docs/PROFILE.md) for more information about the profile cre
 
 ### Using pip
 
-> ⚠️ Installation using pip is not supported yet.
+```shell
+pip install chainbench
+```
+
+After installation, you can run the tool using the following command:
+```shell
+chainbench start --help
+```
 
 ### Using Poetry
 
@@ -61,20 +72,22 @@ Install dependencies:
 cd chainbench && poetry install --without dev
 ```
 
-You might need to run the following command before running the tool:
+When installing using Poetry, you can run the tool using the following command:
 ```shell
-poetry shell
+poetry run chainbench start --help
 ```
 
 ## Example Usage
+All the examples below assume that you have installed the tool using `pip`. If you installed it using `poetry`, replace `chainbench` with `poetry run chainbench`.
+
 To learn about the parameters and flags, run the following command:
 ```shell
-python3 -m chainbench start --help
+chainbench start --help
 ```
 
 Basic usage is:
 ```shell
-python3 -m chainbench start --profile bsc --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
+chainbench start --profile bsc --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
 
 This will run a load test for BSC with 2 workers, 50 users and 12 hours test time in headless mode.
@@ -99,7 +112,7 @@ Run the following command to run a load test for BSC in UI mode. It will start a
 Target is not required as you can specify it in the UI along with the number of users, spawn rate and test time.
 
 ```shell
-python3 -m chainbench start --profile bsc --workers 1
+chainbench start --profile bsc --workers 1
 ```
 
 ### Headless Mode
@@ -107,7 +120,7 @@ python3 -m chainbench start --profile bsc --workers 1
 If you want to run a load test for BSC in headless mode, run the following command:
 
 ```shell
-python3 -m chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit
+chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit
 ```
 
 It will run a load test for BSC with 4 workers, 100 users and 1 hour test time.
@@ -115,7 +128,7 @@ It will run a load test for BSC with 4 workers, 100 users and 1 hour test time.
 In practice, you will probably want to run the benchmark on a remote server. Here's the example utilizing `nohup`:
 
 ```shell
-nohup python3 -m chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit &
+nohup chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit &
 ```
 
 ## License
