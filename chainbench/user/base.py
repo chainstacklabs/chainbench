@@ -1,7 +1,7 @@
 import logging
 import typing as t
 
-from locust import FastHttpUser, between
+from locust import FastHttpUser
 from locust.contrib.fasthttp import RestResponseContextManager
 from locust.exception import RescheduleTask
 
@@ -16,7 +16,6 @@ class BaseBenchUser(FastHttpUser):
     """Base class for all benchmark users."""
 
     abstract = True
-    wait_time = between(0, 2)
 
     rpc_path: str = ""
 
