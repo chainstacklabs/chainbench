@@ -1,7 +1,7 @@
 import logging
 import typing as t
 
-from locust import FastHttpUser
+from locust import FastHttpUser, constant_pacing
 from locust.contrib.fasthttp import RestResponseContextManager
 from locust.exception import RescheduleTask
 
@@ -14,6 +14,7 @@ setup_event_listeners()
 
 class BaseBenchUser(FastHttpUser):
     """Base class for all benchmark users."""
+    wait_time = constant_pacing(10)
 
     abstract = True
 
@@ -36,15 +37,15 @@ class BaseBenchUser(FastHttpUser):
 
     def check_fatal(self, response: RestResponseContextManager):
         if response.status_code == 401:
-            self.logger.critical(f"⛔️ Unauthorized request to {response.url}")
+            self.logger.critical(f"️ Unauthorized request to {response.url}")
         elif response.status_code == 404:
-            self.logger.critical(f"⛔️ Not found: {response.url}")
+            self.logger.critical(f"️ Not found: {response.url}")
         elif 500 <= response.status_code <= 599:
             self.logger.critical(
-                f"⛔️ Got internal server error when requesting {response.url}"
+                f"️ Got internal server error when requesting {response.url}"
             )
         elif 300 <= response.status_code <= 399:
-            self.logger.critical(f"⛔️ Redirect error: {response.url}")
+            self.logger.critical(f"️ Redirect error: {response.url}")
 
     def check_response(self, response: RestResponseContextManager):
         """Check the response for errors."""

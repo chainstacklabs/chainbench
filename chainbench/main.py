@@ -1,4 +1,5 @@
 import logging
+import os
 import shlex
 import subprocess
 import sys
@@ -39,8 +40,8 @@ def cli(ctx: click.Context):
 
 @cli.command(
     help="Start the test using the configured profile. "
-    "By default, the results are saved in the "
-    "./results/{profile}/{YYYY-mm-dd_HH-MM-SS} directory.",
+         "By default, the results are saved in the "
+         "./results/{profile}/{YYYY-mm-dd_HH-MM-SS} directory.",
 )
 @click.option(
     "--profile",
@@ -74,21 +75,21 @@ def cli(ctx: click.Context):
 @click.option("--notify", default=None, help="Notify when test is finished")
 @click.pass_context
 def start(
-    ctx: click.Context,
-    profile: str,
-    host: str,
-    port: int,
-    workers: int,
-    test_time: str,
-    users: int,
-    spawn_rate: int,
-    log_level: str,
-    results_dir: Path,
-    headless: bool,
-    autoquit: bool,
-    target: str | None,
-    run_id: str | None,
-    notify: str | None,
+        ctx: click.Context,
+        profile: str,
+        host: str,
+        port: int,
+        workers: int,
+        test_time: str,
+        users: int,
+        spawn_rate: int,
+        log_level: str,
+        results_dir: Path,
+        headless: bool,
+        autoquit: bool,
+        target: str | None,
+        run_id: str | None,
+        notify: str | None,
 ):
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -118,6 +119,8 @@ def start(
 
     click.echo(f"Results will be saved to {results_path}")
 
+    is_posix = os.name == 'posix'
+
     # Start the Locust master
     master_command = get_master_command(
         profile_path=profile_path,
@@ -136,7 +139,7 @@ def start(
         click.echo(f"Starting master in headless mode for {profile}")
     else:
         click.echo(f"Starting master for {profile}")
-    master_args = shlex.split(master_command)
+    master_args = shlex.split(master_command, posix=is_posix)
     master_process = subprocess.Popen(master_args)
     ctx.obj.master = master_process
     # Start the Locust workers
@@ -151,7 +154,7 @@ def start(
             worker_id=worker_id,
             log_level=log_level,
         )
-        worker_args = shlex.split(worker_command)
+        worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
         ctx.obj.workers.append(worker_process)
         click.echo(f"Starting worker {worker_id + 1} for {profile}")
@@ -170,7 +173,8 @@ def start(
         process.wait()
 
     if autoquit:
-        click.echo("Quitting when test is finished")
+        ctx.obj.master.wait()
+        click.echo("Quitting...")
         ctx.obj.master.terminate()
 
     ctx.obj.notifier.notify(
