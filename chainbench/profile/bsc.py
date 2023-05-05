@@ -21,6 +21,7 @@ from chainbench.user.evm import EVMBenchUser
 
 class BscProfile(EVMBenchUser):
     weight = 9
+
     @task(100)
     def call_task(self):
         self.make_call(
@@ -95,6 +96,7 @@ class BscProfile(EVMBenchUser):
 class BscLogsProfile(EVMBenchUser):
     weight = 1
 
+    @task
     def get_logs_task(self):
         self.make_call(
             name="get_logs",
