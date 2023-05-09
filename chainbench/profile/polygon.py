@@ -18,7 +18,7 @@ pie title Methods Distribution
     "Others" : 9
 ```
 """
-from locust import task
+from locust import tag, task
 
 from chainbench.user.evm import EVMBenchUser
 
@@ -95,7 +95,8 @@ class PolygonProfile(EVMBenchUser):
         ),
 
     # TODO: introduce tags to make it possible to filter out unsupported methods
-    # @task(2)
+    @tag("trace")
+    @task(2)
     def block_task(self):
         self.make_call(
             name="block",

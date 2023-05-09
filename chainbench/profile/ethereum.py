@@ -15,7 +15,7 @@ pie title Methods Distribution
     "Others" : 12
 ```
 """
-from locust import task
+from locust import tag, task
 
 from chainbench.user.evm import EVMBenchUser
 
@@ -91,8 +91,8 @@ class EthereumProfile(EVMBenchUser):
             params=self._get_logs_params_factory(),
         ),
 
-    # TODO: introduce tags to make it possible to filter out unsupported methods
-    # @task(3)
+    @tag("debug")
+    @task(3)
     def trace_transaction_task(self):
         self.make_call(
             name="trace_transaction",
