@@ -103,8 +103,32 @@ After the test is finished, the tool will automatically quit.
 - `--autoquit`: This flag tells the Chainbench tool to automatically quit after the test has finished. This is useful for running the benchmark in an automated environment where manual intervention is not desired.
 - `--help`: This flag displays the help message.
 
+By default, Chainbench uses `constant_pacing` wait time with a value of 10 seconds. 
+This means a load test with 100 users will have a theoretical maximum of 10 rps. This allows us to have a target rps in a test, 
+and the result rps lower than the target rps means performance deterioration.
+
 ### Profiles
-Profiles are located in the [`profile`](chainbench/profile) directory. For a tutorial on how to create custom profiles, please refer to [this document](docs/PROFILE.md).
+Default profiles are located in the [`profile`](chainbench/profile) directory. For a tutorial on how to create custom profiles, please refer to [this document](docs/PROFILE.md).
+
+You can also use the `--profile-dir` flag to specify a custom directory with profiles. For example:
+```shell
+chainbench start --profile-dir /path/to/profiles --profile my-profile --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
+```
+This will run a load test using `/path/to/profiles/my-profile.py` profile.
+
+It's possible to group profiles into directories. For example, you can create a directory called `bsc` and put all the BSC profiles there. Then you can run a load test using the following command:
+```shell
+chainbench start --profile-dir /path/to/profiles --profile bsc.my-profile --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
+```
+
+Chainbench will look for the profile in `/path/to/profiles/bsc/my-profile.py`. Currently, only one level of nesting is supported.
+
+There are built-in `evm.light` and `evm.heavy` profiles for EVM-compatible chains.
+
+Here's an example of how to run a load test for Ethereum using the `evm.light` profile:
+```shell
+chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
+```
 
 ### Web UI Mode
 
