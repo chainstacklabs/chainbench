@@ -1,4 +1,5 @@
 import logging
+import os
 import shlex
 import subprocess
 import sys
@@ -9,6 +10,7 @@ import click
 from chainbench.util.cli import (
     ContextData,
     ensure_results_dir,
+    get_base_path,
     get_master_command,
     get_profile_path,
     get_worker_command,
@@ -48,6 +50,9 @@ def cli(ctx: click.Context):
     help="Profile to run",
     show_default=True,
 )
+@click.option(
+    "--profile-dir", default=None, type=click.Path(), help="Profile directory"
+)
 @click.option("--host", default=MASTER_HOST, help="Host to run on", show_default=True)
 @click.option("--port", default=MASTER_PORT, help="Port to run on", show_default=True)
 @click.option(
@@ -76,6 +81,7 @@ def cli(ctx: click.Context):
 def start(
     ctx: click.Context,
     profile: str,
+    profile_dir: Path | None,
     host: str,
     port: int,
     workers: int,
@@ -102,7 +108,10 @@ def start(
         click.echo("Target is required when running in headless mode")
         sys.exit(1)
 
-    profile_path = get_profile_path(profile, __file__)
+    if not profile_dir:
+        profile_dir = get_base_path(__file__)
+
+    profile_path = get_profile_path(profile_dir, profile)
 
     if not profile_path.exists():
         click.echo(f"Profile file {profile_path} does not exist")
@@ -131,12 +140,17 @@ def start(
         workers=workers,
         headless=headless,
         target=target,
+        # TODO: Add support for tags in the CLI
+        exclude_tags=["trace", "debug"],
     )
     if headless:
         click.echo(f"Starting master in headless mode for {profile}")
     else:
         click.echo(f"Starting master for {profile}")
-    master_args = shlex.split(master_command)
+
+    is_posix = os.name == "posix"
+
+    master_args = shlex.split(master_command, posix=is_posix)
     master_process = subprocess.Popen(master_args)
     ctx.obj.master = master_process
     # Start the Locust workers
@@ -150,12 +164,13 @@ def start(
             target=target,
             worker_id=worker_id,
             log_level=log_level,
+            # TODO: Add support for tags in the CLI
+            exclude_tags=["trace", "debug"],
         )
-        worker_args = shlex.split(worker_command)
+        worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
         ctx.obj.workers.append(worker_process)
         click.echo(f"Starting worker {worker_id + 1} for {profile}")
-        # Print out the URL to access the test
     if headless:
         click.echo(f"Running test in headless mode for {profile}")
         ctx.obj.notifier.notify(
@@ -164,13 +179,15 @@ def start(
             tags=["loudspeaker"],
         )
     else:
+        # Print out the URL to access the test
         click.echo(f"Run test: http://127.0.0.1:8089 {profile}")
 
     for process in ctx.obj.workers:
         process.wait()
 
     if autoquit:
-        click.echo("Quitting when test is finished")
+        ctx.obj.master.wait()
+        click.echo("Quitting...")
         ctx.obj.master.terminate()
 
     ctx.obj.notifier.notify(

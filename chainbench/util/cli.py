@@ -6,10 +6,20 @@ from pathlib import Path
 from chainbench.util.notify import NoopNotifier, Notifier
 
 
-def get_profile_path(profile: str, src_path: str | Path) -> Path:
-    """Get profile path."""
+def get_base_path(src_path: str | Path) -> Path:
+    """Get base path."""
     curr_path = Path(src_path).resolve()
-    profile_path = curr_path.parent / f"profile/{profile}.py"
+    base_path = curr_path.parent / "profile"
+    return base_path
+
+
+def get_profile_path(base_path: Path, profile: str) -> Path:
+    """Get profile path."""
+    subdir, _, profile = profile.rpartition(".")
+    if subdir:
+        profile_path = base_path / subdir / f"{profile}.py"
+    else:
+        profile_path = base_path / f"{profile}.py"
     return profile_path
 
 
@@ -42,6 +52,7 @@ def get_master_command(
     results_path: Path,
     target: str | None = None,
     headless: bool = False,
+    exclude_tags: list[str] | None = None,
 ) -> str:
     """Generate master command."""
     command = (
@@ -59,6 +70,9 @@ def get_master_command(
     if headless:
         command += " --headless"
 
+    if exclude_tags:
+        command += f" --exclude-tags {' '.join(exclude_tags)}"
+
     return command
 
 
@@ -71,6 +85,7 @@ def get_worker_command(
     target: str | None = None,
     headless: bool = False,
     worker_id: int = 0,
+    exclude_tags: list[str] | None = None,
 ) -> str:
     """Generate worker command."""
     command = (
@@ -83,6 +98,9 @@ def get_worker_command(
 
     if headless:
         command += " --headless"
+
+    if exclude_tags:
+        command += f" --exclude-tags {' '.join(exclude_tags)}"
 
     return command
 

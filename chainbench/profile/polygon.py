@@ -94,7 +94,6 @@ class PolygonProfile(EVMBenchUser):
             params=self._get_balance_params_factory_latest(),
         ),
 
-    # TODO: introduce tags to make it possible to filter out unsupported methods
     @tag("trace")
     @task(2)
     def block_task(self):
