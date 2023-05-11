@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chainbench"
-version = "0.1.2"
+version = "0.2.0"
 description = ""
 authors = ["Egor Molodik <egor.molodik@chainstack.com>"]
 readme = "README.md"
