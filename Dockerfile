@@ -1,5 +1,8 @@
 FROM python:3.10-buster
 
+# Install dependencies
+RUN apt-get update && apt-get install -y tini
+
 # copy files
 COPY . /app
 WORKDIR /app
@@ -10,3 +13,5 @@ RUN $HOME/.local/bin/poetry config virtualenvs.create false
 
 # install chainbench
 RUN $HOME/.local/bin/poetry install --without dev
+
+ENTRYPOINT ["/usr/bin/tini", "--", "python3", "-m", "chainbench"]
