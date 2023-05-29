@@ -5,6 +5,7 @@ from chainbench.test_data.base import BaseTestData, BlockchainData
 
 class EVMTestData(BaseTestData):
     TXS_REQUIRED = 50
+    ACCOUNTS_REQUIRED = 100
     SAVE_LAST_BLOCKS = 100
 
     @staticmethod
@@ -31,6 +32,14 @@ class EVMTestData(BaseTestData):
 
     # get initial data from blockchain
     def _get_init_data(self) -> BlockchainData:
+        def get_data_from_tx(tx):
+            txs.append(tx)
+            tx_hashes.append(tx["hash"])
+            if tx["from"] is not None:
+                accounts.append(tx["from"])
+            if tx["to"] is not None:
+                accounts.append(tx["to"])
+
         latest_block_number, latest_block = self._fetch_block("latest")
         txs = []
         tx_hashes = []
@@ -38,19 +47,13 @@ class EVMTestData(BaseTestData):
         blocks = [(latest_block_number, latest_block["hash"])]
         # extract data from block
         for tx in latest_block["transactions"]:
-            txs.append(tx)
-            tx_hashes.append(tx["hash"])
-            accounts.append(tx["from"])
-            accounts.append(tx["to"])
+            get_data_from_tx(tx)
 
-        while self.TXS_REQUIRED > len(txs):
+        while self.TXS_REQUIRED > len(txs) and self.ACCOUNTS_REQUIRED > len(accounts):
             block_number, block = self._fetch_random_block(0, latest_block_number)
             blocks.append((block_number, block["hash"]))
             for tx in block["transactions"]:
-                txs.append(tx)
-                tx_hashes.append(tx["hash"])
-                accounts.append(tx["from"])
-                accounts.append(tx["to"])
+                get_data_from_tx(tx)
 
         return BlockchainData(
             latest_block_number=latest_block_number,
