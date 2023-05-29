@@ -77,7 +77,3 @@ class EVMTestData(BaseTestData):
 
     def get_random_block_number_hex(self) -> str:
         return hex(self.get_random_block_number())
-
-
-evm_test_data = EVMTestData()
-evm_test_data.update("https://nd-308-410-100.p2pify.com/b9d7f9234c52f421896fbcca32fe11a9")
