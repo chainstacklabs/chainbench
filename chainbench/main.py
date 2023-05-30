@@ -94,7 +94,6 @@ def cli(ctx: click.Context):
 @click.option("--run-id", default=None, help="ID of the test")
 @click.option("--notify", default=None, help="Notify when test is finished")
 @click.option(
-    "-dt",
     "--debug-trace-methods",
     is_flag=True,
     help="Enable tasks tagged with debug or trace to be executed",

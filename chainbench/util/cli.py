@@ -23,16 +23,6 @@ def get_profile_path(base_path: Path, profile: str) -> Path:
     return profile_path
 
 
-def get_profile_module(base_path: Path, profile: str) -> Path:
-    """Get profile path."""
-    subdir, _, profile = profile.rpartition(".")
-    if subdir:
-        profile_path = base_path / subdir / f"{profile}.py"
-    else:
-        profile_path = base_path / f"{profile}.py"
-    return profile_path
-
-
 def generate_unique_dir_name() -> str:
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
