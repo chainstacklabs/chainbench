@@ -3,11 +3,11 @@ import os
 import shlex
 import subprocess
 import sys
-from pathlib import Path
 from multiprocessing import Process
+from pathlib import Path
 
-from locust import runners
 import click
+from locust import runners
 
 from chainbench.util.cli import (
     ContextData,
@@ -17,8 +17,8 @@ from chainbench.util.cli import (
     get_profile_path,
     get_worker_command,
 )
+from chainbench.util.monitor import monitors
 from chainbench.util.notify import NoopNotifier, Notifier
-from chainbench.util.monitor import head_lag_monitor, monitors
 
 # Default values for arguments
 MASTER_HOST = "127.0.0.1"
