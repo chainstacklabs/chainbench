@@ -50,14 +50,15 @@ def get_master_command(
     test_time: str,
     log_level: str,
     results_path: Path,
+    exclude_tags: list[str],
     target: str | None = None,
     headless: bool = False,
-    exclude_tags: list[str] | None = None,
 ) -> str:
     """Generate master command."""
     command = (
-        f"locust -f {profile_path} --master --host {host} "
+        f"locust -f {profile_path} --master "
         f"--master-bind-host {host} --master-bind-port {port} "
+        f"--web-host {host} "
         f"-u {users} -r {spawn_rate} --run-time {test_time} "
         f"--html {results_path}/report.html --csv {results_path}/report.csv "
         f"--logfile {results_path}/report.log "
@@ -70,7 +71,7 @@ def get_master_command(
     if headless:
         command += " --headless"
 
-    if exclude_tags:
+    if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
     return command
@@ -82,10 +83,10 @@ def get_worker_command(
     port: int,
     results_path: Path,
     log_level: str,
+    exclude_tags: list[str],
     target: str | None = None,
     headless: bool = False,
     worker_id: int = 0,
-    exclude_tags: list[str] | None = None,
 ) -> str:
     """Generate worker command."""
     command = (
@@ -99,7 +100,7 @@ def get_worker_command(
     if headless:
         command += " --headless"
 
-    if exclude_tags:
+    if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
     return command
