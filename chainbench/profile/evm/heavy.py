@@ -1,12 +1,14 @@
 """
 Ethereum profile (heavy mode).
 """
-from locust import task
+from locust import constant_pacing, tag, task
 
 from chainbench.user.evm import EVMBenchUser
 
 
 class EthereumHeavyProfile(EVMBenchUser):
+    wait_time = constant_pacing(10)
+
     @task
     def trace_transaction_task(self):
         self.make_call(
@@ -23,6 +25,7 @@ class EthereumHeavyProfile(EVMBenchUser):
             params=self._block_by_number_params_factory(),
         ),
 
+    @tag("getLogs")
     @task
     def get_logs_task(self):
         self.make_call(

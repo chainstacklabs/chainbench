@@ -15,12 +15,15 @@ pie title Methods Distribution
     "Others" : 12
 ```
 """
-from locust import tag, task
+from locust import constant_pacing, tag, task
 
 from chainbench.user.evm import EVMBenchUser
 
 
 class EthereumProfile(EVMBenchUser):
+    wait_time = constant_pacing(2)
+    weight = 487
+
     @task(100)
     def call_task(self):
         self.make_call(
@@ -83,6 +86,7 @@ class EthereumProfile(EVMBenchUser):
             params=self._transaction_by_hash_params_factory(),
         ),
 
+    @tag("getLogs")
     @task(5)
     def get_logs_task(self):
         self.make_call(
@@ -106,4 +110,18 @@ class EthereumProfile(EVMBenchUser):
             name="client_version",
             method="web3_clientVersion",
             params=[],
+        ),
+
+
+class GetLogsProfile(EVMBenchUser):
+    wait_time = constant_pacing(10)
+    weight = 13
+
+    @tag("getLogs")
+    @task
+    def get_logs_task(self):
+        self.make_call(
+            name="get_logs",
+            method="eth_getLogs",
+            params=self._get_logs_params_factory(),
         ),

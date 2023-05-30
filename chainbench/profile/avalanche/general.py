@@ -15,12 +15,15 @@ pie title Methods Distribution
     "Others" : 28
 ```
 """
-from locust import task
+from locust import constant_pacing, tag, task
 
 from chainbench.user.evm import EVMBenchUser
 
 
 class AvalancheProfile(EVMBenchUser):
+    wait_time = constant_pacing(2)
+    weight = 91
+
     @task(100)
     def call_task(self):
         self.make_call(
@@ -41,14 +44,6 @@ class AvalancheProfile(EVMBenchUser):
             name="get_block_by_number",
             method="eth_getBlockByNumber",
             params=self._block_by_number_params_factory(),
-        ),
-
-    @task(24)
-    def get_logs_task(self):
-        self.make_call(
-            name="get_logs",
-            method="eth_getLogs",
-            params=self._get_logs_params_factory(),
         ),
 
     @task(17)
@@ -130,4 +125,18 @@ class AvalancheProfile(EVMBenchUser):
         self.make_call(
             name="max_priority_fee_per_gas",
             method="eth_maxPriorityFeePerGas",
+        ),
+
+
+class GetLogsProfile(EVMBenchUser):
+    wait_time = constant_pacing(10)
+    weight = 9
+
+    @tag("getLogs")
+    @task
+    def get_logs_task(self):
+        self.make_call(
+            name="get_logs",
+            method="eth_getLogs",
+            params=self._get_logs_params_factory(),
         ),
