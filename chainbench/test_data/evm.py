@@ -12,6 +12,11 @@ class EVMTestData(BaseTestData):
     def _parse_hex_to_int(value: str) -> int:
         return int(value, 16)
 
+    @staticmethod
+    def _append_if_not_none(data_list, val):
+        if val is not None:
+            data_list.append(val)
+
     def _fetch_block(
         self, block_number: int | str, return_txs: bool = True
     ) -> tuple[int, dict]:
@@ -32,14 +37,6 @@ class EVMTestData(BaseTestData):
 
     # get initial data from blockchain
     def _get_init_data(self) -> BlockchainData:
-        def get_data_from_tx(tx):
-            txs.append(tx)
-            tx_hashes.append(tx["hash"])
-            if tx["from"] is not None:
-                accounts.append(tx["from"])
-            if tx["to"] is not None:
-                accounts.append(tx["to"])
-
         latest_block_number, latest_block = self._fetch_block("latest")
         txs: list[dict] = []
         tx_hashes: list[str] = []
@@ -47,13 +44,19 @@ class EVMTestData(BaseTestData):
         blocks = [(latest_block_number, latest_block["hash"])]
         # extract data from block
         for tx in latest_block["transactions"]:
-            get_data_from_tx(tx)
+            self._append_if_not_none(txs, tx)
+            self._append_if_not_none(tx_hashes, tx["hash"])
+            self._append_if_not_none(accounts, tx["from"])
+            self._append_if_not_none(accounts, tx["to"])
 
         while self.TXS_REQUIRED > len(txs) and self.ACCOUNTS_REQUIRED > len(accounts):
             block_number, block = self._fetch_random_block(0, latest_block_number)
             blocks.append((block_number, block["hash"]))
             for tx in block["transactions"]:
-                get_data_from_tx(tx)
+                self._append_if_not_none(txs, tx)
+                self._append_if_not_none(tx_hashes, tx["hash"])
+                self._append_if_not_none(accounts, tx["from"])
+                self._append_if_not_none(accounts, tx["to"])
 
         return BlockchainData(
             latest_block_number=latest_block_number,
