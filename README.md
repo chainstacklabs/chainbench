@@ -130,6 +130,17 @@ Here's an example of how to run a load test for Ethereum using the `evm.light` p
 chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
 
+### Monitors
+Monitors are separate processes that run during the test to collect or process some additional data and metrics relevant to the test.
+For example, head-lag-monitor will collect the latest block information from the node under test, check the timestamp and compare it to current time to calculate how much the node lags behind.
+You may include monitors in your test by using the `-m` or `--monitor` option and specifying the name of the monitor. At the moment, monitors only work in headless mode.
+
+Here's an example:
+```shell
+chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit -m head-lag-monitor
+```
+
+
 ### Web UI Mode
 
 Run the following command to run a load test for BSC in UI mode. It will start a web server on port 8089. 
