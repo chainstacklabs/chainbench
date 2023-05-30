@@ -81,15 +81,6 @@ class PolygonGeneral(EVMBenchUser):
             params=self._transaction_by_hash_params_factory(),
         ),
 
-    @tag("getLogs")
-    @task(11)
-    def get_logs_task(self):
-        self.make_call(
-            name="get_logs",
-            method="eth_getLogs",
-            params=self._get_logs_params_factory(),
-        ),
-
     @task(4)
     def get_balance_task(self):
         self.make_call(

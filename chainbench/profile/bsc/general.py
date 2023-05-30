@@ -45,15 +45,6 @@ class BscProfile(EVMBenchUser):
             params=self._transaction_by_hash_params_factory(),
         ),
 
-    @tag("getLogs")
-    @task(36)
-    def get_logs_task(self):
-        self.make_call(
-            name="get_logs",
-            method="eth_getLogs",
-            params=self._get_logs_params_factory(),
-        ),
-
     @task(28)
     def block_number_task(self):
         self.make_call(

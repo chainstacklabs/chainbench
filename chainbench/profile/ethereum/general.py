@@ -86,15 +86,6 @@ class EthereumProfile(EVMBenchUser):
             params=self._transaction_by_hash_params_factory(),
         ),
 
-    @tag("getLogs")
-    @task(5)
-    def get_logs_task(self):
-        self.make_call(
-            name="get_logs",
-            method="eth_getLogs",
-            params=self._get_logs_params_factory(),
-        ),
-
     @tag("debug")
     @task(3)
     def trace_transaction_task(self):
