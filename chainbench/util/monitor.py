@@ -1,4 +1,3 @@
-
 import csv
 import logging
 import re
@@ -13,11 +12,12 @@ logger = logging.getLogger()
 
 def calculate_lag(current_timestamp, block_timestamp):
     """
-    Calculate the difference between the time the node under test received the block, and
-    the time when the block producer node produced the block, in seconds.
-    Sometimes this value is negative due to difference in precision - block timestamp is
-    precise to the second, while current_timestamp is precise to microseconds.
-    Therefore, we use max function to ensure the lag calculated is minimum 0 and never negative.
+    Calculate the difference between the time the node under test received the block,
+    and the time when the block producer node produced the block, in seconds.
+    Sometimes this value is negative due to difference in precision - block timestamp
+    is precise to the second, while current_timestamp is precise to microseconds.
+    Therefore, we use max function to ensure the lag calculated is minimum 0 and never
+    negative.
     """
     return max(int((current_timestamp - block_timestamp).total_seconds()), 0)
 
@@ -34,14 +34,22 @@ def parse_timespan(time_str):
         # if an int is specified we assume they want seconds
         return int(time_str)
 
-    timespan_regex = re.compile(r"((?P<hours>\d+?)h)?((?P<minutes>\d+?)m)?((?P<seconds>\d+?)s)?")
+    timespan_regex = re.compile(
+        r"((?P<hours>\d+?)h)?((?P<minutes>\d+?)m)?((?P<seconds>\d+?)s)?"
+    )
     parts = timespan_regex.match(time_str)
     if not parts:
-        raise ValueError("Invalid time span format. Valid formats: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
+        raise ValueError(
+            "Invalid time span format. "
+            "Valid formats: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc."
+        )
     parts = parts.groupdict()
     time_params = {name: int(value) for name, value in parts.items() if value}
     if not time_params:
-        raise ValueError("Invalid time span format. Valid formats: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc.")
+        raise ValueError(
+            "Invalid time span format. "
+            "Valid formats: 20, 20s, 3m, 2h, 1h20m, 3h30m10s, etc."
+        )
     return int(timedelta(**time_params).total_seconds())
 
 
