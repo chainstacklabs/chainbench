@@ -4,7 +4,9 @@ import shlex
 import subprocess
 import sys
 from pathlib import Path
+from multiprocessing import Process
 
+from locust import runners
 import click
 
 from chainbench.util.cli import (
@@ -16,6 +18,7 @@ from chainbench.util.cli import (
     get_worker_command,
 )
 from chainbench.util.notify import NoopNotifier, Notifier
+from chainbench.util.monitor import head_lag_monitor, monitors
 
 # Default values for arguments
 MASTER_HOST = "127.0.0.1"
@@ -27,6 +30,7 @@ SPAWN_RATE = 10
 LOG_LEVEL = "DEBUG"
 DEFAULT_PROFILE = "ethereum"
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
+runners.HEARTBEAT_INTERVAL = 60
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +81,15 @@ def cli(ctx: click.Context):
 @click.option("--target", default=None, help="Endpoint to test")
 @click.option("--run-id", default=None, help="ID of the test")
 @click.option("--notify", default=None, help="Notify when test is finished")
+@click.option(
+    "-m",
+    "--monitor",
+    default=set(),
+    help="Add a monitor to collect additional data or metrics. "
+    "You may specify this option multiple times for different monitors",
+    type=click.Choice(["head-lag-monitor"], case_sensitive=False),
+    multiple=True,
+)
 @click.pass_context
 def start(
     ctx: click.Context,
@@ -95,6 +108,7 @@ def start(
     target: str | None,
     run_id: str | None,
     notify: str | None,
+    monitor: set[str],
 ):
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -153,6 +167,7 @@ def start(
     master_args = shlex.split(master_command, posix=is_posix)
     master_process = subprocess.Popen(master_args)
     ctx.obj.master = master_process
+
     # Start the Locust workers
     for worker_id in range(workers):
         worker_command = get_worker_command(
@@ -182,8 +197,16 @@ def start(
         # Print out the URL to access the test
         click.echo(f"Run test: http://127.0.0.1:8089 {profile}")
 
+    for m in monitor:
+        p = Process(target=monitors[m], args=(target, results_path, test_time))
+        p.start()
+        ctx.obj.monitors.append(p)
+
     for process in ctx.obj.workers:
         process.wait()
+
+    for process in ctx.obj.monitors:
+        process.join()
 
     if autoquit:
         ctx.obj.master.wait()

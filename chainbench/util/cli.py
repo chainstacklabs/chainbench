@@ -109,4 +109,5 @@ def get_worker_command(
 class ContextData:
     workers: list[subprocess.Popen] = field(default_factory=list)
     master: subprocess.Popen | None = None
+    monitors: list[subprocess.Popen] = field(default_factory=list)
     notifier: Notifier = field(default_factory=NoopNotifier)
