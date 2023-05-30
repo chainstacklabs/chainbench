@@ -9,6 +9,10 @@ from chainbench.test_data import BaseTestData, DummyTestData
 from chainbench.util.event import setup_event_listeners
 from chainbench.util.rpc import generate_request
 
+# importing plugins here as all profiles depend on it
+import locust_plugins  # isort: skip  # noqa
+
+
 setup_event_listeners()
 
 

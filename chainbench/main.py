@@ -106,6 +106,22 @@ def cli(ctx: click.Context):
     "You may specify this option multiple times",
     multiple=True,
 )
+@click.option(
+    "--timescale", is_flag=True, help="Export data to PG with timescale extension"
+)
+@click.option(
+    "--pg-host", default=None, help="Hostname of PG instance with timescale extension"
+)
+@click.option(
+    "--pg-port",
+    default=5432,
+    help="Port of PG instance with timescale extension",
+    show_default=True,
+)
+@click.option(
+    "--pg-username", default="postgres", help="PG username", show_default=True
+)
+@click.option("--pg-password", default=None, help="PG password")
 @click.pass_context
 def start(
     ctx: click.Context,
@@ -126,6 +142,11 @@ def start(
     notify: str | None,
     debug_trace_methods: bool,
     exclude_tags: list[str],
+    timescale: bool,
+    pg_host: str | None,
+    pg_port: int,
+    pg_username: str,
+    pg_password: str | None,
 ):
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -137,6 +158,15 @@ def start(
 
     if headless and target is None:
         click.echo("Target is required when running in headless mode")
+        sys.exit(1)
+
+    if timescale and any(
+        pg_arg is None for pg_arg in (pg_host, pg_port, pg_username, pg_password)
+    ):
+        click.echo(
+            "PG connection parameters are required "
+            "when --timescale flag is used: pg_host, pg_port, pg_username, pg_password"
+        )
         sys.exit(1)
 
     if not profile_dir:
@@ -180,6 +210,11 @@ def start(
         headless=headless,
         target=target,
         exclude_tags=custom_exclude_tags,
+        timescale=timescale,
+        pg_host=pg_host,
+        pg_port=pg_port,
+        pg_username=pg_username,
+        pg_password=pg_password,
     )
     if headless:
         click.echo(f"Starting master in headless mode for {profile}")
@@ -203,6 +238,11 @@ def start(
             worker_id=worker_id,
             log_level=log_level,
             exclude_tags=custom_exclude_tags,
+            timescale=timescale,
+            pg_host=pg_host,
+            pg_port=pg_port,
+            pg_username=pg_username,
+            pg_password=pg_password,
         )
         worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
