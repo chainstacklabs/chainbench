@@ -103,7 +103,7 @@ class GetLogsProfile(EVMBenchUser):
     wait_time = constant_pacing(10)
     weight = 1
 
-    @tag("getLogs")
+    @tag("get-logs")
     @task
     def get_logs_task(self):
         self.make_call(

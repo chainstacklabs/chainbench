@@ -25,7 +25,7 @@ class EthereumHeavyProfile(EVMBenchUser):
             params=self._block_by_number_params_factory(),
         ),
 
-    @tag("getLogs")
+    @tag("get-logs")
     @task
     def get_logs_task(self):
         self.make_call(
