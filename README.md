@@ -87,7 +87,7 @@ chainbench start --help
 
 Basic usage is:
 ```shell
-chainbench start --profile bsc --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
+chainbench start --profile bsc.general --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
 
 This will run a load test for BSC with 2 workers, 50 users and 12 hours test time in headless mode.
@@ -155,7 +155,7 @@ chainbench start --profile bsc.general --workers 1 --target https://any-working-
 If you want to run a load test for BSC in headless mode, run the following command:
 
 ```shell
-chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit
+chainbench start --profile bsc.general --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit
 ```
 
 It will run a load test for BSC with 4 workers, 100 users and 1 hour test time.
@@ -163,7 +163,7 @@ It will run a load test for BSC with 4 workers, 100 users and 1 hour test time.
 In practice, you will probably want to run the benchmark on a remote server. Here's the example utilizing `nohup`:
 
 ```shell
-nohup chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit &
+nohup chainbench start --profile bsc.general --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit &
 ```
 
 ## License
