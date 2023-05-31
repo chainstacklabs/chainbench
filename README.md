@@ -102,7 +102,7 @@ After the test is finished, the tool will automatically quit.
 - `--headless`: Runs the benchmark in headless mode, meaning that no graphical user interface (GUI) will be displayed during the test. This is useful for running the test on a remote server or when the GUI is not needed.
 - `--autoquit`: Tells the Chainbench tool to automatically quit after the test has finished. This is useful for running the benchmark in an automated environment where manual intervention is not desired.
 - `--help`: Displays the help message.
-- `-dt, --debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
+- `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
 - `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
 
 You may also run `chainbench start --help` for the full list of parameters and flags.
