@@ -4,7 +4,7 @@
 
 A profile is a python module that defines methods used for benchmarking a specific blockchain. It is located in the `chainbench/profiles` directory. 
 The module name should be the same as the profile name. 
-For example, the `ethereum` profile is located in the [`chainbench/profile/ethereum.py`](../chainbench/profile/ethereum.py) file.
+For example, the `ethereum` profile is located in the [`chainbench/profile/ethereum.py`](../chainbench/profile/ethereum/general.py) file.
 
 ## Creating a Profile
 
@@ -198,7 +198,7 @@ class OasisProfile(EVMBenchUser):
 
 In case of `eth_syncing` we can omit the `params` argument because it doesn't have any parameters.
 
-Here's an example of `eth_call` call with static parameters from [BSC profile](../chainbench/profile/bsc.py):
+Here's an example of `eth_call` call with static parameters from [BSC profile](../chainbench/profile/bsc/general.py):
 
 ```python
 class BscProfile(EVMBenchUser):
@@ -389,7 +389,7 @@ class OasisProfile(EVMBenchUser):
         ),
 ```
 
-You can also find the full version of the profile [here](../chainbench/profile/oasis.py).
+You can also find the full version of the profile [here](../chainbench/profile/oasis/general.py).
 
 ### Step 8: Run the benchmark
 

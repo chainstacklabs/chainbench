@@ -28,7 +28,7 @@ TEST_TIME = "1h"
 USERS = 1000
 SPAWN_RATE = 10
 LOG_LEVEL = "DEBUG"
-DEFAULT_PROFILE = "ethereum"
+DEFAULT_PROFILE = "ethereum.general"
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
 runners.HEARTBEAT_INTERVAL = 60
 
@@ -49,25 +49,41 @@ def cli(ctx: click.Context):
     "./results/{profile}/{YYYY-mm-dd_HH-MM-SS} directory.",
 )
 @click.option(
+    "-p",
     "--profile",
     default=DEFAULT_PROFILE,
     help="Profile to run",
     show_default=True,
 )
 @click.option(
-    "--profile-dir", default=None, type=click.Path(), help="Profile directory"
+    "-d", "--profile-dir", default=None, type=click.Path(), help="Profile directory"
 )
-@click.option("--host", default=MASTER_HOST, help="Host to run on", show_default=True)
-@click.option("--port", default=MASTER_PORT, help="Port to run on", show_default=True)
 @click.option(
+    "-H", "--host", default=MASTER_HOST, help="Host to run on", show_default=True
+)
+@click.option(
+    "-P", "--port", default=MASTER_PORT, help="Port to run on", show_default=True
+)
+@click.option(
+    "-w",
     "--workers",
     default=WORKER_COUNT,
     help="Number of workers to run",
     show_default=True,
 )
-@click.option("--test-time", default=TEST_TIME, help="Test time", show_default=True)
-@click.option("--users", default=USERS, help="Number of users", show_default=True)
-@click.option("--spawn-rate", default=SPAWN_RATE, help="Spawn rate", show_default=True)
+@click.option(
+    "-t", "--test-time", default=TEST_TIME, help="Test time", show_default=True
+)
+@click.option(
+    "-u", "--users", default=USERS, help="Target number of users", show_default=True
+)
+@click.option(
+    "-r",
+    "--spawn-rate",
+    default=SPAWN_RATE,
+    help="Number of users spawned per second",
+    show_default=True,
+)
 @click.option("--log-level", default=LOG_LEVEL, help="Log level", show_default=True)
 @click.option(
     "--results-dir",
@@ -88,6 +104,18 @@ def cli(ctx: click.Context):
     help="Add a monitor to collect additional data or metrics. "
     "You may specify this option multiple times for different monitors",
     type=click.Choice(["head-lag-monitor"], case_sensitive=False),
+)
+@click.option(
+    "--debug-trace-methods",
+    is_flag=True,
+    help="Enable tasks tagged with debug or trace to be executed",
+)
+@click.option(
+    "-E",
+    "--exclude-tags",
+    default=[],
+    help="Exclude tasks tagged with custom tags from the test. "
+    "You may specify this option multiple times",
     multiple=True,
 )
 @click.pass_context
@@ -109,6 +137,8 @@ def start(
     run_id: str | None,
     notify: str | None,
     monitor: set[str],
+    debug_trace_methods: bool,
+    exclude_tags: list[str],
 ):
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -141,6 +171,14 @@ def start(
 
     click.echo(f"Results will be saved to {results_path}")
 
+    custom_exclude_tags: list[str] = []
+    if exclude_tags:
+        for tag in exclude_tags:
+            custom_exclude_tags.append(tag)
+
+    if not debug_trace_methods:
+        custom_exclude_tags = custom_exclude_tags + ["trace", "debug"]
+
     # Start the Locust master
     master_command = get_master_command(
         profile_path=profile_path,
@@ -154,8 +192,7 @@ def start(
         workers=workers,
         headless=headless,
         target=target,
-        # TODO: Add support for tags in the CLI
-        exclude_tags=["trace", "debug"],
+        exclude_tags=custom_exclude_tags,
     )
     if headless:
         click.echo(f"Starting master in headless mode for {profile}")
@@ -179,8 +216,7 @@ def start(
             target=target,
             worker_id=worker_id,
             log_level=log_level,
-            # TODO: Add support for tags in the CLI
-            exclude_tags=["trace", "debug"],
+            exclude_tags=custom_exclude_tags,
         )
         worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
@@ -195,7 +231,7 @@ def start(
         )
     else:
         # Print out the URL to access the test
-        click.echo(f"Run test: http://127.0.0.1:8089 {profile}")
+        click.echo(f"Run test: http://{host}:8089 {profile}")
 
     for m in monitor:
         p = Process(target=monitors[m], args=(target, results_path, test_time))

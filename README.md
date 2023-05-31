@@ -94,23 +94,23 @@ This will run a load test for BSC with 2 workers, 50 users and 12 hours test tim
 After the test is finished, the tool will automatically quit.
 
 ### Parameters and Flags
-- `--profile`: This flag specifies the profile to use for the benchmark. Available profiles are `ethereum`, `bsc`, `polygon`, `oasis`, and `avalanche`.
-- `--users`: This flag sets the number of simulated users to use for the benchmark.
-- `--workers`: This flag sets the number of worker threads to use for the benchmark.
-- `--test-time`: This flag sets the duration of the test to run.
-- `--target`: This flag specifies the target blockchain node URL that the benchmark will connect to.
-- `--headless`: This flag runs the benchmark in headless mode, meaning that no graphical user interface (GUI) will be displayed during the test. This is useful for running the test on a remote server or when the GUI is not needed.
-- `--autoquit`: This flag tells the Chainbench tool to automatically quit after the test has finished. This is useful for running the benchmark in an automated environment where manual intervention is not desired.
-- `--help`: This flag displays the help message.
+- `-p, --profile`: Specifies the profile to use for the benchmark. Available profiles can be found in the profile directory. Sample usage `-p bsc.general`
+- `-u, --users`: Sets the number of simulated users to use for the benchmark.
+- `-w, --workers`: Sets the number of worker threads to use for the benchmark.
+- `-t, --test-time`: Sets the duration of the test to run.
+- `--target`: Specifies the target blockchain node URL that the benchmark will connect to.
+- `--headless`: Runs the benchmark in headless mode, meaning that no graphical user interface (GUI) will be displayed during the test. This is useful for running the test on a remote server or when the GUI is not needed.
+- `--autoquit`: Tells the Chainbench tool to automatically quit after the test has finished. This is useful for running the benchmark in an automated environment where manual intervention is not desired.
+- `--help`: Displays the help message.
+- `-dt, --debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
+- `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
 
-By default, Chainbench uses `constant_pacing` wait time with a value of 10 seconds. 
-This means a load test with 100 users will have a theoretical maximum of 10 rps. This allows us to have a target rps in a test, 
-and the result rps lower than the target rps means performance deterioration.
+You may also run `chainbench start --help` for the full list of parameters and flags.
 
 ### Profiles
 Default profiles are located in the [`profile`](chainbench/profile) directory. For a tutorial on how to create custom profiles, please refer to [this document](docs/PROFILE.md).
 
-You can also use the `--profile-dir` flag to specify a custom directory with profiles. For example:
+You can also use the `-d` or `--profile-dir` flag to specify a custom directory with profiles. For example:
 ```shell
 chainbench start --profile-dir /path/to/profiles --profile my-profile --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
@@ -144,10 +144,10 @@ chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --ta
 ### Web UI Mode
 
 Run the following command to run a load test for BSC in UI mode. It will start a web server on port 8089. 
-Target is not required as you can specify it in the UI along with the number of users, spawn rate and test time.
+Target is required to initialize the test data, however you may change the target endpoint later in the UI, along with the number of users, spawn rate and test time.
 
 ```shell
-chainbench start --profile bsc --workers 1
+chainbench start --profile bsc.general --workers 1 --target https://any-working-node-endpoint.com
 ```
 
 ### Headless Mode

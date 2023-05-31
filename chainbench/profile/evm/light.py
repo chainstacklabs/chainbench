@@ -1,12 +1,14 @@
 """
 Ethereum profile (light mode).
 """
-from locust import task
+from locust import constant_pacing, task
 
 from chainbench.user.evm import EVMBenchUser
 
 
 class EthereumLightProfile(EVMBenchUser):
+    wait_time = constant_pacing(2)
+
     @task
     def get_transaction_receipt_task(self):
         self.make_call(

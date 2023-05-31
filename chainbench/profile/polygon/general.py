@@ -18,12 +18,15 @@ pie title Methods Distribution
     "Others" : 9
 ```
 """
-from locust import tag, task
+from locust import constant_pacing, tag, task
 
 from chainbench.user.evm import EVMBenchUser
 
 
-class PolygonProfile(EVMBenchUser):
+class PolygonGeneral(EVMBenchUser):
+    wait_time = constant_pacing(2)
+    weight = 19
+
     @task(100)
     def call_task(self):
         self.make_call(
@@ -78,14 +81,6 @@ class PolygonProfile(EVMBenchUser):
             params=self._transaction_by_hash_params_factory(),
         ),
 
-    @task(11)
-    def get_logs_task(self):
-        self.make_call(
-            name="get_logs",
-            method="eth_getLogs",
-            params=self._get_logs_params_factory(),
-        ),
-
     @task(4)
     def get_balance_task(self):
         self.make_call(
@@ -101,4 +96,18 @@ class PolygonProfile(EVMBenchUser):
             name="block",
             method="trace_block",
             params=self._block_by_number_params_factory(),
+        ),
+
+
+class GetLogsProfile(EVMBenchUser):
+    wait_time = constant_pacing(10)
+    weight = 1
+
+    @tag("get-logs")
+    @task
+    def get_logs_task(self):
+        self.make_call(
+            name="get_logs",
+            method="eth_getLogs",
+            params=self._get_logs_params_factory(),
         ),

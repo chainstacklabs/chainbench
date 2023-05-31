@@ -1,10 +1,10 @@
-from locust import between, task
+from locust import constant_pacing, task
 
 from chainbench.user.evm import EVMBenchUser
 
 
 class OasisProfile(EVMBenchUser):
-    wait_time = between(0.1, 1.5)
+    wait_time = constant_pacing(2)
 
     @task
     def get_block_by_number_task(self):
