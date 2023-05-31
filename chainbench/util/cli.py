@@ -40,6 +40,18 @@ def ensure_results_dir(
     return results_dir
 
 
+def get_timescale_args(
+    pg_host: str | None,
+    pg_port: int | None,
+    pg_username: str | None,
+    pg_password: str | None,
+) -> str:
+    return (
+        f" --timescale --pghost={pg_host} --pgport={pg_port}"
+        f" --pgpassword={pg_password} --pguser={pg_username}"
+    )
+
+
 def get_master_command(
     profile_path: Path,
     host: str,
@@ -53,6 +65,11 @@ def get_master_command(
     exclude_tags: list[str],
     target: str | None = None,
     headless: bool = False,
+    timescale: bool = False,
+    pg_host: str | None = None,
+    pg_port: int | None = None,
+    pg_username: str | None = None,
+    pg_password: str | None = None,
 ) -> str:
     """Generate master command."""
     command = (
@@ -64,6 +81,9 @@ def get_master_command(
         f"--logfile {results_path}/report.log "
         f"--loglevel {log_level} --expect-workers {workers}"
     )
+
+    if timescale:
+        command += get_timescale_args(pg_host, pg_port, pg_username, pg_password)
 
     if target is not None:
         command += f" --host {target}"
@@ -87,12 +107,20 @@ def get_worker_command(
     target: str | None = None,
     headless: bool = False,
     worker_id: int = 0,
+    timescale: bool = False,
+    pg_host: str | None = None,
+    pg_port: int | None = None,
+    pg_username: str | None = None,
+    pg_password: str | None = None,
 ) -> str:
     """Generate worker command."""
     command = (
         f"locust -f {profile_path} --worker --master-host {host} --master-port {port} "
         f"--logfile {results_path}/worker_{worker_id}.log --loglevel {log_level}"
     )
+
+    if timescale:
+        command += get_timescale_args(pg_host, pg_port, pg_username, pg_password)
 
     if target is not None:
         command += f" --host {target}"
