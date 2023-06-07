@@ -100,10 +100,11 @@ def cli(ctx: click.Context):
 @click.option(
     "-m",
     "--monitor",
-    default=set(),
+    default=[],
     help="Add a monitor to collect additional data or metrics. "
     "You may specify this option multiple times for different monitors",
     type=click.Choice(["head-lag-monitor"], case_sensitive=False),
+    multiple=True,
 )
 @click.option(
     "--debug-trace-methods",
@@ -152,7 +153,7 @@ def start(
     target: str | None,
     run_id: str | None,
     notify: str | None,
-    monitor: set[str],
+    monitor: list[str],
     debug_trace_methods: bool,
     exclude_tags: list[str],
     timescale: bool,
@@ -273,8 +274,10 @@ def start(
         # Print out the URL to access the test
         click.echo(f"Run test: http://{host}:8089 {profile}")
 
+    monitor = set(monitor)
     for m in monitor:
         p = Process(target=monitors[m], args=(target, results_path, test_time))
+        click.echo(f"Starting monitor {m}")
         p.start()
         ctx.obj.monitors.append(p)
 
