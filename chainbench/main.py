@@ -274,8 +274,8 @@ def start(
         # Print out the URL to access the test
         click.echo(f"Run test: http://{host}:8089 {profile}")
 
-    monitor = set(monitor)
-    for m in monitor:
+    unique_monitors: set[str] = set(monitor)
+    for m in unique_monitors:
         p = Process(target=monitors[m], args=(target, results_path, test_time))
         click.echo(f"Starting monitor {m}")
         p.start()
