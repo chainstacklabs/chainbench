@@ -32,12 +32,12 @@ def on_test_stop(environment, **_kwargs):
     if not isinstance(runner, MasterRunner):
         # Print worker details to the log
         logger.info(
-            f"Worker[{runner.worker_index:02d}]: Tests completed in "
+            f"🏁 Worker[{runner.worker_index:02d}]: Tests completed in "
             f"{Timer.get_time_diff(runner.worker_index):>.3f} seconds"
         )
     else:
         # Print master details to the log
-        logger.info("Master: The test is stopped")
+        logger.info("🏁 Master: The test is stopped")
 
 
 # Listener for the init event
@@ -51,11 +51,11 @@ def on_init(environment, **_kwargs):
 
     if isinstance(environment.runner, MasterRunner):
         # Print master details to the log
-        logger.info("I'm a master. Running tests for %s", host_under_test)
+        logger.info("🤖 I'm a master. Running tests for %s", host_under_test)
 
     if isinstance(environment.runner, WorkerRunner):
         # Print worker details to the log
-        logger.info("I'm a worker. Running tests for %s", host_under_test)
+        logger.info("🤖 I'm a worker. Running tests for %s", host_under_test)
         logger.info("Initializing test data...")
         for user in environment.runner.user_classes:
             if not hasattr(user, "test_data"):
