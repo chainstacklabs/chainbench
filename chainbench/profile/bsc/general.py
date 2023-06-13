@@ -14,12 +14,15 @@ pie title Methods Distribution
     "Others" : 20
 ```
 """
-from locust import task
+from locust import constant_pacing, tag, task
 
 from chainbench.user.evm import EVMBenchUser
 
 
 class BscProfile(EVMBenchUser):
+    wait_time = constant_pacing(2)
+    weight = 89
+
     @task(100)
     def call_task(self):
         self.make_call(
@@ -40,14 +43,6 @@ class BscProfile(EVMBenchUser):
             name="get_transaction_receipt",
             method="eth_getTransactionReceipt",
             params=self._transaction_by_hash_params_factory(),
-        ),
-
-    @task(36)
-    def get_logs_task(self):
-        self.make_call(
-            name="get_logs",
-            method="eth_getLogs",
-            params=self._get_logs_params_factory(),
         ),
 
     @task(28)
@@ -96,4 +91,18 @@ class BscProfile(EVMBenchUser):
             name="get_block_by_hash",
             method="eth_getBlockByHash",
             params=self._block_by_hash_params_factory(),
+        ),
+
+
+class GetLogsProfile(EVMBenchUser):
+    wait_time = constant_pacing(10)
+    weight = 12
+
+    @tag("get-logs")
+    @task
+    def get_logs_task(self):
+        self.make_call(
+            name="get_logs",
+            method="eth_getLogs",
+            params=self._get_logs_params_factory(),
         ),
