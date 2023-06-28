@@ -2,10 +2,10 @@ import csv
 import logging
 import re
 from datetime import datetime, timedelta
+from json import JSONDecodeError
 from time import sleep
 
-import requests
-from requests import JSONDecodeError
+import httpx
 
 logger = logging.getLogger()
 
@@ -74,10 +74,15 @@ def head_lag_monitor(endpoint, result_path, duration):
         logger.info("head_lag.csv created")
     end_time = datetime.now() + timedelta(seconds=parse_timespan(duration))
 
+    http = httpx.Client()
+
     logger.info("Start monitoring head lag")
     while datetime.now() < end_time:
         current_timestamp = datetime.now()
-        response = requests.post(endpoint, json=data)
+        response = http.post(
+            endpoint,
+            json=data,
+        )
         try:
             block_timestamp = datetime.fromtimestamp(
                 int(response.json()["result"]["timestamp"], 0)
