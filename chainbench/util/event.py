@@ -12,7 +12,7 @@ def on_test_start(environment, **_kwargs):
     # It will be called for any runner (master, worker, local)
     if not isinstance(environment.runner, MasterRunner):
         # Print worker details to the log
-        logger.debug(
+        logger.info(
             f"Worker[{environment.runner.worker_index:02d}]: "
             f"The test is started, Environment: {environment.runner}",
         )
