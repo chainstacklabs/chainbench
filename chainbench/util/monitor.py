@@ -60,48 +60,39 @@ def head_lag_monitor(endpoint, result_path, duration):
         "method": "eth_getBlockByNumber",
         "params": ["latest", False],
     }
-
     csv_writer_kwargs = {
         "file": f"{result_path}/head_lag.csv",
         "mode": "a",
         "encoding": "utf-8-sig",
         "newline": "",
     }
-    logger.info("Creating head_lag.csv")
+    end_time = datetime.now() + timedelta(seconds=parse_timespan(duration))
+    http = httpx.Client()
     with open(**csv_writer_kwargs) as csv_file:
+        logger.info("Start monitoring head lag")
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(["timestamp", "lag (s)", "block number"])
-        logger.info("head_lag.csv created")
-    end_time = datetime.now() + timedelta(seconds=parse_timespan(duration))
-
-    http = httpx.Client()
-
-    logger.info("Start monitoring head lag")
-    while datetime.now() < end_time:
-        current_timestamp = datetime.now()
-        response = http.post(
-            endpoint,
-            json=data,
-        )
-        try:
-            block_timestamp = datetime.fromtimestamp(
-                int(response.json()["result"]["timestamp"], 0)
-            )
-            block_number = int(response.json()["result"]["number"], 0)
-            with open(**csv_writer_kwargs) as csv_file:
-                csv_writer = csv.writer(csv_file)
-                logger.info("Write row to head_lag.csv")
+        while datetime.now() < end_time:
+            current_timestamp = datetime.now()
+            response = http.post(endpoint, json=data)
+            try:
+                block_timestamp = datetime.fromtimestamp(
+                    int(response.json()["result"]["timestamp"], 0)
+                )
+                block_number = int(response.json()["result"]["number"], 0)
                 csv_writer.writerow(
                     [
                         current_timestamp,
-                        f"{calculate_lag(current_timestamp, block_timestamp)}",  # noqa E501
+                        f"{calculate_lag(current_timestamp, block_timestamp)}",
                         block_number,
                     ]
                 )
                 logger.info("Written 1 row to head_lag.csv")
-        except (KeyError, JSONDecodeError):
-            logger.error("Error decoding JSON or key not found")
-        sleep(10)
+                sleep(10)
+            except (KeyError, JSONDecodeError):
+                logger.error("Error decoding JSON or key not found")
+                sleep(1)
+    logger.info("Finished monitoring head lag")
 
 
 monitors = {"head-lag-monitor": head_lag_monitor}
