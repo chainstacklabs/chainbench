@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       #-----------------------------------------------
-      #       try to load cached poetry installation
+      #     try to load cached poetry installation
       #-----------------------------------------------
       - name: Load cached Poetry installation
         id: cached-poetry
@@ -56,37 +56,49 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
       #----------------------------------------------
-      # install your root project, if required
+      #    install your root project, if required
       #----------------------------------------------
       - name: Install project
         run: poetry install --no-interaction
       #----------------------------------------------
-      #              run black
+      #             build the project
+      #----------------------------------------------
+      - name: Build & Install project with pip
+        run: |
+         poetry build
+         pip install dist/*.whl
+      #----------------------------------------------
+      #                  run black
       #----------------------------------------------
       - name: Run Black
         run: poetry run black --check .
       #----------------------------------------------
-      #              run mypy
+      #                  run mypy
       #----------------------------------------------
       - name: Run Mypy
         run: poetry run mypy .
       #----------------------------------------------
-      #              run poetry check
+      #               run poetry check
       #----------------------------------------------
       - name: Run Poetry Check
         run: poetry check
       #----------------------------------------------
-      #              run flake8
+      #                 run flake8
       #----------------------------------------------
       - name: Run Flake8
         run: poetry run flake8 chainbench
       #----------------------------------------------
-      #              run isort
+      #                 run isort
       #----------------------------------------------
       - name: Run Isort
         run: poetry run isort --check .
       #----------------------------------------------
-      #              run light smoke test
+      #        run light smoke test (poetry)
       #----------------------------------------------
-      - name: Run Light Smoke Test
+      - name: Run Light Smoke Test (poetry)
         run: poetry run chainbench start --help
+      #----------------------------------------------
+      #        run light smoke test (package)
+      #----------------------------------------------
+      - name: Run Light Smoke Test (package)
+        run: chainbench start --help
