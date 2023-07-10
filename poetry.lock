@@ -22,6 +22,17 @@ test = ["anyio[trio]", "coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "mock (>=
 trio = ["trio (<0.22)"]
 
 [[package]]
+name = "async-generator"
+version = "1.10"
+description = "Async generators and context managers for Python 3.5+"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "async_generator-1.10-py3-none-any.whl", hash = "sha256:01c7bf666359b4967d2cda0000cc2e4af16a0ae098cbffcb8472fb9e8ad6585b"},
+    {file = "async_generator-1.10.tar.gz", hash = "sha256:6ebb3d106c12920aaae42ccb6f787ef5eefdcdd166ea3d628fa8476abe712144"},
+]
+
+[[package]]
 name = "attrs"
 version = "23.1.0"
 description = "Classes Without Boilerplate"
@@ -1158,13 +1169,13 @@ Werkzeug = ">=2.0.0"
 
 [[package]]
 name = "locust-plugins"
-version = "3.3.0"
+version = "3.3.1"
 description = "Useful plugins/extensions for Locust"
 optional = false
 python-versions = ">=3.7, <4"
 files = [
-    {file = "locust-plugins-3.3.0.tar.gz", hash = "sha256:8e67e6ec217d9ad5c74a66e5aff9d9d7ca92c4488e756ae8b91ec180af7a119d"},
-    {file = "locust_plugins-3.3.0-py3-none-any.whl", hash = "sha256:c11529c9c2bb1013f00fcf7e8b655d6b0543f5da7f30334618dcb7f022518902"},
+    {file = "locust-plugins-3.3.1.tar.gz", hash = "sha256:98b19cc7432dfd33cac10247dc6bac97391047fad078d0fe3505231e44561a51"},
+    {file = "locust_plugins-3.3.1-py3-none-any.whl", hash = "sha256:bab612db2c1ecad517f7cd138d63927d41acb1a6fe8b2cb431b49677814441ca"},
 ]
 
 [package.dependencies]
@@ -1173,7 +1184,7 @@ locust = ">=2.14.0"
 lxml = "*"
 opencensus-ext-azure = "*"
 paho-mqtt = ">=1.5.0"
-playwright = "*"
+playwright = ">=1.34.0"
 psycogreen = "*"
 psycopg2-binary = "*"
 pymongo = "*"
@@ -2328,17 +2339,18 @@ files = [
 
 [[package]]
 name = "trio"
-version = "0.22.1"
+version = "0.22.0"
 description = "A friendly Python library for async concurrency and I/O"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "trio-0.22.1-py3-none-any.whl", hash = "sha256:1270da4a4a33caf33f85c6a255f2ef5f71629a3ec9aea31a052062b673ae58d3"},
-    {file = "trio-0.22.1.tar.gz", hash = "sha256:eb5f641b313eb502a16de176d84cecd9ccf2394a7c8655d2297398376bb15eca"},
+    {file = "trio-0.22.0-py3-none-any.whl", hash = "sha256:f1dd0780a89bfc880c7c7994519cb53f62aacb2c25ff487001c0052bd721cdf0"},
+    {file = "trio-0.22.0.tar.gz", hash = "sha256:ce68f1c5400a47b137c5a4de72c7c901bd4e7a24fbdebfe9b41de8c6c04eaacf"},
 ]
 
 [package.dependencies]
-attrs = ">=20.1.0"
+async-generator = ">=1.9"
+attrs = ">=19.2.0"
 cffi = {version = ">=1.14", markers = "os_name == \"nt\" and implementation_name != \"pypy\""}
 exceptiongroup = {version = ">=1.0.0rc9", markers = "python_version < \"3.11\""}
 idna = "*"
@@ -2528,4 +2540,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "185b5f243bfe15331ba58d55a550576eb14e95fb92b69afa38feb5e61297f314"
+content-hash = "138f9500b88f4bdeb81caf19a72ecd978a05b8ddbbfa325ace41633e50af65f6"
