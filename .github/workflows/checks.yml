@@ -85,3 +85,8 @@ jobs:
       #----------------------------------------------
       - name: Run Isort
         run: poetry run isort --check .
+      #----------------------------------------------
+      #              run smoke test
+      #----------------------------------------------
+      - name: Run Smoke Test
+        run: poetry run chainbench start --help
