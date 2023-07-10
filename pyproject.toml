@@ -2,7 +2,11 @@
 name = "chainbench"
 version = "0.3.2"
 description = ""
-authors = ["Egor Molodik <egor.molodik@chainstack.com>"]
+authors = [
+    "Egor Molodik <egor.molodik@chainstack.com>",
+    "Erwin Wee <erwin.wee@chainstack.com>"
+]
+maintainers = ["Erwin Wee <erwin.wee@chainstack.com>"]
 readme = "README.md"
 packages = [{include = "chainbench"}]
 
