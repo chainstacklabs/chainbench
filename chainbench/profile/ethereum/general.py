@@ -18,6 +18,7 @@ pie title Methods Distribution
 from locust import constant_pacing, tag, task
 
 from chainbench.user.evm import EVMBenchUser
+from chainbench.util.rng import get_rng
 
 
 class EthereumProfile(EVMBenchUser):
@@ -43,7 +44,7 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_receipt",
             method="eth_getTransactionReceipt",
-            params=self._transaction_by_hash_params_factory(),
+            params=self._transaction_by_hash_params_factory(get_rng()),
         ),
 
     @task(19)
@@ -59,7 +60,7 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory_latest(),
+            params=self._get_balance_params_factory_latest(get_rng()),
         ),
 
     @task(11)
@@ -75,7 +76,7 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
 
     @task(8)
@@ -83,7 +84,7 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_by_hash",
             method="eth_getTransactionByHash",
-            params=self._transaction_by_hash_params_factory(),
+            params=self._transaction_by_hash_params_factory(get_rng()),
         ),
 
     @tag("debug")
@@ -114,5 +115,5 @@ class GetLogsProfile(EVMBenchUser):
         self.make_call(
             name="get_logs",
             method="eth_getLogs",
-            params=self._get_logs_params_factory(),
+            params=self._get_logs_params_factory(get_rng()),
         ),

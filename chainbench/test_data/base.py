@@ -1,11 +1,12 @@
 import logging
-import random
 import typing as t
 from dataclasses import dataclass, field
 from secrets import token_hex
 
 import httpx
 from gevent.lock import Semaphore as GeventSemaphore
+
+from chainbench.util.rng import RNG, get_rng
 
 Account = str
 Accounts = list[Account]
@@ -21,9 +22,8 @@ Blocks = list[tuple[BlockNumber, BlockHash]]
 
 @dataclass
 class BlockchainData:
-    first_block_number: BlockNumber = 0
-    latest_block: Block = field(default_factory=dict)
-    latest_block_number: BlockNumber = 0
+    start_block_number: BlockNumber = 0
+    end_block_number: BlockNumber = 0
     blocks: Blocks = field(default_factory=list)
     txs: Txs = field(default_factory=list)
     tx_hashes: TxHashes = field(default_factory=list)
@@ -130,30 +130,48 @@ class BaseTestData:
     def wait(self):
         self._lock.wait()
 
-    def get_random_block_number(self) -> BlockNumber:
-        return random.randint(self.first_block_number, self.latest_block_number)
+    @staticmethod
+    def get_random_bool(rng: RNG) -> bool:
+        if rng is None:
+            rng = get_rng()
+        return rng.random.choice([True, False])
 
-    def get_random_block_hash(self) -> BlockHash:
-        _, block_hash = random.choice(self.blocks)
+    def get_random_block_number(self, rng: RNG) -> BlockNumber:
+        if rng is None:
+            rng = get_rng()
+        return rng.random.randint(self.first_block_number, self.latest_block_number)
+
+    def get_random_block_hash(self, rng: RNG) -> BlockHash:
+        if rng is None:
+            rng = get_rng()
+        _, block_hash = rng.random.choice(self.blocks)
         return block_hash
 
-    def get_random_tx_hash(self) -> TxHash:
-        return random.choice(self.tx_hashes)
+    def get_random_tx_hash(self, rng: RNG) -> TxHash:
+        if rng is None:
+            rng = get_rng()
+        return rng.random.choice(self.tx_hashes)
 
-    def get_random_account(self) -> Account:
-        return random.choice(self.accounts)
+    def get_random_recent_block_number(self, rng: RNG, n: int) -> BlockNumber:
+        if rng is None:
+            rng = get_rng()
+        return rng.random.randint(
+            self.latest_block_number - n,
+            self.latest_block_number,
+        )
 
-    @property
-    def latest_block(self) -> Block:
-        return self.data.latest_block
+    def get_random_account(self, rng: RNG) -> Account:
+        if rng is None:
+            rng = get_rng()
+        return rng.random.choice(self.accounts)
 
     @property
     def first_block_number(self) -> BlockNumber:
-        return self.data.first_block_number
+        return self.data.start_block_number
 
     @property
     def latest_block_number(self) -> BlockNumber:
-        return self.data.latest_block_number
+        return self.data.end_block_number
 
     @property
     def txs(self) -> Txs:

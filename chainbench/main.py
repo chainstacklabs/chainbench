@@ -38,6 +38,7 @@ logger = logging.getLogger(__name__)
 @click.group(
     help="Tool for flexible blockchain infrastructure benchmarking.",
 )
+@click.version_option(message="%(prog)s-%(version)s")
 @click.pass_context
 def cli(ctx: click.Context):
     ctx.obj = ContextData()
