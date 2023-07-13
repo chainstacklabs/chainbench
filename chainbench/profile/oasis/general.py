@@ -1,6 +1,7 @@
 from locust import constant_pacing, task
 
 from chainbench.user.evm import EVMBenchUser
+from chainbench.util.rng import get_rng
 
 
 class OasisProfile(EVMBenchUser):
@@ -11,7 +12,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
 
     @task
@@ -19,7 +20,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -27,7 +28,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_count",
             method="eth_getTransactionCount",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -35,7 +36,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_code",
             method="eth_getCode",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -43,7 +44,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_by_hash",
             method="eth_getTransactionByHash",
-            params=self._transaction_by_hash_params_factory(),
+            params=self._transaction_by_hash_params_factory(get_rng()),
         ),
 
     @task
@@ -65,5 +66,5 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_transaction_count_by_number",
             method="eth_getBlockTransactionCountByNumber",
-            params=self._random_block_number_params_factory(),
+            params=self._random_block_number_params_factory(get_rng()),
         ),
