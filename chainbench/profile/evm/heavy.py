@@ -6,6 +6,7 @@ from random import randint
 from locust import constant_pacing, tag, task
 
 from chainbench.user.evm import EVMBenchUser
+from chainbench.util.rng import get_rng
 
 
 class EthereumHeavyProfile(EVMBenchUser):
@@ -16,7 +17,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="debug_trace_transaction",
             method="debug_traceTransaction",
-            params=self._trace_transaction_by_hash_params_factory(),
+            params=self._trace_transaction_params_factory(get_rng()),
         ),
 
     @task
@@ -24,7 +25,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="trace_block",
             method="trace_block",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
 
     @tag("get-logs")
@@ -33,7 +34,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="eth_get_logs",
             method="eth_getLogs",
-            params=self._get_logs_params_factory(),
+            params=self._get_logs_params_factory(get_rng()),
         ),
 
     @task
@@ -41,7 +42,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="eth_get_block_receipts",
             method="eth_getBlockReceipts",
-            params=[self.test_data.get_random_block_number_hex()],
+            params=[hex(self.test_data.get_random_block_number(get_rng()))],
         )
 
     @task
@@ -49,7 +50,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="trace_replay_transaction",
             method="trace_replayTransaction",
-            params=self._trace_replay_transaction_by_hash_params_factory(),
+            params=self._trace_replay_transaction_params_factory(get_rng()),
         )
 
     @task
@@ -57,7 +58,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="trace_replay_block_transactions",
             method="trace_replayBlockTransactions",
-            params=self._trace_replay_block_transaction_by_block_number_params_factory(),  # noqa E501
+            params=self._trace_replay_block_transaction_params_factory(get_rng()),
         )
 
     @task
@@ -80,7 +81,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="trace_filter",
             method="trace_filter",
-            params=self._trace_filter_params_factory(),
+            params=self._trace_filter_params_factory(get_rng()),
         )
 
     @task
@@ -120,7 +121,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="debug_trace_block_by_number",
             method="debug_traceBlockByNumber",
-            params=self._trace_block_by_number_params_factory(),
+            params=self._trace_block_by_number_params_factory(get_rng()),
         )
 
     @task
@@ -128,7 +129,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="debug_trace_block_by_hash",
             method="debug_traceBlockByHash",
-            params=self._trace_block_by_hash_params_factory(),
+            params=self._trace_block_by_hash_params_factory(get_rng()),
         )
 
     @task
@@ -136,5 +137,5 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="eth_estimate_gas",
             method="eth_estimateGas",
-            params=self._eth_estimate_gas_params_factory(),
+            params=self._eth_estimate_gas_params_factory(get_rng()),
         )
