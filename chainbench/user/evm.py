@@ -13,9 +13,9 @@ class EVMBenchUser(BaseBenchUser):
         return [
             {
                 "fromBlock": hex(
-                    self.test_data.get_random_recent_block_number(rng, 20)
+                    self.test_data.get_random_recent_block_number(20, rng)
                 ),
-                "toBlock": hex(self.test_data.latest_block_number),
+                "toBlock": hex(self.test_data.end_block_number),
             }
         ]
 

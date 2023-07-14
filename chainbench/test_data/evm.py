@@ -16,7 +16,11 @@ class EVMTestData(BaseTestData):
     SAVE_LAST_BLOCKS = 100
 
     CHAIN_INFO: Mapping[int, ChainInfo] = {
-        1: {"name": "ethereum-mainnet", "start_block": 10000000, "end_block": 17000000},
+        1: {
+            "name": "ethereum-mainnet",
+            "start_block": 10000000,
+            "end_block": 17000000,
+        },
         56: {
             "name": "binance-smart-chain",
             "start_block": 20000000,
@@ -27,7 +31,11 @@ class EVMTestData(BaseTestData):
             "start_block": 35000000,
             "end_block": 45000000,
         },
-        26863: {"name": "oasis-mainnet", "start_block": 8000000, "end_block": 14000000},
+        26863: {
+            "name": "oasis-mainnet",
+            "start_block": 8000000,
+            "end_block": 14000000,
+        },
         43114: {
             "name": "avalanche-mainnet",
             "start_block": 20000000,

@@ -131,46 +131,48 @@ class BaseTestData:
         self._lock.wait()
 
     @staticmethod
-    def get_random_bool(rng: RNG) -> bool:
+    def get_random_bool(rng: RNG | None = None) -> bool:
         if rng is None:
             rng = get_rng()
         return rng.random.choice([True, False])
 
-    def get_random_block_number(self, rng: RNG) -> BlockNumber:
+    def get_random_block_number(self, rng: RNG | None = None) -> BlockNumber:
         if rng is None:
             rng = get_rng()
-        return rng.random.randint(self.first_block_number, self.latest_block_number)
+        return rng.random.randint(self.start_block_number, self.end_block_number)
 
-    def get_random_block_hash(self, rng: RNG) -> BlockHash:
+    def get_random_block_hash(self, rng: RNG | None = None) -> BlockHash:
         if rng is None:
             rng = get_rng()
         _, block_hash = rng.random.choice(self.blocks)
         return block_hash
 
-    def get_random_tx_hash(self, rng: RNG) -> TxHash:
+    def get_random_tx_hash(self, rng: RNG | None = None) -> TxHash:
         if rng is None:
             rng = get_rng()
         return rng.random.choice(self.tx_hashes)
 
-    def get_random_recent_block_number(self, rng: RNG, n: int) -> BlockNumber:
+    def get_random_recent_block_number(
+        self, n: int, rng: RNG | None = None
+    ) -> BlockNumber:
         if rng is None:
             rng = get_rng()
         return rng.random.randint(
-            self.latest_block_number - n,
-            self.latest_block_number,
+            self.end_block_number - n,
+            self.end_block_number,
         )
 
-    def get_random_account(self, rng: RNG) -> Account:
+    def get_random_account(self, rng: RNG | None = None) -> Account:
         if rng is None:
             rng = get_rng()
         return rng.random.choice(self.accounts)
 
     @property
-    def first_block_number(self) -> BlockNumber:
+    def start_block_number(self) -> BlockNumber:
         return self.data.start_block_number
 
     @property
-    def latest_block_number(self) -> BlockNumber:
+    def end_block_number(self) -> BlockNumber:
         return self.data.end_block_number
 
     @property
