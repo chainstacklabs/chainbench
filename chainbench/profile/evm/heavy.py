@@ -58,9 +58,7 @@ class EthereumHeavyProfile(EVMBenchUser):
         self.make_call(
             name="trace_replay_block_transactions",
             method="trace_replayBlockTransactions",
-            params=self._trace_replay_block_transaction_params_factory(
-                get_rng()
-            ),  # noqa E501
+            params=self._trace_replay_block_transaction_params_factory(get_rng()),
         )
 
     @task

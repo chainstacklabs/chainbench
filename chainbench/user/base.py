@@ -77,17 +77,21 @@ class BaseBenchUser(FastHttpUser):
             raise RescheduleTask()
 
         if "error" in response.js:
-            self.logger.error(f"Response for {name} has a JSON-RPC error: {response.text}")
+            self.logger.error(
+                f"Response for {name} has a JSON-RPC error: {response.text}"
+            )
             if "code" in response.js["error"]:
                 response.failure(
-                    f"Response for {name} has a JSON-RPC error {response.js['error']['code']}"
+                    f"Response for {name} has a JSON-RPC error {response.js['error']['code']}"  # noqa: E501
                 )
                 raise RescheduleTask()
             response.failure("Unspecified JSON-RPC error")
             raise RescheduleTask()
 
         if not response.js.get("result"):
-            self.logger.error(f"Response for {name} call has no result: {response.text}")
+            self.logger.error(
+                f"Response for {name} call has no result: {response.text}"
+            )
 
     def make_call(
         self, method: str, params: list[t.Any] | None = None, name: str | None = None
