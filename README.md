@@ -104,7 +104,7 @@ After the test is finished, the tool will automatically quit.
 - `--help`: Displays the help message.
 - `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
 - `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
-
+- `--use-recent-blocks`: Use recent blocks for test data generation.
 You may also run `chainbench start --help` for the full list of parameters and flags.
 
 ### Profiles
