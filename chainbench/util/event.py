@@ -8,6 +8,42 @@ from chainbench.util.timer import Timer
 logger = logging.getLogger(__name__)
 
 
+def cli_custom_arguments(parser):
+    parser.add_argument(
+        "--use-recent-blocks",
+        type=bool,
+        default=False,
+        help="Use recent blocks as test data",
+    )
+
+
+# Listener for the init event
+def on_init(environment, **_kwargs):
+    # It will be called for any runner (master, worker, local)
+    logger.debug("init.add_listener: Init is started")
+    logger.debug("init.add_listener: Environment: %s", environment.runner)
+    logger.debug("init.add_listener: Host: %s", environment.host)
+
+    host_under_test = environment.host or "Default host"
+
+    if isinstance(environment.runner, MasterRunner):
+        # Print master details to the log
+        logger.info("I'm a master. Running tests for %s", host_under_test)
+
+    if isinstance(environment.runner, WorkerRunner):
+        # Print worker details to the log
+        logger.info("I'm a worker. Running tests for %s", host_under_test)
+        logger.info("Initializing test data...")
+        for user in environment.runner.user_classes:
+            if not hasattr(user, "test_data"):
+                continue
+
+            user.test_data.update(
+                environment.host, environment.parsed_options.use_recent_blocks
+            )
+            logger.info("Test data is ready")
+
+
 def on_test_start(environment, **_kwargs):
     # It will be called for any runner (master, worker, local)
     if not isinstance(environment.runner, MasterRunner):
@@ -40,32 +76,8 @@ def on_test_stop(environment, **_kwargs):
         logger.info("Master: The test is stopped")
 
 
-# Listener for the init event
-def on_init(environment, **_kwargs):
-    # It will be called for any runner (master, worker, local)
-    logger.debug("init.add_listener: Init is started")
-    logger.debug("init.add_listener: Environment: %s", environment.runner)
-    logger.debug("init.add_listener: Host: %s", environment.host)
-
-    host_under_test = environment.host or "Default host"
-
-    if isinstance(environment.runner, MasterRunner):
-        # Print master details to the log
-        logger.info("I'm a master. Running tests for %s", host_under_test)
-
-    if isinstance(environment.runner, WorkerRunner):
-        # Print worker details to the log
-        logger.info("I'm a worker. Running tests for %s", host_under_test)
-        logger.info("Initializing test data...")
-        for user in environment.runner.user_classes:
-            if not hasattr(user, "test_data"):
-                continue
-
-            user.test_data.update(environment.host)
-            logger.info("Test data is ready")
-
-
 def setup_event_listeners():
+    events.init_command_line_parser.add_listener(cli_custom_arguments)
     events.test_start.add_listener(on_test_start)
     events.test_stop.add_listener(on_test_stop)
     events.init.add_listener(on_init)
