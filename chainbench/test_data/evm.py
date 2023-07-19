@@ -84,12 +84,15 @@ class EVMTestData(BaseTestData):
         accounts: set[str] = set()
         blocks: Blocks = []
         chain_id: int = self._fetch_chain_id()
+        start_block_number: int
+        end_block_number: int
+
         if use_recent_blocks:
-            end_block_number: int = int(self._make_call("eth_blockNumber"), 0)
-            start_block_number: int = end_block_number - 20
+            end_block_number = int(self._make_call("eth_blockNumber"), 0)
+            start_block_number = end_block_number - 20
         else:
-            start_block_number: int = self.CHAIN_INFO[chain_id]["start_block"]
-            end_block_number: int = self.CHAIN_INFO[chain_id]["end_block"]
+            start_block_number = self.CHAIN_INFO[chain_id]["start_block"]
+            end_block_number = self.CHAIN_INFO[chain_id]["end_block"]
 
         while (
             self.TXS_REQUIRED > len(txs)
