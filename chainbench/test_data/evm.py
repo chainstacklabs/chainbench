@@ -13,7 +13,7 @@ class ChainInfo(TypedDict):
 class EVMTestData(BaseTestData):
     TXS_REQUIRED = 100
     ACCOUNTS_REQUIRED = 200
-    SAVE_BLOCKS = 10
+    SAVE_BLOCKS = 20
 
     CHAIN_INFO: Mapping[int, ChainInfo] = {
         1: {
@@ -86,6 +86,7 @@ class EVMTestData(BaseTestData):
         chain_id: int = self._fetch_chain_id()
         start_block_number: int
         end_block_number: int
+        return_txs: bool
 
         if use_recent_blocks:
             end_block_number = int(self._make_call("eth_blockNumber"), 0)
@@ -99,8 +100,12 @@ class EVMTestData(BaseTestData):
             or self.ACCOUNTS_REQUIRED > len(accounts)
             or self.SAVE_BLOCKS > len(blocks)
         ):
+            if self.ACCOUNTS_REQUIRED > len(accounts) or self.SAVE_BLOCKS > len(blocks):
+                return_txs = True
+            else:
+                return_txs = False
             block_number, block = self._fetch_random_block(
-                start_block_number, end_block_number
+                start_block_number, end_block_number, return_txs
             )
             if self.SAVE_BLOCKS > len(blocks):
                 blocks.append((block_number, block["hash"]))
