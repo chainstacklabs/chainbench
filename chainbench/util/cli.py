@@ -70,6 +70,7 @@ def get_master_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
+    use_recent_blocks: bool = False,
 ) -> str:
     """Generate master command."""
     command = (
@@ -94,6 +95,8 @@ def get_master_command(
     if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
+    if use_recent_blocks:
+        command += " --use-recent-blocks True"
     return command
 
 
@@ -112,6 +115,7 @@ def get_worker_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
+    use_recent_blocks: bool = False,
 ) -> str:
     """Generate worker command."""
     command = (
@@ -131,6 +135,8 @@ def get_worker_command(
     if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
+    if use_recent_blocks:
+        command += " --use-recent-blocks True"
     return command
 
 

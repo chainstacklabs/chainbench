@@ -44,11 +44,11 @@ class BaseTestData:
 
         self._data: BlockchainData | None = None
 
-    def update(self, host_url: str):
+    def update(self, host_url: str, use_recent_blocks: bool = False) -> BlockchainData:
         self._logger.info("Updating data")
         self._host = host_url
         self._logger.debug("Host: %s", self._host)
-        data = self._get_init_data()
+        data = self._get_init_data(use_recent_blocks)
         self._logger.info("Data fetched")
         self._logger.debug("Data: %s", data)
         self._data = data
@@ -57,7 +57,7 @@ class BaseTestData:
         self._logger.info("Lock released")
         return data
 
-    def _get_init_data(self) -> BlockchainData:
+    def _get_init_data(self, use_recent_blocks) -> BlockchainData:
         raise NotImplementedError
 
     @property

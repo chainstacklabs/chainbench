@@ -136,6 +136,9 @@ def cli(ctx: click.Context):
     "--pg-username", default="postgres", help="PG username", show_default=True
 )
 @click.option("--pg-password", default=None, help="PG password")
+@click.option(
+    "--use-recent-blocks", is_flag=True, help="Uses recent blocks for test data"
+)
 @click.pass_context
 def start(
     ctx: click.Context,
@@ -162,6 +165,7 @@ def start(
     pg_port: int,
     pg_username: str,
     pg_password: str | None,
+    use_recent_blocks: bool,
 ):
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -230,6 +234,7 @@ def start(
         pg_port=pg_port,
         pg_username=pg_username,
         pg_password=pg_password,
+        use_recent_blocks=use_recent_blocks,
     )
     if headless:
         click.echo(f"Starting master in headless mode for {profile}")
@@ -259,6 +264,7 @@ def start(
             pg_port=pg_port,
             pg_username=pg_username,
             pg_password=pg_password,
+            use_recent_blocks=use_recent_blocks,
         )
         worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)

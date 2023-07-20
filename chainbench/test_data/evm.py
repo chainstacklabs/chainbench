@@ -1,6 +1,6 @@
 from typing import Mapping, TypedDict
 
-from chainbench.test_data.base import BaseTestData, BlockchainData
+from chainbench.test_data.base import BaseTestData, BlockchainData, Blocks
 from chainbench.util.rng import get_rng
 
 
@@ -11,9 +11,9 @@ class ChainInfo(TypedDict):
 
 
 class EVMTestData(BaseTestData):
-    TXS_REQUIRED = 50
-    ACCOUNTS_REQUIRED = 100
-    SAVE_LAST_BLOCKS = 100
+    TXS_REQUIRED = 100
+    ACCOUNTS_REQUIRED = 200
+    SAVE_BLOCKS = 20
 
     CHAIN_INFO: Mapping[int, ChainInfo] = {
         1: {
@@ -78,25 +78,45 @@ class EVMTestData(BaseTestData):
         return self._fetch_block(block_number, return_txs=return_txs)
 
     # get initial data from blockchain
-    def _get_init_data(self) -> BlockchainData:
+    def _get_init_data(self, use_recent_blocks) -> BlockchainData:
         txs: list[dict] = []
         tx_hashes: list[str] = []
         accounts: set[str] = set()
-        blocks = []
-        chain_id = self._fetch_chain_id()
-        start_block_number = self.CHAIN_INFO[chain_id]["start_block"]
-        end_block_number = self.CHAIN_INFO[chain_id]["end_block"]
+        blocks: Blocks = []
+        chain_id: int = self._fetch_chain_id()
+        start_block_number: int
+        end_block_number: int
+        return_txs: bool
 
-        while self.TXS_REQUIRED > len(txs) and self.ACCOUNTS_REQUIRED > len(accounts):
+        if use_recent_blocks:
+            end_block_number = int(self._make_call("eth_blockNumber"), 0)
+            start_block_number = end_block_number - 20
+        else:
+            start_block_number = self.CHAIN_INFO[chain_id]["start_block"]
+            end_block_number = self.CHAIN_INFO[chain_id]["end_block"]
+
+        while (
+            self.TXS_REQUIRED > len(txs)
+            or self.ACCOUNTS_REQUIRED > len(accounts)
+            or self.SAVE_BLOCKS > len(blocks)
+        ):
+            if self.ACCOUNTS_REQUIRED > len(accounts) or self.SAVE_BLOCKS > len(blocks):
+                return_txs = True
+            else:
+                return_txs = False
             block_number, block = self._fetch_random_block(
-                start_block_number, end_block_number
+                start_block_number, end_block_number, return_txs
             )
-            blocks.append((block_number, block["hash"]))
+            if self.SAVE_BLOCKS > len(blocks):
+                blocks.append((block_number, block["hash"]))
             for tx in block["transactions"]:
-                self._append_if_not_none(txs, tx)
-                self._append_if_not_none(tx_hashes, tx["hash"])
-                self._append_if_not_none(accounts, tx["from"])
-                self._append_if_not_none(accounts, tx["to"])
+                if self.TXS_REQUIRED > len(txs):
+                    self._append_if_not_none(txs, tx)
+                    self._append_if_not_none(tx_hashes, tx["hash"])
+                if self.ACCOUNTS_REQUIRED > len(accounts):
+                    self._append_if_not_none(accounts, tx["from"])
+                if self.ACCOUNTS_REQUIRED > len(accounts):
+                    self._append_if_not_none(accounts, tx["to"])
 
         return BlockchainData(
             end_block_number=end_block_number,
