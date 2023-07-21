@@ -27,9 +27,7 @@ def generate_unique_dir_name() -> str:
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 
-def ensure_results_dir(
-    profile: str, parent_dir: Path, run_id: str | None = None
-) -> Path:
+def ensure_results_dir(profile: str, parent_dir: Path, run_id: str | None = None) -> Path:
     if run_id is not None:
         results_dir = (parent_dir / run_id).resolve()
     else:
@@ -46,10 +44,7 @@ def get_timescale_args(
     pg_username: str | None,
     pg_password: str | None,
 ) -> str:
-    return (
-        f" --timescale --pghost={pg_host} --pgport={pg_port}"
-        f" --pgpassword={pg_password} --pguser={pg_username}"
-    )
+    return f" --timescale --pghost={pg_host} --pgport={pg_port}" f" --pgpassword={pg_password} --pguser={pg_username}"
 
 
 def get_master_command(

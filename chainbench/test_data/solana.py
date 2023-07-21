@@ -9,9 +9,7 @@ class SolanaTestData(BaseTestData):
     ACCOUNTS_REQUIRED = 200
     BLOCK_TIME = 0.4
 
-    def _fetch_block(
-        self, block_number: int, return_txs: bool = True
-    ) -> dict | Exception:
+    def _fetch_block(self, block_number: int, return_txs: bool = True) -> dict | Exception:
         if return_txs:
             transaction_details = "accounts"
         else:
@@ -26,7 +24,7 @@ class SolanaTestData(BaseTestData):
             result = self._make_call("getBlock", [block_number, config_object])
         except Exception as e:
             self._logger.error(f"Failed to fetch block {block_number}: {e}")
-            return e
+            raise e
         return result
 
     @retry(reraise=True, stop=stop_after_attempt(5))
@@ -43,6 +41,7 @@ class SolanaTestData(BaseTestData):
         slot = self._make_call("getLatestBlockhash")["context"]["slot"]
         return slot
 
+    @retry(reraise=True, stop=stop_after_attempt(5))
     def _fetch_latest_block(self):
         slot_number = self._fetch_latest_slot_number()
         latest_block = self._fetch_block(slot_number, return_txs=True)
@@ -66,27 +65,19 @@ class SolanaTestData(BaseTestData):
         start_block_number += int((parsed_options.run_time / self.BLOCK_TIME) * 1.1)
 
         while self.TXS_REQUIRED > len(txs) or self.ACCOUNTS_REQUIRED > len(accounts):
-            if (
-                    self.ACCOUNTS_REQUIRED > len(accounts)
-                    or self.TXS_REQUIRED > len(blocks)
-            ):
+            if self.ACCOUNTS_REQUIRED > len(accounts) or self.TXS_REQUIRED > len(blocks):
                 return_txs = True
             else:
                 return_txs = False
-            block = self._fetch_random_block(
-                start_block_number, end_block_number, return_txs
-            )
+            block = self._fetch_random_block(start_block_number, end_block_number, return_txs)
             for tx in block["transactions"]:
                 if self.TXS_REQUIRED > len(txs):
                     self._append_if_not_none(txs, tx)
-                    self._append_if_not_none(
-                        tx_hashes, tx["transaction"]["signatures"][0]
-                    )
+                    self._append_if_not_none(tx_hashes, tx["transaction"]["signatures"][0])
                     for account in tx["transaction"]["accountKeys"]:
                         if (
                             self.ACCOUNTS_REQUIRED > len(accounts)
-                            and account["pubkey"]
-                            != "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+                            and account["pubkey"] != "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
                         ):
                             self._append_if_not_none(accounts, account["pubkey"])
                         else:

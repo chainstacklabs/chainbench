@@ -27,9 +27,7 @@ def setup_test_data(environment, msg, **kwargs):
             continue
 
         user.test_data.init_data_from_json(test_data[user.__class__.__name__])
-    environment.runner.send_message(
-        "acknowledge_data", f"Test data received by worker {worker_index}"
-    )
+    environment.runner.send_message("acknowledge_data", f"Test data received by worker {worker_index}")
     logger.info("Test Data received from master")
 
 
@@ -80,8 +78,7 @@ def on_test_start(environment, **_kwargs):
 
         # Print master details to the log
         logger.info(
-            f"Master: test_start.add_listener: The test is started, "
-            f"Environment: {environment.runner}",
+            f"Master: test_start.add_listener: The test is started, " f"Environment: {environment.runner}",
         )
 
     if not isinstance(environment.runner, MasterRunner):

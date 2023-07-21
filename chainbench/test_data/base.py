@@ -137,9 +137,7 @@ class BaseTestData:
             json=self._make_body(method, params),
         )
 
-        self._logger.debug(
-            f"Making call to {self.host} with method {method} and params {params}"
-        )
+        self._logger.debug(f"Making call to {self.host} with method {method} and params {params}")
         self._logger.debug(f"Response: {response.text}")
 
         response.raise_for_status()
@@ -191,9 +189,7 @@ class BaseTestData:
             rng = get_rng()
         return rng.random.choice(self.tx_hashes)
 
-    def get_random_recent_block_number(
-        self, n: int, rng: RNG | None = None
-    ) -> BlockNumber:
+    def get_random_recent_block_number(self, n: int, rng: RNG | None = None) -> BlockNumber:
         if rng is None:
             rng = get_rng()
         return rng.random.randint(

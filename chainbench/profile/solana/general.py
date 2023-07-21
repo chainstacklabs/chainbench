@@ -138,7 +138,5 @@ class SolanaProfile(SolanaBenchUser):
     def get_confirmed_signatures_for_address2(self):
         self.make_call(
             method="getConfirmedSignaturesForAddress2",
-            params=self._get_confirmed_signatures_for_address2_params_factory(
-                get_rng()
-            ),
+            params=self._get_confirmed_signatures_for_address2_params_factory(get_rng()),
         ),

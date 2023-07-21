@@ -40,9 +40,7 @@ class EVMTestData(BaseTestData):
     def _fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("eth_chainId"))
 
-    def _fetch_block(
-        self, block_number: int | str, return_txs: bool = True
-    ) -> tuple[int, dict]:
+    def _fetch_block(self, block_number: int | str, return_txs: bool = True) -> tuple[int, dict]:
         if isinstance(block_number, int):
             block_number = hex(block_number)
         elif (block_number := block_number.lower()) not in (
@@ -77,18 +75,12 @@ class EVMTestData(BaseTestData):
             start_block_number = self.CHAIN_INFO[chain_id]["start_block"]
             end_block_number = self.CHAIN_INFO[chain_id]["end_block"]
 
-        while (
-            self.TXS_REQUIRED > len(txs)
-            or self.ACCOUNTS_REQUIRED > len(accounts)
-            or self.SAVE_BLOCKS > len(blocks)
-        ):
+        while self.TXS_REQUIRED > len(txs) or self.ACCOUNTS_REQUIRED > len(accounts) or self.SAVE_BLOCKS > len(blocks):
             if self.ACCOUNTS_REQUIRED > len(accounts) or self.TXS_REQUIRED > len(txs):
                 return_txs = True
             else:
                 return_txs = False
-            block_number, block = self._fetch_random_block(
-                start_block_number, end_block_number, return_txs
-            )
+            block_number, block = self._fetch_random_block(start_block_number, end_block_number, return_txs)
             if self.SAVE_BLOCKS > len(blocks):
                 blocks.append((block_number, block["hash"]))
             for tx in block["transactions"]:

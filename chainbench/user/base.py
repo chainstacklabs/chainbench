@@ -46,9 +46,7 @@ class BaseBenchUser(FastHttpUser):
         elif response.status_code == 404:
             self.logger.critical(f"Not found: {response.url}")
         elif 500 <= response.status_code <= 599:
-            self.logger.critical(
-                f"Got internal server error when requesting {response.url}"
-            )
+            self.logger.critical(f"Got internal server error when requesting {response.url}")
         elif 300 <= response.status_code <= 399:
             self.logger.critical(f"Redirect error: {response.url}")
 
@@ -77,9 +75,7 @@ class BaseBenchUser(FastHttpUser):
             raise RescheduleTask()
 
         if "error" in response.js:
-            self.logger.error(
-                f"Response for {name} has a JSON-RPC error: {response.text}"
-            )
+            self.logger.error(f"Response for {name} has a JSON-RPC error: {response.text}")
             if "code" in response.js["error"]:
                 response.failure(
                     f"Response for {name} has a JSON-RPC error {response.js['error']['code']}"  # noqa: E501
@@ -89,13 +85,9 @@ class BaseBenchUser(FastHttpUser):
             raise RescheduleTask()
 
         if not response.js.get("result"):
-            self.logger.error(
-                f"Response for {name} call has no result: {response.text}"
-            )
+            self.logger.error(f"Response for {name} call has no result: {response.text}")
 
-    def make_call(
-        self, method: str, params: list[t.Any] | None = None, name: str | None = None
-    ):
+    def make_call(self, method: str, params: list[t.Any] | None = None, name: str | None = None):
         name = name if name else method
         return self._post(name, data=generate_request(method, params))
 

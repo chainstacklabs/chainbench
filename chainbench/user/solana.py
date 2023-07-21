@@ -35,9 +35,7 @@ class SolanaBenchUser(BaseBenchUser):
             raise RescheduleTask()
 
         if "error" in response.js:
-            self.logger.error(
-                f"Response for {name} has a JSON-RPC error: {response.text}"
-            )
+            self.logger.error(f"Response for {name} has a JSON-RPC error: {response.text}")
             if "code" in response.js["error"]:
                 if response.js["error"]["code"] == -32007:
                     self.logger.warn(
@@ -56,9 +54,7 @@ class SolanaBenchUser(BaseBenchUser):
             raise RescheduleTask()
 
         if not response.js.get("result"):
-            self.logger.error(
-                f"Response for {name} call has no result: {response.text}"
-            )
+            self.logger.error(f"Response for {name} call has no result: {response.text}")
 
     def _get_account_info_params_factory(self, rng: RNG):
         return [self.test_data.get_random_account(rng), {"encoding": "jsonParsed"}]
@@ -82,10 +78,7 @@ class SolanaBenchUser(BaseBenchUser):
 
     def _get_multiple_accounts_params_factory(self, rng: RNG):
         return [
-            [
-                self.test_data.get_random_account(rng)
-                for _ in range(2, 2 + rng.random.randint(0, 3))
-            ],
+            [self.test_data.get_random_account(rng) for _ in range(2, 2 + rng.random.randint(0, 3))],
             {"encoding": "jsonParsed"},
         ]
 
@@ -109,10 +102,7 @@ class SolanaBenchUser(BaseBenchUser):
 
     def _get_signature_statuses_params_factory(self, rng: RNG):
         return [
-            [
-                self.test_data.get_random_tx_hash(rng)
-                for _ in range(2, 2 + rng.random.randint(0, 3))
-            ],
+            [self.test_data.get_random_tx_hash(rng) for _ in range(2, 2 + rng.random.randint(0, 3))],
             {"searchTransactionHistory": True},
         ]
 

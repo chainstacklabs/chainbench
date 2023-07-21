@@ -45,9 +45,7 @@ def head_lag_monitor(endpoint, result_path, duration):
             current_timestamp = datetime.now()
             response = http.post(endpoint, json=data)
             try:
-                block_timestamp = datetime.fromtimestamp(
-                    int(response.json()["result"]["timestamp"], 0)
-                )
+                block_timestamp = datetime.fromtimestamp(int(response.json()["result"]["timestamp"], 0))
                 block_number = int(response.json()["result"]["number"], 0)
                 csv_writer.writerow(
                     [
