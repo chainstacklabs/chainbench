@@ -66,8 +66,9 @@ class SolanaTestData(BaseTestData):
         start_block_number += int((parsed_options.run_time / self.BLOCK_TIME) * 1.1)
 
         while self.TXS_REQUIRED > len(txs) or self.ACCOUNTS_REQUIRED > len(accounts):
-            if self.ACCOUNTS_REQUIRED > len(accounts) or self.TXS_REQUIRED > len(
-                blocks
+            if (
+                    self.ACCOUNTS_REQUIRED > len(accounts)
+                    or self.TXS_REQUIRED > len(blocks)
             ):
                 return_txs = True
             else:
@@ -86,7 +87,7 @@ class SolanaTestData(BaseTestData):
                             self.ACCOUNTS_REQUIRED > len(accounts)
                             and account["pubkey"]
                             != "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-                        ):  # noqa E501
+                        ):
                             self._append_if_not_none(accounts, account["pubkey"])
                         else:
                             break
