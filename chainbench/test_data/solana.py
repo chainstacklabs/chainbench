@@ -9,7 +9,7 @@ class SolanaTestData(BaseTestData):
     ACCOUNTS_REQUIRED = 200
     BLOCK_TIME = 0.4
 
-    def _fetch_block(self, block_number: int, return_txs: bool = True) -> dict | Exception:
+    def _fetch_block(self, block_number: int, return_txs: bool = True) -> dict:
         if return_txs:
             transaction_details = "accounts"
         else:
@@ -32,10 +32,7 @@ class SolanaTestData(BaseTestData):
         rng = get_rng()
         block_number = rng.random.randint(start, end)
         block = self._fetch_block(block_number, return_txs=return_txs)
-        if isinstance(block, Exception):
-            raise block
-        else:
-            return block
+        return block
 
     def _fetch_latest_slot_number(self):
         slot = self._make_call("getLatestBlockhash")["context"]["slot"]
