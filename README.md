@@ -35,7 +35,7 @@ Chainbench lets you to easily define profiles for any EVM-compatible chain.
 You can use not only hard-coded values but also real chain data to generate dynamic call parameters.
 
 Main features:
-- Built-in profiles for Ethereum, Binance Smart Chain, Polygon, Oasis, and Avalanche
+- Built-in profiles for Ethereum, Binance Smart Chain, Polygon, Oasis, Avalanche and Solana
 - Support for custom profiles
 - Dynamic call params generation using real chain data
 - Headless and web UI modes

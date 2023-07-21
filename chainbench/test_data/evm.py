@@ -1,13 +1,7 @@
-from typing import Mapping, TypedDict
+from typing import Mapping
 
-from chainbench.test_data.base import BaseTestData, BlockchainData, Blocks
+from chainbench.test_data.base import BaseTestData, BlockchainData, Blocks, ChainInfo
 from chainbench.util.rng import get_rng
-
-
-class ChainInfo(TypedDict):
-    name: str
-    start_block: int
-    end_block: int
 
 
 class EVMTestData(BaseTestData):
@@ -43,24 +37,10 @@ class EVMTestData(BaseTestData):
         },
     }
 
-    @staticmethod
-    def _parse_hex_to_int(value: str) -> int:
-        return int(value, 16)
-
-    @staticmethod
-    def _append_if_not_none(data, val):
-        if val is not None:
-            if isinstance(data, list):
-                data.append(val)
-            elif isinstance(data, set):
-                data.add(val)
-
     def _fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("eth_chainId"))
 
-    def _fetch_block(
-        self, block_number: int | str, return_txs: bool = True
-    ) -> tuple[int, dict]:
+    def _fetch_block(self, block_number: int | str, return_txs: bool = True) -> tuple[int, dict]:
         if isinstance(block_number, int):
             block_number = hex(block_number)
         elif (block_number := block_number.lower()) not in (
@@ -78,7 +58,7 @@ class EVMTestData(BaseTestData):
         return self._fetch_block(block_number, return_txs=return_txs)
 
     # get initial data from blockchain
-    def _get_init_data(self, use_recent_blocks) -> BlockchainData:
+    def _get_init_data(self, parsed_options) -> BlockchainData:
         txs: list[dict] = []
         tx_hashes: list[str] = []
         accounts: set[str] = set()
@@ -88,25 +68,19 @@ class EVMTestData(BaseTestData):
         end_block_number: int
         return_txs: bool
 
-        if use_recent_blocks:
+        if parsed_options.use_recent_blocks:
             end_block_number = int(self._make_call("eth_blockNumber"), 0)
             start_block_number = end_block_number - 20
         else:
             start_block_number = self.CHAIN_INFO[chain_id]["start_block"]
             end_block_number = self.CHAIN_INFO[chain_id]["end_block"]
 
-        while (
-            self.TXS_REQUIRED > len(txs)
-            or self.ACCOUNTS_REQUIRED > len(accounts)
-            or self.SAVE_BLOCKS > len(blocks)
-        ):
-            if self.ACCOUNTS_REQUIRED > len(accounts) or self.SAVE_BLOCKS > len(blocks):
+        while self.TXS_REQUIRED > len(txs) or self.ACCOUNTS_REQUIRED > len(accounts) or self.SAVE_BLOCKS > len(blocks):
+            if self.ACCOUNTS_REQUIRED > len(accounts) or self.TXS_REQUIRED > len(txs):
                 return_txs = True
             else:
                 return_txs = False
-            block_number, block = self._fetch_random_block(
-                start_block_number, end_block_number, return_txs
-            )
+            block_number, block = self._fetch_random_block(start_block_number, end_block_number, return_txs)
             if self.SAVE_BLOCKS > len(blocks):
                 blocks.append((block_number, block["hash"]))
             for tx in block["transactions"]:

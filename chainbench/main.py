@@ -56,15 +56,9 @@ def cli(ctx: click.Context):
     help="Profile to run",
     show_default=True,
 )
-@click.option(
-    "-d", "--profile-dir", default=None, type=click.Path(), help="Profile directory"
-)
-@click.option(
-    "-H", "--host", default=MASTER_HOST, help="Host to run on", show_default=True
-)
-@click.option(
-    "-P", "--port", default=MASTER_PORT, help="Port to run on", show_default=True
-)
+@click.option("-d", "--profile-dir", default=None, type=click.Path(), help="Profile directory")
+@click.option("-H", "--host", default=MASTER_HOST, help="Host to run on", show_default=True)
+@click.option("-P", "--port", default=MASTER_PORT, help="Port to run on", show_default=True)
 @click.option(
     "-w",
     "--workers",
@@ -72,12 +66,8 @@ def cli(ctx: click.Context):
     help="Number of workers to run",
     show_default=True,
 )
-@click.option(
-    "-t", "--test-time", default=TEST_TIME, help="Test time", show_default=True
-)
-@click.option(
-    "-u", "--users", default=USERS, help="Target number of users", show_default=True
-)
+@click.option("-t", "--test-time", default=TEST_TIME, help="Test time", show_default=True)
+@click.option("-u", "--users", default=USERS, help="Target number of users", show_default=True)
 @click.option(
     "-r",
     "--spawn-rate",
@@ -116,29 +106,20 @@ def cli(ctx: click.Context):
     "-E",
     "--exclude-tags",
     default=[],
-    help="Exclude tasks tagged with custom tags from the test. "
-    "You may specify this option multiple times",
+    help="Exclude tasks tagged with custom tags from the test. " "You may specify this option multiple times",
     multiple=True,
 )
-@click.option(
-    "--timescale", is_flag=True, help="Export data to PG with timescale extension"
-)
-@click.option(
-    "--pg-host", default=None, help="Hostname of PG instance with timescale extension"
-)
+@click.option("--timescale", is_flag=True, help="Export data to PG with timescale extension")
+@click.option("--pg-host", default=None, help="Hostname of PG instance with timescale extension")
 @click.option(
     "--pg-port",
     default=5432,
     help="Port of PG instance with timescale extension",
     show_default=True,
 )
-@click.option(
-    "--pg-username", default="postgres", help="PG username", show_default=True
-)
+@click.option("--pg-username", default="postgres", help="PG username", show_default=True)
 @click.option("--pg-password", default=None, help="PG password")
-@click.option(
-    "--use-recent-blocks", is_flag=True, help="Uses recent blocks for test data"
-)
+@click.option("--use-recent-blocks", is_flag=True, help="Uses recent blocks for test data")
 @click.pass_context
 def start(
     ctx: click.Context,
@@ -179,9 +160,7 @@ def start(
         click.echo("Target is required when running in headless mode")
         sys.exit(1)
 
-    if timescale and any(
-        pg_arg is None for pg_arg in (pg_host, pg_port, pg_username, pg_password)
-    ):
+    if timescale and any(pg_arg is None for pg_arg in (pg_host, pg_port, pg_username, pg_password)):
         click.echo(
             "PG connection parameters are required "
             "when --timescale flag is used: pg_host, pg_port, pg_username, pg_password"
@@ -201,9 +180,7 @@ def start(
 
     click.echo(f"Results directory: {results_dir}")
 
-    results_path = ensure_results_dir(
-        profile=profile, parent_dir=results_dir, run_id=run_id
-    )
+    results_path = ensure_results_dir(profile=profile, parent_dir=results_dir, run_id=run_id)
 
     click.echo(f"Results will be saved to {results_path}")
 
@@ -299,9 +276,7 @@ def start(
         click.echo("Quitting...")
         ctx.obj.master.terminate()
 
-    ctx.obj.notifier.notify(
-        title="Test finished", message=f"Test finished for {profile}", tags=["tada"]
-    )
+    ctx.obj.notifier.notify(title="Test finished", message=f"Test finished for {profile}", tags=["tada"])
 
 
 if __name__ == "__main__":

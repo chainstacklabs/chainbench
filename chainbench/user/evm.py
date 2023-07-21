@@ -12,9 +12,7 @@ class EVMBenchUser(BaseBenchUser):
     def _get_logs_params_factory(self, rng: RNG):
         return [
             {
-                "fromBlock": hex(
-                    self.test_data.get_random_recent_block_number(20, rng)
-                ),
+                "fromBlock": hex(self.test_data.get_random_recent_block_number(20, rng)),
                 "toBlock": hex(self.test_data.end_block_number),
             }
         ]
