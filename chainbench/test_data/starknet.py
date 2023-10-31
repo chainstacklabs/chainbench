@@ -9,10 +9,6 @@ logger = logging.getLogger(__name__)
 
 
 class StarkNetTestData(EVMTestData):
-    TXS_REQUIRED = 100
-    ACCOUNTS_REQUIRED = 200
-    SAVE_BLOCKS = 20
-
     CHAIN_INFO: Mapping[int, ChainInfo] = {
         23448594291968334: {
             "name": "starknet-mainnet",
@@ -48,11 +44,6 @@ class StarkNetTestData(EVMTestData):
 
         result = self._make_call("starknet_getBlockWithTxs", [params])
         return result["block_number"], result
-
-    def _fetch_random_block(self, start, end, return_txs=True) -> tuple[int, dict]:
-        rng = get_rng()
-        block_number = rng.random.randint(start, end)
-        return self._fetch_block(block_number, return_txs=return_txs)
 
     # get initial data from blockchain
     def _get_init_data(self, parsed_options) -> BlockchainData:
