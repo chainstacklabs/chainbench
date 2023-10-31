@@ -12,7 +12,7 @@ pie title Methods Distribution
     "Others" : 1
 ```
 """
-from locust import constant_pacing, tag, task
+from locust import constant_pacing, task
 
 from chainbench.user.starknet import StarkNetBenchUser
 from chainbench.util.rng import get_rng
@@ -23,10 +23,7 @@ class StarkNetWalletProfile(StarkNetBenchUser):
 
     @task(435)
     def call_task(self):
-        self.make_call(
-            name="call",
-            method="starknet_call",
-            params=self._call_params_factory(get_rng())),
+        self.make_call(name="call", method="starknet_call", params=self._call_params_factory(get_rng())),
 
     @task(200)
     def chain_id_task(self):
@@ -67,14 +64,13 @@ class StarkNetWalletProfile(StarkNetBenchUser):
             params=["latest", self._get_contract_address(get_rng())],
         ),
 
-
     @task(2)
     def simulate_transaction_task(self):
         self.make_call(
             name="simulate_transaction",
             method="starknet_simulateTransaction",
             params=self._simulate_transaction_params_factory(get_rng()),
-            url_postfix="/rpc/v0.3"
+            url_postfix="/rpc/v0.3",
         ),
 
     @task(1)
@@ -90,7 +86,7 @@ class StarkNetWalletProfile(StarkNetBenchUser):
                         "version": "0x100000000000000000000000000000001",
                         "signature": [
                             "0x323d2b227ee23a4bc72f398040ae4f6005bcf907ecf8c90d43009d01c9f9e0d",
-                            "0x7e8def72bc4d5e27ff1ada45640c38ee65a8feb2097546d3296d8d5272a3898"
+                            "0x7e8def72bc4d5e27ff1ada45640c38ee65a8feb2097546d3296d8d5272a3898",
                         ],
                         "nonce": "0x9a9",
                         "sender_address": "0x49c825710365f3cd0a8fa61e27368197b47727a4d0a78981cc2b19febaef9bd",
@@ -104,9 +100,9 @@ class StarkNetWalletProfile(StarkNetBenchUser):
                             "0x1",
                             "0x1",
                             "0x0",
-                        ]
+                        ],
                     }
                 ],
-                "block_id": "latest"
-            }
+                "block_id": "latest",
+            },
         ),

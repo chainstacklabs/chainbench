@@ -88,11 +88,8 @@ class BaseBenchUser(FastHttpUser):
             self.logger.error(f"Response for {name} call has no result: {response.text}")
 
     def make_call(
-            self,
-            method: str,
-            params: list[t.Any] | dict | None = None,
-            name: str | None = None,
-            url_postfix: str = ""):
+        self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, url_postfix: str = ""
+    ):
         name = name if name else method
         return self._post(name, data=generate_request(method, params), url_postfix=url_postfix)
 

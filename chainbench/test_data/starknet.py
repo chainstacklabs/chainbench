@@ -28,7 +28,7 @@ class StarkNetTestData(EVMTestData):
             "name": "starknet-testnet2",
             "start_block": 1,
             "end_block": 149000,
-        }
+        },
     }
 
     def _fetch_chain_id(self) -> int:
@@ -76,7 +76,7 @@ class StarkNetTestData(EVMTestData):
                     try:
                         self._append_if_not_none(accounts, tx["sender_address"])
                     except KeyError:
-                        pass    # skip tx if it doesn't have sender_address
+                        pass  # skip tx if it doesn't have sender_address
 
         return BlockchainData(
             end_block_number=end_block_number,
