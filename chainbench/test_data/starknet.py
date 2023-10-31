@@ -3,7 +3,6 @@ from typing import Mapping
 
 from chainbench.test_data import EVMTestData
 from chainbench.test_data.base import BlockchainData, Blocks, ChainInfo
-from chainbench.util.rng import get_rng
 
 logger = logging.getLogger(__name__)
 
