@@ -53,6 +53,10 @@ class EVMTestData(BaseTestData):
     def _fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("eth_chainId"))
 
+    def _fetch_latest_block_number(self) -> int:
+        result = self._make_call("eth_blockNumber")
+        return self._parse_hex_to_int(result)
+
     def _fetch_block(self, block_number: int | str, return_txs: bool = True) -> tuple[int, dict]:
         if isinstance(block_number, int):
             block_number = hex(block_number)
@@ -78,7 +82,7 @@ class EVMTestData(BaseTestData):
             logger.info("Using blocks from %s to %s as test data", start_block_number, end_block_number)
             return start_block_number, end_block_number
         else:
-            end_block_number = int(self._make_call("eth_blockNumber"), 0)
+            end_block_number = self._fetch_latest_block_number()
             start_block_number = end_block_number - 20
             logger.info("Using recent blocks from %s to %s as test data", start_block_number, end_block_number)
             return start_block_number, end_block_number

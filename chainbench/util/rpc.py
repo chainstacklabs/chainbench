@@ -1,4 +1,4 @@
-def generate_request(method, params: list | None = None, version: str = "2.0"):
+def generate_request(method, params: list | dict | None = None, version: str = "2.0"):
     """Generate a JSON-RPC request."""
     if params is None:
         params = []

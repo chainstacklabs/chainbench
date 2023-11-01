@@ -87,11 +87,13 @@ class BaseBenchUser(FastHttpUser):
         if not response.js.get("result"):
             self.logger.error(f"Response for {name} call has no result: {response.text}")
 
-    def make_call(self, method: str, params: list[t.Any] | None = None, name: str | None = None):
+    def make_call(
+        self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, url_postfix: str = ""
+    ):
         name = name if name else method
-        return self._post(name, data=generate_request(method, params))
+        return self._post(name, data=generate_request(method, params), url_postfix=url_postfix)
 
-    def _post(self, name: str, data: t.Optional[dict] = None):
+    def _post(self, name: str, data: t.Optional[dict] = None, url_postfix: str = ""):
         """Make a JSON-RPC call."""
-        with self.rest("POST", self.rpc_path, json=data, name=name) as response:
+        with self.rest("POST", self.rpc_path + url_postfix, json=data, name=name) as response:
             self.check_response(response, name=name)
