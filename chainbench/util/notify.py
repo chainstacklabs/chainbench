@@ -80,9 +80,7 @@ class Notification:
 class Notifier:
     """A notification service."""
 
-    def __init__(
-        self, topic: str, url: str = DEFAULT_NTFY_SERVER, timeout: int = 30
-    ) -> None:
+    def __init__(self, topic: str, url: str = DEFAULT_NTFY_SERVER, timeout: int = 30) -> None:
         self.topic: str = topic
 
         self.url: str = url

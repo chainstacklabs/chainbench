@@ -3,9 +3,11 @@ import os
 import shlex
 import subprocess
 import sys
+from multiprocessing import Process
 from pathlib import Path
 
 import click
+from locust import runners
 
 from chainbench.util.cli import (
     ContextData,
@@ -15,6 +17,7 @@ from chainbench.util.cli import (
     get_profile_path,
     get_worker_command,
 )
+from chainbench.util.monitor import monitors
 from chainbench.util.notify import NoopNotifier, Notifier
 
 # Default values for arguments
@@ -27,6 +30,7 @@ SPAWN_RATE = 10
 LOG_LEVEL = "DEBUG"
 DEFAULT_PROFILE = "ethereum.general"
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
+runners.HEARTBEAT_INTERVAL = 60
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +38,7 @@ logger = logging.getLogger(__name__)
 @click.group(
     help="Tool for flexible blockchain infrastructure benchmarking.",
 )
+@click.version_option(message="%(prog)s-%(version)s")
 @click.pass_context
 def cli(ctx: click.Context):
     ctx.obj = ContextData()
@@ -51,15 +56,9 @@ def cli(ctx: click.Context):
     help="Profile to run",
     show_default=True,
 )
-@click.option(
-    "-d", "--profile-dir", default=None, type=click.Path(), help="Profile directory"
-)
-@click.option(
-    "-H", "--host", default=MASTER_HOST, help="Host to run on", show_default=True
-)
-@click.option(
-    "-P", "--port", default=MASTER_PORT, help="Port to run on", show_default=True
-)
+@click.option("-d", "--profile-dir", default=None, type=click.Path(), help="Profile directory")
+@click.option("-H", "--host", default=MASTER_HOST, help="Host to run on", show_default=True)
+@click.option("-P", "--port", default=MASTER_PORT, help="Port to run on", show_default=True)
 @click.option(
     "-w",
     "--workers",
@@ -67,12 +66,8 @@ def cli(ctx: click.Context):
     help="Number of workers to run",
     show_default=True,
 )
-@click.option(
-    "-t", "--test-time", default=TEST_TIME, help="Test time", show_default=True
-)
-@click.option(
-    "-u", "--users", default=USERS, help="Target number of users", show_default=True
-)
+@click.option("-t", "--test-time", default=TEST_TIME, help="Test time", show_default=True)
+@click.option("-u", "--users", default=USERS, help="Target number of users", show_default=True)
 @click.option(
     "-r",
     "--spawn-rate",
@@ -94,6 +89,15 @@ def cli(ctx: click.Context):
 @click.option("--run-id", default=None, help="ID of the test")
 @click.option("--notify", default=None, help="Notify when test is finished")
 @click.option(
+    "-m",
+    "--monitor",
+    default=[],
+    help="Add a monitor to collect additional data or metrics. "
+    "You may specify this option multiple times for different monitors",
+    type=click.Choice(["head-lag-monitor"], case_sensitive=False),
+    multiple=True,
+)
+@click.option(
     "--debug-trace-methods",
     is_flag=True,
     help="Enable tasks tagged with debug or trace to be executed",
@@ -102,26 +106,20 @@ def cli(ctx: click.Context):
     "-E",
     "--exclude-tags",
     default=[],
-    help="Exclude tasks tagged with custom tags from the test. "
-    "You may specify this option multiple times",
+    help="Exclude tasks tagged with custom tags from the test. " "You may specify this option multiple times",
     multiple=True,
 )
-@click.option(
-    "--timescale", is_flag=True, help="Export data to PG with timescale extension"
-)
-@click.option(
-    "--pg-host", default=None, help="Hostname of PG instance with timescale extension"
-)
+@click.option("--timescale", is_flag=True, help="Export data to PG with timescale extension")
+@click.option("--pg-host", default=None, help="Hostname of PG instance with timescale extension")
 @click.option(
     "--pg-port",
     default=5432,
     help="Port of PG instance with timescale extension",
     show_default=True,
 )
-@click.option(
-    "--pg-username", default="postgres", help="PG username", show_default=True
-)
+@click.option("--pg-username", default="postgres", help="PG username", show_default=True)
 @click.option("--pg-password", default=None, help="PG password")
+@click.option("--use-recent-blocks", is_flag=True, help="Uses recent blocks for test data")
 @click.pass_context
 def start(
     ctx: click.Context,
@@ -140,6 +138,7 @@ def start(
     target: str | None,
     run_id: str | None,
     notify: str | None,
+    monitor: list[str],
     debug_trace_methods: bool,
     exclude_tags: list[str],
     timescale: bool,
@@ -147,6 +146,7 @@ def start(
     pg_port: int,
     pg_username: str,
     pg_password: str | None,
+    use_recent_blocks: bool,
 ):
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -160,9 +160,7 @@ def start(
         click.echo("Target is required when running in headless mode")
         sys.exit(1)
 
-    if timescale and any(
-        pg_arg is None for pg_arg in (pg_host, pg_port, pg_username, pg_password)
-    ):
+    if timescale and any(pg_arg is None for pg_arg in (pg_host, pg_port, pg_username, pg_password)):
         click.echo(
             "PG connection parameters are required "
             "when --timescale flag is used: pg_host, pg_port, pg_username, pg_password"
@@ -182,9 +180,7 @@ def start(
 
     click.echo(f"Results directory: {results_dir}")
 
-    results_path = ensure_results_dir(
-        profile=profile, parent_dir=results_dir, run_id=run_id
-    )
+    results_path = ensure_results_dir(profile=profile, parent_dir=results_dir, run_id=run_id)
 
     click.echo(f"Results will be saved to {results_path}")
 
@@ -215,6 +211,7 @@ def start(
         pg_port=pg_port,
         pg_username=pg_username,
         pg_password=pg_password,
+        use_recent_blocks=use_recent_blocks,
     )
     if headless:
         click.echo(f"Starting master in headless mode for {profile}")
@@ -226,6 +223,7 @@ def start(
     master_args = shlex.split(master_command, posix=is_posix)
     master_process = subprocess.Popen(master_args)
     ctx.obj.master = master_process
+
     # Start the Locust workers
     for worker_id in range(workers):
         worker_command = get_worker_command(
@@ -243,6 +241,7 @@ def start(
             pg_port=pg_port,
             pg_username=pg_username,
             pg_password=pg_password,
+            use_recent_blocks=use_recent_blocks,
         )
         worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
@@ -259,17 +258,25 @@ def start(
         # Print out the URL to access the test
         click.echo(f"Run test: http://{host}:8089 {profile}")
 
+    unique_monitors: set[str] = set(monitor)
+    for m in unique_monitors:
+        p = Process(target=monitors[m], args=(target, results_path, test_time))
+        click.echo(f"Starting monitor {m}")
+        p.start()
+        ctx.obj.monitors.append(p)
+
     for process in ctx.obj.workers:
         process.wait()
+
+    for process in ctx.obj.monitors:
+        process.join()
 
     if autoquit:
         ctx.obj.master.wait()
         click.echo("Quitting...")
         ctx.obj.master.terminate()
 
-    ctx.obj.notifier.notify(
-        title="Test finished", message=f"Test finished for {profile}", tags=["tada"]
-    )
+    ctx.obj.notifier.notify(title="Test finished", message=f"Test finished for {profile}", tags=["tada"])
 
 
 if __name__ == "__main__":

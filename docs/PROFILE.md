@@ -2,117 +2,17 @@
 
 ## Introduction
 
-A profile is a python module that defines methods used for benchmarking a specific blockchain. It is located in the `chainbench/profiles` directory. 
-The module name should be the same as the profile name. 
-For example, the `ethereum` profile is located in the [`chainbench/profile/ethereum.py`](../chainbench/profile/ethereum/general.py) file.
+A profile is a collection of tasks that are executed during the benchmark. Each profile is a Python file that contains a class that inherits from the `chainbench.user.base.BaseUser` class.
+The folder where the profiles are located is `chainbench/profile`. Each profile is located in a subfolder named after the blockchain/protocol that it is designed for.
+For example, the `Oasis` profile is located in the [`chainbench/profile/oasis/general.py`](../chainbench/profile/oasis/general.py) file.
 
 ## Creating a Profile
 
-Here's the locustfile for Oasis that we will use as an example for creating a custom profile:
+Let's create a profile for the Oasis blockchain. We will use the `Oasis` profile as a reference.
 
-```python
-import random
-import secrets
-from locust import task, between, HttpUser
-
-
-class QuickstartUser(HttpUser):
-    wait_time = between(0.1, 1.5)
-    latest_block = 0
-    latest_block_number = 0
-    tx_hashes = ''
-
-    def on_start(self):
-        self.latest_block = self.client.post(
-            '/', json=self._make_rpc_payload('eth_getBlockByNumber', ['latest', False])
-        ).json()['result']
-        self.latest_block_number = int(self.latest_block['number'], base=16)
-
-    @staticmethod
-    def _make_rpc_payload(method: str, params: list = None) -> dict:
-        if not params:
-            params = []
-
-        return {
-            "jsonrpc": "2.0",
-            "method": method,
-            "params": params,
-            "id": 0
-        }
-
-    def _get_random_block(self) -> str:
-        return hex(random.randint(1, self.latest_block_number))
-
-    def _get_random_address(self) -> str:
-        return f'0x{secrets.token_hex(20)}'
-
-    @task
-    def get_block_by_number(self) -> dict:
-        return self.client.post(
-            '/', json=self._make_rpc_payload(
-                "eth_getBlockByNumber",
-                params=[self._get_random_block(), False]
-            )
-        ).json()
-
-    @task
-    def get_transaction_count(self):
-        self.client.post(
-            '/', json=self._make_rpc_payload(
-                "eth_getTransactionCount",
-                params=[self._get_random_address(), self._get_random_block()]
-            )
-        )
-
-    @task
-    def get_balance(self):
-        self.client.post(
-            '/', json=self._make_rpc_payload(
-                "eth_getBalance",
-                params=[self._get_random_address(), self._get_random_block()]
-            )
-        )
-
-    def _get_random_tx_hash(self) -> str:
-        return random.choice(self.get_block_by_number()['result']['transactions'])
-
-    @task
-    def get_transaction_by_hash(self):
-        self.client.post(
-            '/', json=self._make_rpc_payload(
-                "eth_getTransactionByHash",
-                params=[self._get_random_tx_hash()]
-            )
-        )
-
-    @task
-    def get_block_number(self):
-        self.client.post('/', json=self._make_rpc_payload('eth_blockNumber'))
-
-    @task
-    def get_code(self):
-        self.client.post(
-            '/', json=self._make_rpc_payload(
-                "eth_getCode",
-                params=[self._get_random_address(), self._get_random_block()]
-            )
-        )
-
-    @task
-    def get_syncing(self):
-        self.client.post('/', json=self._make_rpc_payload("eth_syncing"))
-
-    @task
-    def get_block_transaction_count_by_number(self):
-        self.client.post(
-            '/', json=self._make_rpc_payload(
-                "eth_getBlockTransactionCountByNumber",
-                params=[self._get_random_block()])
-        )
-```
 ### Step 1: Create a new file in the `profile` directory
 
-Let's create a new file called `oasis.py` in the `chainbench/profile` directory and add the following code:
+Let's create a new file called `oasis.py` in the `chainbench/profile/oasis/` directory and add the following code:
 
 ```python
 from chainbench.user.evm import EVMBenchUser
@@ -125,47 +25,55 @@ class OasisProfile(EVMBenchUser):
 We inherit `EVMBenchUser` because it contains methods for benchmarking an EVM-based blockchain.
 
 ### Step 2: Configure wait time
-`EVMBenchUser` is a subclass of `FastHttpUser` from the [Locust](https://docs.locust.io/en/stable/) library. So defining wait time is straightforward:
+`EVMBenchUser` is a subclass of `FastHttpUser` from the [Locust](https://docs.locust.io/en/stable/) library. So defining wait time is straightforward.
+Here we use `constant_pacing` to set a dynamic wait time between requests. 
+The wait time is calculated as `n - response_time` where `n` is the value passed to `constant_pacing`.
+If response time is greater than `n`, then the wait time is set to 0, and the next request is sent immediately once the previous one is finished.
+
+There are other ways to set wait time, see the [Locust docs](https://docs.locust.io/en/stable/writing-a-locustfile.html#wait-time-attribute) for more details.
 
 ```python
 from chainbench.user.evm import EVMBenchUser
-from locust import between
+from locust import constant_pacing
 
 class OasisProfile(EVMBenchUser):
-    wait_time = between(0.1, 1.5)
+    wait_time = constant_pacing(2)
 ```
 
 ### Step 3: Add `get_block_by_number` task
 
-`on_start` in the original locustfile is used to get the latest block number and the latest block. 
+In a standard Locust test, `on_start` event will need to be used to fetch blockchain data before the test starts.
 But `EVMBenchUser` comes with `EVMTestData` class that handles this. Basically, before each worker starts spawning users
 it fetches real blockchain data and stores it in memory, so it can be used for test data randomization.
 
-Other methods such as `_make_rpc_payload`, `_get_random_block`, and `_get_random_address` also have their counterparts 
-in `EVMTestData` class.
-
-Here's the equivalent for `get_block_by_number` from the original locustfile:
+The `update` method of `EVMTestData` fetches the chain ID, and gets the block range from which to fetch test data based on the chain ID.
+The block ranges are defined in the [`chainbench/test_data/evm.py`](../chainbench/test_data/evm.py) file for each supported protocol.
+After that, blockchain data such as block numbers, block hashes, transactions, transaction hashes and addresses are fetched from the blockchain node and stored in memory.
 
 ```python
 from chainbench.user.evm import EVMBenchUser
-from locust import task, between
+from chainbench.util.rng import get_rng
+from locust import task, constant_pacing
 
 
 class OasisProfile(EVMBenchUser):
-    wait_time = between(0.1, 1.5)
-    
+    wait_time = constant_pacing(2)
+
     @task
     def get_block_by_number_task(self):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
 ```
 
 `make_call` is a method from `EVMBenchUser` that sends a request to the blockchain node and checks the response.
-`_block_by_number_params_factory` returns a random list of parameters for the `eth_getBlockByNumber` method. See the 
-[`chainbench/user/evm.py`](../chainbench/user/evm.py) file for all supported param factories.
+`_block_by_number_params_factory` returns a random list of parameters for the `eth_getBlockByNumber` method. 
+`get_rng` is a helper function that returns a random number generator unique to the function that it is called in,
+with a fixed seed. This is done to ensure that the same random number generator is used for the same function call, and
+that the test data is consistent across all workers, as well as across multiple runs. This increases consistency of the data across runs, and makes them more comparable.
+See the [`chainbench/user/evm.py`](../chainbench/user/evm.py) file for all supported param factories.
 
 ### Step 4: Add `get_syncing` task
 
@@ -173,20 +81,21 @@ Adding task for a call with static parameters is as simple as:
 
 ```python
 from chainbench.user.evm import EVMBenchUser
-from locust import task, between
+from chainbench.util.rng import get_rng
+from locust import task, constant_pacing
 
 
 class OasisProfile(EVMBenchUser):
-    wait_time = between(0.1, 1.5)
-    
+    wait_time = constant_pacing(2)
+
     @task
     def get_block_by_number_task(self):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
-        
+
     @task
     def get_syncing_task(self):
         self.make_call(
@@ -201,6 +110,9 @@ In case of `eth_syncing` we can omit the `params` argument because it doesn't ha
 Here's an example of `eth_call` call with static parameters from [BSC profile](../chainbench/profile/bsc/general.py):
 
 ```python
+from chainbench.user.evm import EVMBenchUser
+from locust import task
+
 class BscProfile(EVMBenchUser):
     @task(100)
     def call_task(self):
@@ -224,26 +136,27 @@ For `eth_getTransactionByHash` we can use the `_transaction_by_hash_params_facto
 
 ```python
 from chainbench.user.evm import EVMBenchUser
-from locust import task, between
+from chainbench.util.rng import get_rng
+from locust import task, constant_pacing
 
 
 class OasisProfile(EVMBenchUser):
-    wait_time = between(0.1, 1.5)
+    wait_time = constant_pacing(2)
 
     @task
     def get_block_by_number_task(self):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
-        
+
     @task
     def get_transaction_by_hash_task(self):
         self.make_call(
             name="get_transaction_by_hash",
             method="eth_getTransactionByHash",
-            params=self._transaction_by_hash_params_factory(),
+            params=self._transaction_by_hash_params_factory(get_rng()),
         ),
 
     @task
@@ -260,26 +173,28 @@ class OasisProfile(EVMBenchUser):
 
 ```python
 from chainbench.user.evm import EVMBenchUser
-from locust import task, between
+from chainbench.util.rng import get_rng
+from locust import task, constant_pacing
+
 
 
 class OasisProfile(EVMBenchUser):
-    wait_time = between(0.1, 1.5)
+    wait_time = constant_pacing(2)
 
     @task
     def get_block_by_number_task(self):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
-        
+
     @task
     def get_balance_task(self):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -287,15 +202,15 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_count",
             method="eth_getTransactionCount",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
-        
+
     @task
     def get_code_task(self):
         self.make_call(
             name="get_code",
             method="eth_getCode",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -303,7 +218,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_by_hash",
             method="eth_getTransactionByHash",
-            params=self._transaction_by_hash_params_factory(),
+            params=self._transaction_by_hash_params_factory(get_rng()),
         ),
 
     @task
@@ -320,18 +235,20 @@ Here's the final version of the profile:
 
 ```python
 from chainbench.user.evm import EVMBenchUser
-from locust import task, between
+from chainbench.util.rng import get_rng
+from locust import task, constant_pacing
+
 
 
 class OasisProfile(EVMBenchUser):
-    wait_time = between(0.1, 1.5)
+    wait_time = constant_pacing(2)
 
     @task
     def get_block_by_number_task(self):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_by_number_params_factory(),
+            params=self._block_params_factory(get_rng()),
         ),
 
     @task
@@ -339,7 +256,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -347,7 +264,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_count",
             method="eth_getTransactionCount",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -355,7 +272,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_code",
             method="eth_getCode",
-            params=self._get_balance_params_factory(),
+            params=self._get_balance_params_factory(get_rng()),
         ),
 
     @task
@@ -363,9 +280,9 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_transaction_by_hash",
             method="eth_getTransactionByHash",
-            params=self._transaction_by_hash_params_factory(),
+            params=self._transaction_by_hash_params_factory(get_rng()),
         ),
-        
+
     @task
     def get_block_number_task(self):
         self.make_call(
@@ -385,7 +302,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_transaction_count_by_number",
             method="eth_getBlockTransactionCountByNumber",
-            params=self._random_block_number_params_factory(),
+            params=self._random_block_number_params_factory(get_rng()),
         ),
 ```
 
@@ -396,5 +313,5 @@ You can also find the full version of the profile [here](../chainbench/profile/o
 Now we can run the benchmark:
 
 ```bash
-python3 -m chainbench start --profile oasis --users 50 --workers 2 --test-time 1h --target https://node-url --headless --autoquit
+python3 -m chainbench start --profile oasis.general --users 50 --workers 2 --test-time 1h --target https://node-url --headless --autoquit
 ```

@@ -27,9 +27,7 @@ def generate_unique_dir_name() -> str:
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 
-def ensure_results_dir(
-    profile: str, parent_dir: Path, run_id: str | None = None
-) -> Path:
+def ensure_results_dir(profile: str, parent_dir: Path, run_id: str | None = None) -> Path:
     if run_id is not None:
         results_dir = (parent_dir / run_id).resolve()
     else:
@@ -46,10 +44,7 @@ def get_timescale_args(
     pg_username: str | None,
     pg_password: str | None,
 ) -> str:
-    return (
-        f" --timescale --pghost={pg_host} --pgport={pg_port}"
-        f" --pgpassword={pg_password} --pguser={pg_username}"
-    )
+    return f" --timescale --pghost={pg_host} --pgport={pg_port}" f" --pgpassword={pg_password} --pguser={pg_username}"
 
 
 def get_master_command(
@@ -70,6 +65,7 @@ def get_master_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
+    use_recent_blocks: bool = False,
 ) -> str:
     """Generate master command."""
     command = (
@@ -94,6 +90,8 @@ def get_master_command(
     if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
+    if use_recent_blocks:
+        command += " --use-recent-blocks True"
     return command
 
 
@@ -112,6 +110,7 @@ def get_worker_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
+    use_recent_blocks: bool = False,
 ) -> str:
     """Generate worker command."""
     command = (
@@ -131,6 +130,8 @@ def get_worker_command(
     if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
+    if use_recent_blocks:
+        command += " --use-recent-blocks True"
     return command
 
 
@@ -138,4 +139,5 @@ def get_worker_command(
 class ContextData:
     workers: list[subprocess.Popen] = field(default_factory=list)
     master: subprocess.Popen | None = None
+    monitors: list[subprocess.Popen] = field(default_factory=list)
     notifier: Notifier = field(default_factory=NoopNotifier)

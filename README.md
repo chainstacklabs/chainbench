@@ -35,7 +35,7 @@ Chainbench lets you to easily define profiles for any EVM-compatible chain.
 You can use not only hard-coded values but also real chain data to generate dynamic call parameters.
 
 Main features:
-- Built-in profiles for Ethereum, Binance Smart Chain, Polygon, Oasis, and Avalanche
+- Built-in profiles for Ethereum, Binance Smart Chain, Polygon, Oasis, Avalanche and Solana
 - Support for custom profiles
 - Dynamic call params generation using real chain data
 - Headless and web UI modes
@@ -87,7 +87,7 @@ chainbench start --help
 
 Basic usage is:
 ```shell
-chainbench start --profile bsc --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
+chainbench start --profile bsc.general --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
 
 This will run a load test for BSC with 2 workers, 50 users and 12 hours test time in headless mode.
@@ -104,7 +104,7 @@ After the test is finished, the tool will automatically quit.
 - `--help`: Displays the help message.
 - `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
 - `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
-
+- `--use-recent-blocks`: Use recent blocks for test data generation.
 You may also run `chainbench start --help` for the full list of parameters and flags.
 
 ### Profiles
@@ -130,6 +130,17 @@ Here's an example of how to run a load test for Ethereum using the `evm.light` p
 chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
 
+### Monitors
+Monitors are separate processes that run during the test to collect or process some additional data and metrics relevant to the test.
+For example, head-lag-monitor will collect the latest block information from the node under test, check the timestamp and compare it to current time to calculate how much the node lags behind.
+You may include monitors in your test by using the `-m` or `--monitor` option and specifying the name of the monitor. At the moment, monitors only work in headless mode.
+
+Here's an example:
+```shell
+chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit -m head-lag-monitor
+```
+
+
 ### Web UI Mode
 
 Run the following command to run a load test for BSC in UI mode. It will start a web server on port 8089. 
@@ -144,7 +155,7 @@ chainbench start --profile bsc.general --workers 1 --target https://any-working-
 If you want to run a load test for BSC in headless mode, run the following command:
 
 ```shell
-chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit
+chainbench start --profile bsc.general --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit
 ```
 
 It will run a load test for BSC with 4 workers, 100 users and 1 hour test time.
@@ -152,7 +163,7 @@ It will run a load test for BSC with 4 workers, 100 users and 1 hour test time.
 In practice, you will probably want to run the benchmark on a remote server. Here's the example utilizing `nohup`:
 
 ```shell
-nohup chainbench start --profile bsc --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit &
+nohup chainbench start --profile bsc.general --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit &
 ```
 
 ## License
