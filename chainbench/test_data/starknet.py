@@ -14,16 +14,17 @@ class StarkNetTestData(EVMTestData):
             "start_block": 100000,
             "end_block": 360000,
         },
-        1536727068981429685321: {
-            "name": "starknet-testnet",
-            "start_block": 500000,
-            "end_block": 890000,
-        },
-        393402129659245999442226: {
-            "name": "starknet-testnet2",
-            "start_block": 1,
-            "end_block": 149000,
-        },
+        # TODO: uncomment after adding testnet support to methods like call, simulateTransaction, etc.
+        # 1536727068981429685321: {
+        #     "name": "starknet-testnet",
+        #     "start_block": 500000,
+        #     "end_block": 890000,
+        # },
+        # 393402129659245999442226: {
+        #     "name": "starknet-testnet2",
+        #     "start_block": 1,
+        #     "end_block": 149000,
+        # },
     }
 
     def _fetch_chain_id(self) -> int:
