@@ -15,7 +15,7 @@ class StarkNetBenchUser(BaseBenchUser):
                 "entry_point_selector": "0x279193ae67f7ef3a6be330f5bd004266a0ec3fd5a6f7d2fe71a2096b3101578",
                 "calldata": [hex(rng.random.randint(1, 8))],
             },
-            "block_id": "pending",
+            "block_id": "latest",
         }
 
     @staticmethod
