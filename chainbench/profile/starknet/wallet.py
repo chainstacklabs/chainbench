@@ -73,7 +73,7 @@ class StarkNetWalletProfile(StarkNetBenchUser):
             url_postfix="/rpc/v0.3",
         ),
 
-    @task(1000)
+    @task(1)
     def estimate_fee_task(self):
         self.make_call(
             name="estimate_fee",
