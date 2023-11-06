@@ -32,7 +32,7 @@ class StarkNetTestData(EVMTestData):
 
     def _fetch_latest_block_number(self) -> int:
         result = self._make_call("starknet_blockNumber")
-        return self._parse_hex_to_int(result)
+        return result
 
     def _fetch_block(self, block_number: int | str, return_txs: bool = True) -> tuple[int, dict]:
         if isinstance(block_number, str) and (block_number := block_number.lower()) not in (
