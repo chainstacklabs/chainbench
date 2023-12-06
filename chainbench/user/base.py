@@ -3,7 +3,6 @@ import typing as t
 
 from locust import FastHttpUser
 from locust.contrib.fasthttp import RestResponseContextManager
-from locust.exception import RescheduleTask
 
 from chainbench.test_data import BaseTestData, DummyTestData
 from chainbench.util.event import setup_event_listeners
@@ -26,6 +25,8 @@ class BaseBenchUser(FastHttpUser):
 
     connection_timeout = 120
     network_timeout = 360
+
+    rpc_error_code_exclusions: list[int] = []
 
     test_data: BaseTestData = DummyTestData()
 
@@ -51,40 +52,42 @@ class BaseBenchUser(FastHttpUser):
             self.logger.critical(f"Redirect error: {response.url}")
 
     def check_response(self, response: RestResponseContextManager, name: str):
-        """Check the response for errors."""
-        if response.status_code != 200:
-            self.logger.info(f"Request failed with {response.status_code} code")
-            self.logger.debug(
-                f"Request to {response.url} failed with {response.status_code} code: {response.text}"  # noqa: E501
-            )
-            self.check_fatal(response)
-            response.failure(f"Request failed with {response.status_code} code")
-            response.raise_for_status()
+        response_json: dict = response.js
 
         if response.request:
             self.logger.debug(f"Request: {response.request.body}")
 
-        if response.js is None:
+        """Check the response for errors."""
+        if response.status_code != 200:
+            self.logger.info(f"Request failed with {response.status_code} code")
+            self.logger.debug(f"Request to {response.url} failed with {response.status_code} code: {response.text}")
+            self.check_fatal(response)
+            response.failure(f"Request failed with {response.status_code} code")
+            response.raise_for_status()
+
+        if response_json is None:
             self.logger.error(f"Response for {name}  is not a JSON: {response.text}")
             response.failure(f"Response for {name}  is not a JSON")
-            raise RescheduleTask()
+            return
 
-        if "jsonrpc" not in response.js:
+        if "jsonrpc" not in response_json:
             self.logger.error(f"Response for {name} is not a JSON-RPC: {response.text}")
             response.failure(f"Response for {name} is not a JSON-RPC")
-            raise RescheduleTask()
+            return
 
-        if "error" in response.js:
+        if "error" in response_json:
             self.logger.error(f"Response for {name} has a JSON-RPC error: {response.text}")
-            if "code" in response.js["error"]:
-                response.failure(
-                    f"Response for {name} has a JSON-RPC error {response.js['error']['code']}"  # noqa: E501
-                )
-                raise RescheduleTask()
-            response.failure("Unspecified JSON-RPC error")
-            raise RescheduleTask()
+            if "code" in response_json["error"]:
+                if response_json["error"]["code"] not in self.rpc_error_code_exclusions:
+                    response.failure(
+                        f"Response for {name} has a JSON-RPC error {response_json['error']['code']} - "
+                        f"{response_json['error']['message']}"
+                    )
+            else:
+                response.failure("Unspecified JSON-RPC error")
+            return
 
-        if not response.js.get("result"):
+        if not response_json.get("result"):
             self.logger.error(f"Response for {name} call has no result: {response.text}")
 
     def make_call(

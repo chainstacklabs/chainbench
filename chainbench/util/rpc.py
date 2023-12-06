@@ -1,3 +1,6 @@
+import random
+
+
 def generate_request(method, params: list | dict | None = None, version: str = "2.0"):
     """Generate a JSON-RPC request."""
     if params is None:
@@ -7,5 +10,5 @@ def generate_request(method, params: list | dict | None = None, version: str = "
         "jsonrpc": version,
         "method": method,
         "params": params,
-        "id": 1,
+        "id": random.randint(1, 100000000),
     }
