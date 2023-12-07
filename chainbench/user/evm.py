@@ -9,6 +9,8 @@ class EVMBenchUser(BaseBenchUser):
     abstract = True
     test_data = EVMTestData()
 
+    _default_trace_timeout = "120s"
+
     def _get_logs_params_factory(self, rng: RNG):
         return [
             {
@@ -38,16 +40,43 @@ class EVMBenchUser(BaseBenchUser):
             hex(self.test_data.get_random_block_number(rng)),
         ]
 
+    def _trace_call_params_factory(self, rng: RNG):
+        tx_data = self.test_data.get_random_tx(rng)
+        tx_param = {
+            "to": tx_data["to"],
+            "gas": tx_data["gas"],
+            "value": tx_data["value"],
+        }
+
+        if "maxFeePerGas" in tx_data:
+            tx_param["maxFeePerGas"] = tx_data["maxFeePerGas"]
+        else:
+            tx_param["gasPrice"] = tx_data["gasPrice"]
+
+        if "input" in tx_data:
+            if tx_data["input"] != "0x":
+                tx_param["data"] = tx_data["input"]
+
+        if "accessList" in tx_data:
+            if len(tx_data["accessList"]) > 0:
+                tx_param["accessList"] = tx_data["accessList"]
+
+        return [
+            tx_param,
+            tx_data["blockNumber"],
+            {"tracer": "callTracer", "timeout": self._default_trace_timeout},
+        ]
+
     def _trace_block_by_number_params_factory(self, rng: RNG):
         return [
             hex(self.test_data.get_random_block_number(rng)),
-            {"tracer": "callTracer"},
+            {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
     def _trace_block_by_hash_params_factory(self, rng: RNG):
         return [
             self.test_data.get_random_block_hash(rng),
-            {"tracer": "callTracer"},
+            {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
     def _trace_replay_block_transaction_params_factory(self, rng: RNG):
@@ -63,7 +92,10 @@ class EVMBenchUser(BaseBenchUser):
         ]
 
     def _trace_transaction_params_factory(self, rng: RNG):
-        return [self.test_data.get_random_tx_hash(rng), {"tracer": "prestateTracer"}]
+        return [
+            self.test_data.get_random_tx_hash(rng),
+            {"tracer": "callTracer", "timeout": self._default_trace_timeout},
+        ]
 
     def _trace_filter_params_factory(self, rng: RNG):
         block_number = self.test_data.get_random_block_number(rng)

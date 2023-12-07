@@ -83,7 +83,7 @@ class EVMTestData(BaseTestData):
             return start_block_number, end_block_number
         else:
             end_block_number = self._fetch_latest_block_number()
-            start_block_number = end_block_number - 20
+            start_block_number = end_block_number - 10000
             logger.info("Using recent blocks from %s to %s as test data", start_block_number, end_block_number)
             return start_block_number, end_block_number
 
@@ -99,6 +99,11 @@ class EVMTestData(BaseTestData):
         start_block_number, end_block_number = self._get_start_and_end_blocks(parsed_options.use_recent_blocks)
 
         while self.TXS_REQUIRED > len(txs) or self.ACCOUNTS_REQUIRED > len(accounts) or self.SAVE_BLOCKS > len(blocks):
+            print(
+                f"txs = {len(txs)}/{self.TXS_REQUIRED}  "
+                f"accounts = {len(accounts)}/{self.ACCOUNTS_REQUIRED}  "
+                f"blocks = {len(blocks)}/{self.SAVE_BLOCKS}"
+            )
             if self.ACCOUNTS_REQUIRED > len(accounts) or self.TXS_REQUIRED > len(txs):
                 return_txs = True
             else:

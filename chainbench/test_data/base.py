@@ -189,6 +189,11 @@ class BaseTestData:
             rng = get_rng()
         return rng.random.choice(self.tx_hashes)
 
+    def get_random_tx(self, rng: RNG | None = None) -> Tx:
+        if rng is None:
+            rng = get_rng()
+        return rng.random.choice(self.txs)
+
     def get_random_recent_block_number(self, n: int, rng: RNG | None = None) -> BlockNumber:
         if rng is None:
             rng = get_rng()
