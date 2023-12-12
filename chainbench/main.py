@@ -23,11 +23,11 @@ from chainbench.util.notify import NoopNotifier, Notifier
 # Default values for arguments
 MASTER_HOST = "127.0.0.1"
 MASTER_PORT = "5557"
-WORKER_COUNT = 16
-TEST_TIME = "1h"
-USERS = 1000
+WORKER_COUNT = 8
+TEST_TIME = "5m"
+USERS = 100
 SPAWN_RATE = 10
-LOG_LEVEL = "DEBUG"
+LOG_LEVEL = "INFO"
 DEFAULT_PROFILE = "ethereum.general"
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
 runners.HEARTBEAT_INTERVAL = 60
