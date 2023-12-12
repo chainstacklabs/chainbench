@@ -66,9 +66,9 @@ def on_init(environment, **_kwargs):
                 if not hasattr(user, "test_data"):
                     continue
                 if user.__class__.__name__ not in test_data:
-                        user.test_data.update(environment.host, environment.parsed_options)
-                        test_data[user.__class__.__name__] = user.test_data.data.to_json()
-        except Exception as e:
+                    user.test_data.update(environment.host, environment.parsed_options)
+                    test_data[user.__class__.__name__] = user.test_data.data.to_json()
+        except Exception:
             logger.error(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
             print(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
             environment.runner.quit()
