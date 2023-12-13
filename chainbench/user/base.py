@@ -60,10 +60,12 @@ class BaseBenchUser(FastHttpUser):
         """Check the response for errors."""
         if response.status_code != 200:
             self.logger.info(f"Request failed with {response.status_code} code")
-            self.logger.debug(f"Request to {response.url} failed with {response.status_code} code: {response.text}")
+            self.logger.debug(
+                f"Request to {response.url} failed with HTTP Error {response.status_code} code: {response.text}"
+            )
             self.check_fatal(response)
             response.failure(f"Request failed with {response.status_code} code")
-            response.raise_for_status()
+            return
 
         if response_json is None:
             self.logger.error(f"Response for {name}  is not a JSON: {response.text}")

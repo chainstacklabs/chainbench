@@ -2,7 +2,6 @@ import json
 import logging
 import typing as t
 from argparse import Namespace
-from collections import namedtuple
 from dataclasses import dataclass, field
 from secrets import token_hex
 
@@ -24,10 +23,14 @@ BlockHash = str
 Blocks = list[tuple[BlockNumber, BlockHash]]
 
 
-BlockchainDataSize = namedtuple("BlockchainDataSize", ["blocks", "txs", "accounts"])
+@dataclass(frozen=True)
+class BlockchainDataSize:
+    blocks: int
+    txs: int
+    accounts: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class Sizes:
     S = BlockchainDataSize(10, 100, 100)
     M = BlockchainDataSize(100, 1000, 1000)
@@ -35,14 +38,14 @@ class Sizes:
     XL = BlockchainDataSize(10000, 100000, 1000000)
 
     @classmethod
-    def get_size(cls, size: str):
+    def get_size(cls, size: str) -> BlockchainDataSize:
         try:
             return getattr(cls, size.upper())
         except AttributeError:
             raise ValueError(f"Invalid size: '{size}'. Valid Sizes are S, M, L, XL")
 
     @classmethod
-    def get_custom_size(cls, blocks: int, txs: int, accounts: int):
+    def get_custom_size(cls, blocks: int, txs: int, accounts: int) -> BlockchainDataSize:
         return BlockchainDataSize(blocks, txs, accounts)
 
 

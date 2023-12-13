@@ -7,7 +7,7 @@ from time import sleep
 import httpx
 from locust.util.timespan import parse_timespan
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 def calculate_lag(current_timestamp, block_timestamp):
