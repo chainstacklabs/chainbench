@@ -2,11 +2,13 @@ import json
 import logging
 import typing as t
 from argparse import Namespace
+from collections import namedtuple
 from dataclasses import dataclass, field
 from secrets import token_hex
 
 import httpx
 from gevent.lock import Semaphore as GeventSemaphore
+from tenacity import retry, stop_after_attempt
 
 from chainbench.util.rng import RNG, get_rng
 
@@ -20,6 +22,28 @@ Block = dict[str, t.Any]
 BlockNumber = int
 BlockHash = str
 Blocks = list[tuple[BlockNumber, BlockHash]]
+
+
+BlockchainDataSize = namedtuple("BlockchainDataSize", ["blocks", "txs", "accounts"])
+
+
+@dataclass
+class Sizes:
+    S = BlockchainDataSize(10, 100, 100)
+    M = BlockchainDataSize(100, 1000, 1000)
+    L = BlockchainDataSize(1000, 10000, 100000)
+    XL = BlockchainDataSize(10000, 100000, 1000000)
+
+    @classmethod
+    def get_size(cls, size: str):
+        try:
+            return getattr(cls, size.upper())
+        except AttributeError:
+            raise ValueError(f"Invalid size: '{size}'. Valid Sizes are S, M, L, XL")
+
+    @classmethod
+    def get_custom_size(cls, blocks: int, txs: int, accounts: int):
+        return BlockchainDataSize(blocks, txs, accounts)
 
 
 @dataclass
@@ -46,11 +70,12 @@ class BlockchainData:
 
 class ChainInfo(t.TypedDict):
     name: str
-    start_block: int
-    end_block: int
+    start_block: BlockNumber
 
 
 class BaseTestData:
+    DEFAULT_SIZE = "S"
+
     def __init__(self, rpc_version: str = "2.0"):
         self._logger = logging.getLogger(__name__)
         self._host: str | None = None
@@ -64,21 +89,67 @@ class BaseTestData:
 
         self._data: BlockchainData | None = None
 
-    def update(self, host_url: str, parsed_options: Namespace) -> BlockchainData:
+    def update(self, host_url: str, parsed_options: Namespace):
         self._logger.info("Updating data")
         self._host = host_url
         self._logger.debug("Host: %s", self._host)
-        data = self._get_init_data(parsed_options)
+        self._data = self._get_init_data_from_blockchain(parsed_options)
         self._logger.info("Data fetched")
-        self._logger.debug("Data: %s", data)
-        self._data = data
+        self._logger.debug("Data: %s", self._data)
         self._logger.info("Data updated. Releasing lock")
         self._lock.release()
         self._logger.info("Lock released")
-        return data
 
-    def _get_init_data(self, parsed_options) -> BlockchainData:
+    def _process_block(self, block_number, block, txs, tx_hashes, accounts, blocks, size, return_txs):
         raise NotImplementedError
+
+    def _get_start_and_end_blocks(self, parsed_options):
+        raise NotImplementedError
+
+    # get initial data from blockchain
+    def _get_init_data_from_blockchain(self, parsed_options) -> BlockchainData:
+        def print_progress():
+            print(
+                f"txs = {len(txs)}/{size.txs}  "
+                f"accounts = {len(accounts)}/{size.accounts}  "
+                f"blocks = {len(blocks)}/{size.blocks}",
+                end="\r",
+            )
+
+        txs: list[Tx] = []
+        tx_hashes: set[TxHash] = set()
+        accounts: set[Account] = set()
+        blocks: set[tuple[BlockNumber, BlockHash]] = set()
+        start_block_number: BlockNumber
+        end_block_number: BlockNumber
+        return_txs: bool
+        start_block_number, end_block_number = self._get_start_and_end_blocks(parsed_options)
+        size_str = parsed_options.size.upper() if parsed_options.size != "None" else self.DEFAULT_SIZE
+        size = Sizes.get_size(size_str)
+
+        print(f"Test data size: {size_str}")
+        self._logger.info(f"Test data size: {size_str}")
+
+        while size.txs > len(txs) or size.accounts > len(accounts) or size.blocks > len(blocks):
+            print_progress()
+            if size.accounts > len(accounts) or size.txs > len(txs):
+                return_txs = True
+            else:
+                return_txs = False
+            block_number, block = self._fetch_random_block(start_block_number, end_block_number, return_txs)
+            self._process_block(block_number, block, txs, tx_hashes, accounts, blocks, size, return_txs)
+        else:
+            print_progress()
+            print("\n")  # new line after progress display upon exiting loop
+
+        return BlockchainData(
+            end_block_number=end_block_number,
+            start_block_number=start_block_number,
+            blocks=sorted(list(blocks)),
+            txs=txs,
+            tx_hashes=sorted(list(tx_hashes)),
+            accounts=sorted(list(accounts)),
+        )
 
     def init_data_from_json(self, json_data: str):
         self._data = BlockchainData()
@@ -166,6 +237,15 @@ class BaseTestData:
 
     def wait(self):
         self._lock.wait()
+
+    def _fetch_block(self, block_number, return_txs: bool = True) -> tuple[BlockNumber, Block]:
+        raise NotImplementedError
+
+    @retry(reraise=True, stop=stop_after_attempt(5))
+    def _fetch_random_block(self, start: int, end: int, return_txs: bool = True) -> tuple[BlockNumber, Block]:
+        rng = get_rng()
+        block_number = rng.random.randint(start, end)
+        return self._fetch_block(block_number, return_txs=return_txs)
 
     @staticmethod
     def get_random_bool(rng: RNG | None = None) -> bool:

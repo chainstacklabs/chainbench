@@ -23,11 +23,11 @@ from chainbench.util.notify import NoopNotifier, Notifier
 # Default values for arguments
 MASTER_HOST = "127.0.0.1"
 MASTER_PORT = "5557"
-WORKER_COUNT = 16
-TEST_TIME = "1h"
-USERS = 1000
+WORKER_COUNT = 8
+TEST_TIME = "5m"
+USERS = 100
 SPAWN_RATE = 10
-LOG_LEVEL = "DEBUG"
+LOG_LEVEL = "INFO"
 DEFAULT_PROFILE = "ethereum.general"
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
 runners.HEARTBEAT_INTERVAL = 60
@@ -120,6 +120,7 @@ def cli(ctx: click.Context):
 @click.option("--pg-username", default="postgres", help="PG username", show_default=True)
 @click.option("--pg-password", default=None, help="PG password")
 @click.option("--use-recent-blocks", is_flag=True, help="Uses recent blocks for test data")
+@click.option("--size", default=None, help="Set the size of the test data. e.g. --size S")
 @click.pass_context
 def start(
     ctx: click.Context,
@@ -147,6 +148,7 @@ def start(
     pg_username: str,
     pg_password: str | None,
     use_recent_blocks: bool,
+    size: str | None,
 ):
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -212,6 +214,7 @@ def start(
         pg_username=pg_username,
         pg_password=pg_password,
         use_recent_blocks=use_recent_blocks,
+        size=size,
     )
     if headless:
         click.echo(f"Starting master in headless mode for {profile}")

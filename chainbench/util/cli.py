@@ -66,6 +66,7 @@ def get_master_command(
     pg_username: str | None = None,
     pg_password: str | None = None,
     use_recent_blocks: bool = False,
+    size: str | None = None,
 ) -> str:
     """Generate master command."""
     command = (
@@ -76,6 +77,7 @@ def get_master_command(
         f"--html {results_path}/report.html --csv {results_path}/report.csv "
         f"--logfile {results_path}/report.log "
         f"--loglevel {log_level} --expect-workers {workers}"
+        f" --size {size}"
     )
 
     if timescale:
@@ -92,6 +94,7 @@ def get_master_command(
 
     if use_recent_blocks:
         command += " --use-recent-blocks True"
+
     return command
 
 

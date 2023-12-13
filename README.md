@@ -90,7 +90,7 @@ Basic usage is:
 chainbench start --profile bsc.general --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
 
-This will run a load test for BSC with 2 workers, 50 users and 12 hours test time in headless mode.
+This will run a load test for BSC with 2 workers, 50 users and 12 hours test time in headless mode with default test data size S.
 After the test is finished, the tool will automatically quit.
 
 ### Parameters and Flags
@@ -105,6 +105,8 @@ After the test is finished, the tool will automatically quit.
 - `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
 - `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
 - `--use-recent-blocks`: Use recent blocks for test data generation.
+- `--size`: Specifies the test data size. Available values are S, M, L, XL. Default is S.
+
 You may also run `chainbench start --help` for the full list of parameters and flags.
 
 ### Profiles
@@ -129,6 +131,19 @@ Here's an example of how to run a load test for Ethereum using the `evm.light` p
 ```shell
 chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
+
+### Test Data Size
+You may specify the test data size using the `--size` flag. This will determine how much data is used in the test.
+Take note that larger data size will result in longer test data generation time before the test starts.
+We plan to add an option to reuse previously generated test data in the future to avoid regenerating the same
+test data for multiple test runs.
+
+| Size | Blocks | Txs    | Accounts/Addresses |
+|------|--------|--------|--------------------|
+| S    | 10     | 100    | 100                |
+| M    | 100    | 1000   | 1000               |
+| L    | 1000   | 10000  | 10000              |
+| XL   | 10000  | 100000 | 100000             |
 
 ### Monitors
 Monitors are separate processes that run during the test to collect or process some additional data and metrics relevant to the test.

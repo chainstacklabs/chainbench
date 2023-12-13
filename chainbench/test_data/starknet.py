@@ -2,7 +2,16 @@ import logging
 from typing import Mapping
 
 from chainbench.test_data import EVMTestData
-from chainbench.test_data.base import BlockchainData, Blocks, ChainInfo
+from chainbench.test_data.base import (
+    Account,
+    Block,
+    BlockchainDataSize,
+    BlockHash,
+    BlockNumber,
+    ChainInfo,
+    Tx,
+    TxHash,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -12,18 +21,15 @@ class StarkNetTestData(EVMTestData):
         23448594291968334: {
             "name": "starknet-mainnet",
             "start_block": 100000,
-            "end_block": 360000,
         },
         # TODO: uncomment after adding testnet support to methods like call, simulateTransaction, etc.
         # 1536727068981429685321: {
         #     "name": "starknet-testnet",
         #     "start_block": 500000,
-        #     "end_block": 890000,
         # },
         # 393402129659245999442226: {
         #     "name": "starknet-testnet2",
         #     "start_block": 1,
-        #     "end_block": 149000,
         # },
     }
 
@@ -42,38 +48,32 @@ class StarkNetTestData(EVMTestData):
             raise ValueError("Invalid block number")
         params = {"block_number": block_number} if isinstance(block_number, int) else block_number
 
-        result = self._make_call("starknet_getBlockWithTxs", [params])
+        if return_txs:
+            result = self._make_call("starknet_getBlockWithTxs", [params])
+        else:
+            result = self._make_call("starknet_getBlockWithTxHashes", [params])
         return result["block_number"], result
 
-    # get initial data from blockchain
-    def _get_init_data(self, parsed_options) -> BlockchainData:
-        txs: list[dict] = []
-        tx_hashes: list[str] = []
-        accounts: set[str] = set()
-        blocks: Blocks = []
-        start_block_number: int
-        end_block_number: int
-        start_block_number, end_block_number = self._get_start_and_end_blocks(parsed_options.use_recent_blocks)
-
-        while self.TXS_REQUIRED > len(txs) or self.ACCOUNTS_REQUIRED > len(accounts) or self.SAVE_BLOCKS > len(blocks):
-            block_number, block = self._fetch_random_block(start_block_number, end_block_number)
-            if self.SAVE_BLOCKS > len(blocks):
-                blocks.append((block_number, block["block_hash"]))
+    def _process_block(
+        self,
+        block_number: BlockNumber,
+        block: Block,
+        txs: list[Tx],
+        tx_hashes: set[TxHash],
+        accounts: set[Account],
+        blocks: set[tuple[BlockNumber, BlockHash]],
+        size: BlockchainDataSize,
+        return_txs: bool = True,
+    ):
+        if size.blocks > len(blocks):
+            self._append_if_not_none(blocks, (block_number, block["block_hash"]))
+        if return_txs:
             for tx in block["transactions"]:
-                if self.TXS_REQUIRED > len(txs):
+                if size.txs > len(txs):
                     self._append_if_not_none(txs, tx)
                     self._append_if_not_none(tx_hashes, tx["transaction_hash"])
-                if self.ACCOUNTS_REQUIRED > len(accounts):
+                if size.accounts > len(accounts):
                     try:
                         self._append_if_not_none(accounts, tx["sender_address"])
                     except KeyError:
                         pass  # skip tx if it doesn't have sender_address
-
-        return BlockchainData(
-            end_block_number=end_block_number,
-            start_block_number=start_block_number,
-            blocks=blocks,
-            txs=txs,
-            tx_hashes=tx_hashes,
-            accounts=sorted(list(accounts)),
-        )

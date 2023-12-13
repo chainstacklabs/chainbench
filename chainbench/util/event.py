@@ -1,4 +1,5 @@
 import logging
+import traceback
 
 from locust import events
 from locust.runners import MasterRunner, WorkerRunner
@@ -15,6 +16,7 @@ def cli_custom_arguments(parser):
         default=False,
         help="Use recent blocks as test data",
     )
+    parser.add_argument("--size", type=str, default=None, help="Set the size of the test data. e.g. --size S")
 
 
 def setup_test_data(environment, msg, **kwargs):
@@ -50,36 +52,39 @@ def on_init(environment, **_kwargs):
         logger.info("I'm a worker. Running tests for %s", host_under_test)
         environment.runner.register_message("test_data", setup_test_data)
 
+    test_data = {}
+
     if not isinstance(environment.runner, WorkerRunner):
         # Print master details to the log
         logger.info("I'm a master. Running tests for %s", host_under_test)
         environment.runner.register_message("acknowledge_data", on_acknowledge)
 
+        logger.info("Initializing test data...")
+        print("Initializing test data...")
+        try:
+            for user in environment.runner.user_classes:
+                if not hasattr(user, "test_data"):
+                    continue
+                if user.__class__.__name__ not in test_data:
+                    user.test_data.update(environment.host, environment.parsed_options)
+                    test_data[user.__class__.__name__] = user.test_data.data.to_json()
+        except Exception:
+            logger.error(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
+            print(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
+            environment.runner.quit()
+            raise exit()
+        else:
+            logger.info("Test data is ready")
+            for i, worker in enumerate(environment.runner.clients):
+                environment.runner.send_message("test_data", (test_data, i), worker)
+                logger.info(f"Test data is sent to worker {i}")
+
 
 def on_test_start(environment, **_kwargs):
-    test_data = {}
-
-    # It will be called for any runner (master, worker, local)
-    if not isinstance(environment.runner, WorkerRunner):
-        logger.info("Initializing test data...")
-        print("Initializing test data...\n")
-        for user in environment.runner.user_classes:
-            if not hasattr(user, "test_data"):
-                continue
-
-            if user.__class__.__name__ not in test_data:
-                user.test_data.update(environment.host, environment.parsed_options)
-                test_data[user.__class__.__name__] = user.test_data.data.to_json()
-
-        logger.info("Test data is ready")
-        for i, worker in enumerate(environment.runner.clients):
-            environment.runner.send_message("test_data", (test_data, i), worker)
-            logger.info(f"Test data is sent to worker {i}")
-
-        # Print master details to the log
-        logger.info(
-            f"Master: test_start.add_listener: The test is started, " f"Environment: {environment.runner}",
-        )
+    # Print master details to the log
+    logger.info(
+        f"Master: test_start.add_listener: The test is started, " f"Environment: {environment.runner}",
+    )
 
     if not isinstance(environment.runner, MasterRunner):
         # Print worker details to the log
