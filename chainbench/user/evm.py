@@ -111,6 +111,6 @@ class EVMBenchUser(BaseBenchUser):
         return [
             {
                 "from": self.test_data.get_random_account(rng),
-                "to": "0x18318221d811Da0fe45412394eAf2C42A10BC678",
+                "to": self.test_data.get_random_account(rng),
             }
         ]
