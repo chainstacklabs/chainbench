@@ -1,4 +1,4 @@
-from chainbench.test_data.starknet import StarkNetTestData
+from chainbench.test_data import StarkNetTestData
 from chainbench.user.base import BaseBenchUser
 from chainbench.util.rng import RNG
 
