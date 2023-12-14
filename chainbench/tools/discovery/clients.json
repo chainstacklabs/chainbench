@@ -1,0 +1,52 @@
+{
+    "avalanchego": {
+        "version": "1.10.17",
+        "endpoints": [
+            "/ext/bc/C/admin",
+            "/ext/bc/C/avax",
+            "/ext/bc/C/rpc",
+            "/ext/bc/P",
+            "/ext/bc/X"
+        ]
+    },
+    "base": {
+        "version": "0.5.1"
+    },
+    "besu": {
+        "version": "23.10.2"
+    },
+    "bor": {
+        "version": "1.2.0"
+    },
+    "bsc": {
+        "version": "1.3.5"
+    },
+    "erigon": {
+        "version": "2.55.1"
+    },
+    "eth": {
+        "version": "1.0.0-beta.3"
+    },
+    "geth": {
+        "version": "1.13.5"
+    },
+    "juno": {
+        "version": "0.8.1",
+        "endpoints": ["/v0_6"]
+    },
+    "nethermind": {
+        "version": "1.23.0"
+    },
+    "optimism": {
+        "version": "1.3.2"
+    },
+    "pathfinder": {
+        "version": "0.10.2"
+    },
+    "reth": {
+        "version": "0.1.0-alpha.13"
+    },
+    "solana": {
+        "version": "1.16.23"
+    }
+}

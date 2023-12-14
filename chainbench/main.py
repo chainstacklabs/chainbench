@@ -282,5 +282,65 @@ def start(
     ctx.obj.notifier.notify(title="Test finished", message=f"Test finished for {profile}", tags=["tada"])
 
 
+@cli.command(
+    help="Discover methods available on target endpoint.\n"
+    "Example usage:\n"
+    "chainbench discover https://eth-rpc-endpoint --clients geth,erigon",
+)
+@click.argument("endpoint", default=None)
+@click.option(
+    "--clients",
+    default=None,
+    help="List of methods used to test the endpoint will "
+    "be based on the clients specified here, default to eth. e.g. --clients eth,bsc.\n",
+)
+def discover(endpoint: str | None, clients: str):
+    if not endpoint:
+        click.echo("Target endpoint is required.")
+        sys.exit(1)
+
+    from chainbench.tools.discovery.rpc import RPCDiscovery
+
+    if clients is not None:
+        clients_list = clients.split(",")
+    else:
+        click.echo("Defaulting to ethereum execution api methods.")
+        clients_list = ["eth"]
+    click.echo("Please wait. Discovering methods...")
+    result = RPCDiscovery.discover_methods(endpoint, clients_list)
+
+    for method, supported in result:
+        if supported is True:
+            click.echo(f"{method} ✔")
+        elif supported is False:
+            click.echo(f"{method} ✖")
+        else:
+            click.echo(f"{method}: {supported}")
+
+
+@cli.command(
+    help="Lists all available client options for method discovery.",
+)
+def clients():
+    from chainbench.tools.discovery.rpc import RPCDiscovery
+
+    for client in RPCDiscovery.get_clients_and_versions():
+        name, version = client
+        click.echo(f"{name}: ({version})")
+
+
+@cli.command(
+    help="Lists all available load profiles.",
+)
+def profiles():
+    from os import walk
+
+    profile_dir = get_base_path(__file__)
+    for dir_path, _, files in walk(profile_dir):
+        for file in files:
+            if file.endswith(".py") and file != "__init__.py":
+                click.echo(f"{os.path.basename(dir_path)}.{file[:-3]}")
+
+
 if __name__ == "__main__":
     cli()
