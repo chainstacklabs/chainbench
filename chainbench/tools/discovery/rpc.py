@@ -51,23 +51,21 @@ class RPCDiscovery:
     @staticmethod
     def _parse_methods() -> list[RPCMethod]:
         methods = []
-        with RPCDiscovery.METHODS_FILE.open("r") as f:
-            methods_json = json.loads(f.read())
-            for method in methods_json.keys():
-                methods.append(RPCMethod(name=method, supported_clients=methods_json[method]["clients"]))
+        methods_json = json.loads(RPCDiscovery.METHODS_FILE.read_text())
+        for method in methods_json.keys():
+            methods.append(RPCMethod(name=method, supported_clients=methods_json[method]["clients"]))
         return methods
 
     @staticmethod
     def _parse_clients() -> list[RPCClient]:
         clients = []
-        with RPCDiscovery.CLIENTS_FILE.open("r") as f:
-            clients_json = json.loads(f.read())
-            for client in clients_json.keys():
-                if "endpoints" in clients_json[client]:
-                    endpoints = clients_json[client]["endpoints"]
-                else:
-                    endpoints = []
-                clients.append(RPCClient(name=client, version=clients_json[client]["version"], endpoints=endpoints))
+        clients_json = json.loads(RPCDiscovery.CLIENTS_FILE.read_text())
+        for client in clients_json.keys():
+            if "endpoints" in clients_json[client]:
+                endpoints = clients_json[client]["endpoints"]
+            else:
+                endpoints = []
+            clients.append(RPCClient(name=client, version=clients_json[client]["version"], endpoints=endpoints))
         return clients
 
     @classmethod
