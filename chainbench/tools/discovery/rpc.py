@@ -1,40 +1,95 @@
 import json
+import os
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterator
 
 import httpx
+
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 class JSONRPCError(Exception):
     pass
 
 
+@dataclass
+class RPCMethod:
+    name: str
+    supported_clients: list[str]
+
+
+@dataclass
+class RPCClient:
+    name: str
+    version: str
+    endpoints: list[str]
+
+    def get_cli_argument_names(self) -> Iterator[str]:
+        if len(self.endpoints) > 0:
+            for endpoint in self.endpoints:
+                yield f"{self.name}{endpoint}"
+        else:
+            yield self.name
+
+    def get_name_and_version(self) -> Iterator[str]:
+        for name in self.get_cli_argument_names():
+            yield f"{name}: {self.version}"
+
+
+@dataclass
+class DiscoveryResult:
+    method: str
+    supported: bool | None = None
+    error_message: str | None = None
+
+
 class RPCDiscovery:
+    METHODS_FILE = Path(os.path.join(__location__, "methods.json"))
+    CLIENTS_FILE = Path(os.path.join(__location__, "clients.json"))
+
     @staticmethod
-    def _get_methods_list(clients: list[str]) -> list[str]:
+    def _parse_methods() -> list[RPCMethod]:
         methods = []
-        with open("chainbench/tools/discovery/methods.json", "r") as f:
+        with RPCDiscovery.METHODS_FILE.open("r") as f:
             methods_json = json.loads(f.read())
             for method in methods_json.keys():
-                for client in clients:
-                    if client in methods_json[method]["clients"]:
-                        methods.append(method)
+                methods.append(RPCMethod(name=method, supported_clients=methods_json[method]["clients"]))
         return methods
 
     @staticmethod
-    def get_clients_and_versions() -> list[tuple[str, str]]:
+    def _parse_clients() -> list[RPCClient]:
         clients = []
-        with open("chainbench/tools/discovery/clients.json", "r") as f:
+        with RPCDiscovery.CLIENTS_FILE.open("r") as f:
             clients_json = json.loads(f.read())
             for client in clients_json.keys():
-                if "endpoints" not in clients_json[client]:
-                    clients.append((client, clients_json[client]["version"]))
+                if "endpoints" in clients_json[client]:
+                    endpoints = clients_json[client]["endpoints"]
                 else:
-                    for endpoint in clients_json[client]["endpoints"]:
-                        clients.append((f"{client}{endpoint}", clients_json[client]["version"]))
+                    endpoints = []
+                clients.append(RPCClient(name=client, version=clients_json[client]["version"], endpoints=endpoints))
         return clients
 
     @classmethod
-    def discover_methods(cls, endpoint: str, clients: list[str]) -> list[tuple[str, str | bool]]:
-        result: list[tuple[str, str | bool]] = []
+    def _get_methods_list(cls, clients: list[str]) -> list[str]:
+        methods = []
+        for method in cls._parse_methods():
+            for client in clients:
+                if client in method.supported_clients:
+                    methods.append(method.name)
+        return methods
+
+    @classmethod
+    def get_client_names(cls) -> list[str]:
+        return [client.name for client in cls._parse_clients()]
+
+    @classmethod
+    def get_clients(cls) -> list[RPCClient]:
+        return cls._parse_clients()
+
+    @classmethod
+    def discover_methods(cls, endpoint: str, clients: list[str]) -> list[DiscoveryResult]:
+        result: list[DiscoveryResult] = []
         http = httpx.Client(base_url=endpoint)
 
         method_list = cls._get_methods_list(clients)
@@ -53,17 +108,18 @@ class RPCDiscovery:
                 response_json = response.json()
                 if "error" in response_json:
                     if response_json["error"]["code"] == -32602:
-                        result.append((method, True))
+                        result.append(DiscoveryResult(method, True))
                     elif response_json["error"]["code"] == -32601:
-                        result.append((method, False))
+                        result.append(DiscoveryResult(method, False))
                     else:
                         result.append(
-                            (
+                            DiscoveryResult(
                                 method,
+                                None,
                                 f"Unable to determine. Unknown error {response_json['error']['code']}: "
                                 f"{response_json['error']['message']}",
                             )
                         )
                 else:
-                    result.append((method, True))
+                    result.append(DiscoveryResult(method, True))
         return result
