@@ -1,0 +1,3457 @@
+{
+    "admin.lockProfile": {
+        "clients": [
+            "avalanchego/ext/bc/C/admin"
+        ]
+    },
+    "admin.memoryProfile": {
+        "clients": [
+            "avalanchego/ext/bc/C/admin"
+        ]
+    },
+    "admin.setLogLevel": {
+        "clients": [
+            "avalanchego/ext/bc/C/admin"
+        ]
+    },
+    "admin.startCPUProfiler": {
+        "clients": [
+            "avalanchego/ext/bc/C/admin"
+        ]
+    },
+    "admin.stopCPUProfiler": {
+        "clients": [
+            "avalanchego/ext/bc/C/admin"
+        ]
+    },
+    "admin_addPeer": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_addTrustedPeer": {
+        "clients": [
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_changeLogLevel": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "admin_datadir": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_exportChain": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_generateLogBloomCache": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "admin_importChain": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_logsRepairCache": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "admin_nodeInfo": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_peerEvents": {
+        "clients": [
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_peerEvents_unsubscribe": {
+        "clients": [
+            "reth"
+        ]
+    },
+    "admin_peers": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_prune": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "admin_removePeer": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "besu",
+            "reth",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_removeTrustedPeer": {
+        "clients": [
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_resetDerivationPipeline": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_sequencerActive": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_startHTTP": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_startSequencer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_startWS": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_stopHTTP": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_stopSequencer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "admin_stopWS": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "avax.export": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.exportAVAX": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.exportKey": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.getAtomicTx": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.getAtomicTxStatus": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.getUTXOs": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.import": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.importAVAX": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.importKey": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avax.issueTx": {
+        "clients": [
+            "avalanchego/ext/bc/C/avax"
+        ]
+    },
+    "avm.buildGenesis": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.createAddress": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.createFixedCapAsset": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.createNFTAsset": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.createVariableCapAsset": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.export": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.exportKey": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getAddressTxs": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getAllBalances": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getAssetDescription": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getBalance": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getBlock": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getBlockByHeight": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getHeight": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getTx": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getTxStatus": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.getUTXOs": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.import": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.importKey": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.issueTx": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.listAddresses": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.mint": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.mintNFT": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.send": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.sendMultiple": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "avm.sendNFT": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "bor_getAuthor": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getCurrentProposer": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getCurrentValidators": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getRootHash": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getSigners": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getSignersAtHash": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getSnapshot": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getSnapshotAtHash": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getSnapshotProposerSequence": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "bor_getVoteOnHash": {
+        "clients": [
+            "erigon",
+            "bor"
+        ]
+    },
+    "clique_discard": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "besu"
+        ]
+    },
+    "clique_getBlockSigner": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "clique_getSigner": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "clique_getSignerMetrics": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "clique_getSigners": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "besu"
+        ]
+    },
+    "clique_getSignersAnnotated": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "clique_getSignersAtHash": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "besu"
+        ]
+    },
+    "clique_getSignersAtHashAnnotated": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "clique_getSignersAtNumber": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "clique_getSnapshot": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind"
+        ]
+    },
+    "clique_getSnapshotAtHash": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind"
+        ]
+    },
+    "clique_produceBlock": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "clique_proposals": {
+        "clients": [
+            "geth",
+            "bsc",
+            "besu"
+        ]
+    },
+    "clique_propose": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "besu"
+        ]
+    },
+    "clique_status": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "debug_accountAt": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "debug_accountRange": {
+        "clients": [
+            "geth",
+            "bsc",
+            "erigon",
+            "besu",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_backtraceAt": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_blockProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_chaindbCompact": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_chaindbProperty": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_cpuProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_dbAncient": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_dbAncients": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_dbGet": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_deleteChainSlice": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_dumpBlock": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_freeOSMemory": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_freezeClient": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_gcStats": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getAccessibleState": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getBadBlocks": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getBlockRlp": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_getBlockRlpByHash": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_getChainLevel": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_getConfigValue": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_getModifiedAccountsByHash": {
+        "clients": [
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getModifiedAccountsByNumber": {
+        "clients": [
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getRawBlock": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getRawHeader": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getRawReceipts": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getRawTransaction": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_getSyncStage": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_goTrace": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_insertReceipts": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_intermediateRoots": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_memStats": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_metrics": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "debug_migrateReceipts": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_mutexProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_preimage": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_printBlock": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_resetHead": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_setBlockProfileRate": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_setGCPercent": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_setHead": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_setMutexProfileFraction": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_setTrieFlushInterval": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_stacks": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_standardTraceBadBlockToFile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_standardTraceBlockToFile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_startCPUProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_startGoTrace": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_stopCPUProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_stopGoTrace": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_storageRangeAt": {
+        "clients": [
+            "geth",
+            "bsc",
+            "erigon",
+            "besu",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceBadBlock": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceBlock": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceBlockByHash": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceBlockByNumber": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceBlockFromFile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceCall": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceCallMany": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "debug_traceChain": {
+        "clients": [
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceTransaction": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_traceTransactionByBlockAndIndex": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_traceTransactionByBlockhashAndIndex": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_traceTransactionInBlockByHash": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_traceTransactionInBlockByIndex": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "debug_verbosity": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_vmodule": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_writeBlockProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_writeMemProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "debug_writeMutexProfile": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eea_sendRawTransaction": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "engine_exchangeCapabilities": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_exchangeTransitionConfigurationV1": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_forkchoiceUpdatedV1": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_forkchoiceUpdatedV2": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_forkchoiceUpdatedV3": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_getPayloadBodiesByHashV1": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_getPayloadBodiesByRangeV1": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_getPayloadV1": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_getPayloadV2": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_getPayloadV3": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_newPayloadV1": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_newPayloadV2": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "engine_newPayloadV3": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "erigon_BlockNumber": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "erigon_forks": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "erigon_getBlockByTimestamp": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "erigon_getBlockReceiptsByBlockHash": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "erigon_getHeaderByHash": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "erigon_getHeaderByNumber": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "erigon_getLatestLogs": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "erigon_getLogsByHash": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "eth_accounts": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_baseFee": {
+        "clients": [
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "eth_blockNumber": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_call": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_callBundle": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "eth_callMany": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "eth_chainID/eth_chainId": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "eth_chainId": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_coinbase": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_createAccessList": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_estimateGas": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_feeHistory": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_gasPrice": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getAccount": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "eth_getAssetBalance": {
+        "clients": [
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "eth_getBalance": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getBlockByHash": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getBlockByNumber": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getBlockReceipts": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getBlockTransactionCountByHash": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getBlockTransactionCountByNumber": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getChainConfig": {
+        "clients": [
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "eth_getCode": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getFilterChanges": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getFilterLogs": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getHeaderByHash": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getHeaderByNumber": {
+        "clients": [
+            "geth",
+            "bsc",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getLogs": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getMinerDataByBlockHash": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "eth_getMinerDataByBlockNumber": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "eth_getProof": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getRawTransactionByHash": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "eth_getStorageAt": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getTransactionByBlockHashAndIndex": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getTransactionByBlockNumberAndIndex": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getTransactionByHash": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getTransactionCount": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getTransactionReceipt": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getUncleByBlockHashAndIndex": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "eth_getUncleByBlockNumberAndIndex": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "eth_getUncleCountByBlockHash": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getUncleCountByBlockNumber": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_getWork": {
+        "clients": [
+            "erigon",
+            "besu"
+        ]
+    },
+    "eth_hashrate": {
+        "clients": [
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "eth_maxPriorityFeePerGas": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "erigon",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_mining": {
+        "clients": [
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "eth_newBlockFilter": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_newFilter": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_newPendingTransactionFilter": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_pendingTransactions": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "eth_protocolVersion": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "eth_retRawTransactionByBlockHashAndIndex": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "eth_retRawTransactionByBlockNumberAndIndex": {
+        "clients": [
+            "erigon"
+        ]
+    },
+    "eth_sendRawTransaction": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_sendTransaction": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_sign": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_signTransaction": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_submitHashrate": {
+        "clients": [
+            "erigon",
+            "besu"
+        ]
+    },
+    "eth_submitWork": {
+        "clients": [
+            "erigon",
+            "besu"
+        ]
+    },
+    "eth_subscribe": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_syncing": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_uninstallFilter": {
+        "clients": [
+            "eth",
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "eth_unsubscribe": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "bor",
+            "optimism",
+            "base"
+        ]
+    },
+    "getAccountInfo": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBalance": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBlock": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBlockCommitment": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBlockHeight": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBlockProduction": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBlockTime": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBlocks": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getBlocksWithLimit": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getClusterNodes": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getEpochInfo": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getEpochSchedule": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getFeeForMessage": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getFirstAvailableBlock": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getGenesisHash": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getHealth": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getHighestSnapshotSlot": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getIdentity": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getInflationGovernor": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getInflationRate": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getInflationReward": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getLargestAccounts": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getLatestBlockhash": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getLeaderSchedule": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getMaxRetransmitSlot": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getMaxShredInsertSlot": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getMinimumBalanceForRentExemption": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getMultipleAccounts": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getProgramAccounts": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getRecentPerformanceSamples": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getRecentPrioritizationFees": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getSignatureStatuses": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getSignaturesForAddress": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getSlot": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getSlotLeader": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getSlotLeaders": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getStakeActivation": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getStakeMinimumDelegation": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getSupply": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getTokenAccountBalance": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getTokenAccountsByDelegate": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getTokenAccountsByOwner": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getTokenLargestAccounts": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getTokenSupply": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getTransaction": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getTransactionCount": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getVersion": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "getVoteAccounts": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "ibft_discardValidatorVote": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "ibft_getPendingVotes": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "ibft_getSignerMetrics": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "ibft_getValidatorsByBlockHash": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "ibft_getValidatorsByBlockNumber": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "ibft_proposeValidatorVote": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "isBlockhashValid": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "juno_version": {
+        "clients": [
+            "juno/v0_6"
+        ]
+    },
+    "les_addBalance": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_clientInfo": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_getCheckpoint": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_getCheckpointContractAddress": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_latestCheckpoint": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_priorityClientInfo": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_serverInfo": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_setClientParams": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "les_setDefaultParams": {
+        "clients": [
+            "geth",
+            "bsc"
+        ]
+    },
+    "miner_start": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "miner_stop": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "minimumLedgerSlot": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "net_enode": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "net_listening": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "net_localAddress": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "net_localEnode": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "net_peerCount": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "net_services": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "net_version": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_blockAddr": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_blockPeer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_blockSubnet": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_connectPeer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_disconnectPeer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_discoveryTable": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_listBlockedAddrs": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_listBlockedPeers": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_listBlockedSubnets": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_peerStats": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_peers": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_protectPeer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_self": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_unblockAddr": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_unblockPeer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_unblockSubnet": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "opp2p_unprotectPeer": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "optimism_outputAtBlock": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "optimism_rollupConfig": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "optimism_syncStatus": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "optimism_version": {
+        "clients": [
+            "optimism",
+            "base"
+        ]
+    },
+    "parity_clearEngineSigner": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "parity_enode": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "parity_getBlockReceipts": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "parity_netPeers": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "parity_pendingTransactions": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "parity_setEngineSigner": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "parity_setEngineSignerSecret": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "pathfinder_getProof": {
+        "clients": [
+            "pathfinder"
+        ]
+    },
+    "pathfinder_getTransactionStatus": {
+        "clients": [
+            "pathfinder"
+        ]
+    },
+    "pathfinder_version": {
+        "clients": [
+            "pathfinder"
+        ]
+    },
+    "perm_addAccountsToAllowlist": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "perm_addNodesToAllowlist": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "perm_getAccountsAllowlist": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "perm_getNodesAllowlist": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "perm_reloadPermissionsFromFile": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "perm_removeAccountsFromAllowlist": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "perm_removeNodesFromAllowlist": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "personal_deriveAccount": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_ecRecover": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_importRawKey": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_initializeWallet": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_initializeWallets": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_listAccounts": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_listWallets": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_lockAccount": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_newAccount": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_openWallet": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_sendTransaction": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_sign": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_signTransaction": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_unlockAccount": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "personal_unpair": {
+        "clients": [
+            "geth",
+            "bsc",
+            "avalanchego/ext/bc/C/rpc"
+        ]
+    },
+    "platform.addDelegator": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.addSubnetValidator": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.addValidator": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.createAddress": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.createBlockchain": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.createSubnet": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.exportAVAX": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.exportKey": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getBalance": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getBlock": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getBlockByHeight": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getBlockchainStatus": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getBlockchains": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getCurrentSupply": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getCurrentValidators": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getHeight": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getMaxStakeAmount": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getMinStake": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getPendingValidators": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getRewardUTXOs": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getStake": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getStakingAssetID": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getSubnets": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getTimestamp": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getTotalStake": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getTx": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getTxStatus": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getUTXOs": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.getValidatorsAt": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.importAVAX": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.importKey": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.issueTx": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.listAddresses": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.sampleValidators": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.validatedBy": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "platform.validates": {
+        "clients": [
+            "avalanchego/ext/bc/P"
+        ]
+    },
+    "plugins_reloadPluginConfig": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_call": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_createPrivacyGroup": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_deletePrivacyGroup": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_distributeRawTransaction": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_findPrivacyGroup": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getCode": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getEeaTransactionCount": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getFilterChanges": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getFilterLogs": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getLogs": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getPrivacyPrecompileAddress": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getPrivateTransaction": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getTransactionCount": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_getTransactionReceipt": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_newFilter": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "priv_uninstallFilter": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "proof_getTransactionByHash": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "proof_getTransactionReceipt": {
+        "clients": [
+            "nethermind"
+        ]
+    },
+    "requestAirdrop": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "rpc_modules": {
+        "clients": [
+            "besu",
+            "reth"
+        ]
+    },
+    "sendTransaction": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "simulateTransaction": {
+        "clients": [
+            "solana"
+        ]
+    },
+    "starknet_addDeclareTransaction": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_addDeployAccountTransaction": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_addInvokeTransaction": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_blockHashAndNumber": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_blockNumber": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_call": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_chainId": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_estimateFee": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_estimateMessageFee": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getBlockTransactionCount": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getBlockWithTxHashes": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getBlockWithTxs": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getClass": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getClassAt": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getClassHashAt": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getEvents": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getNonce": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getStateUpdate": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getStorageAt": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getTransactionByBlockIdAndIndex": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getTransactionByHash": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getTransactionReceipt": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_getTransactionStatus": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_simulateTransactions": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_specVersion": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_syncing": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_traceBlockTransactions": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "starknet_traceTransaction": {
+        "clients": [
+            "pathfinder",
+            "juno/v0_6"
+        ]
+    },
+    "trace_block": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "trace_call": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "reth"
+        ]
+    },
+    "trace_callMany": {
+        "clients": [
+            "erigon",
+            "reth"
+        ]
+    },
+    "trace_filter": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "reth"
+        ]
+    },
+    "trace_get": {
+        "clients": [
+            "erigon",
+            "reth"
+        ]
+    },
+    "trace_rawTransaction": {
+        "clients": [
+            "nethermind",
+            "reth"
+        ]
+    },
+    "trace_replayBlockTransactions": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "trace_replayTransaction": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "reth"
+        ]
+    },
+    "trace_transaction": {
+        "clients": [
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth"
+        ]
+    },
+    "txpool_besuPendingTransactions": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "txpool_besuStatistics": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "txpool_besuTransactions": {
+        "clients": [
+            "besu"
+        ]
+    },
+    "txpool_content": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "txpool_contentFrom": {
+        "clients": [
+            "geth",
+            "bsc",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "txpool_inspect": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "txpool_status": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "reth",
+            "bor",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "wallet.issueTx": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "wallet.send": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "wallet.sendMultiple": {
+        "clients": [
+            "avalanchego/ext/bc/X"
+        ]
+    },
+    "web3_clientVersion": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    },
+    "web3_sha3": {
+        "clients": [
+            "geth",
+            "bsc",
+            "nethermind",
+            "erigon",
+            "besu",
+            "reth",
+            "avalanchego/ext/bc/C/rpc",
+            "optimism",
+            "base"
+        ]
+    }
+}

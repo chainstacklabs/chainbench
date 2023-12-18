@@ -112,7 +112,12 @@ You may also run `chainbench start --help` for the full list of parameters and f
 ### Profiles
 Default profiles are located in the [`profile`](chainbench/profile) directory. For a tutorial on how to create custom profiles, please refer to [this document](docs/PROFILE.md).
 
-You can also use the `-d` or `--profile-dir` flag to specify a custom directory with profiles. For example:
+You may use the following command to list all profiles available out of the box:
+```shell
+chainbench profiles
+```
+
+The `-d` or `--profile-dir` flag can be used to specify a custom directory with profiles. For example:
 ```shell
 chainbench start --profile-dir /path/to/profiles --profile my-profile --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
@@ -180,6 +185,18 @@ In practice, you will probably want to run the benchmark on a remote server. Her
 ```shell
 nohup chainbench start --profile bsc.general --workers 4 --users 100 --test-time 1h --target https://node-url --headless --autoquit &
 ```
+
+## Other Commands
+### Discover Available Methods on Endpoints
+This command will discover all available rpc methods on the specified endpoint and print them to the console. List of methods that are tested are based on the `--clients` option.
+```shell
+chainbench discover --target https://node-url --clients geth,erigon
+```
+To list valid arguments for `--clients` option and the reference client version, run:
+```shell
+chainbench clients
+```
+If you don't specify the `--clients` option, the tool will default to Ethereum JSON-RPC Specification (eth).
 
 ## License
 This project is licensed under the [Apache 2.0 License](LICENSE).

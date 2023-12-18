@@ -282,5 +282,77 @@ def start(
     ctx.obj.notifier.notify(title="Test finished", message=f"Test finished for {profile}", tags=["tada"])
 
 
+def validate_clients(ctx, param, value) -> list[str]:
+    from chainbench.tools.discovery.rpc import RPCDiscovery
+
+    if value is not None:
+        input_client_list = value.split(",")
+        client_list = RPCDiscovery.get_client_names()
+        for client in input_client_list:
+            if client not in client_list:
+                raise click.BadParameter(f"Client {client} is not supported.")
+    else:
+        click.echo("Defaulting to ethereum execution api methods.")
+        input_client_list = ["eth"]
+    return input_client_list
+
+
+@cli.command(
+    help="Discover methods available on target endpoint.\n"
+    "Example usage:\n"
+    "chainbench discover https://eth-rpc-endpoint --clients geth,erigon",
+)
+@click.argument("endpoint", default=None)
+@click.option(
+    "--clients",
+    callback=validate_clients,
+    default=None,
+    help="List of methods used to test the endpoint will "
+    "be based on the clients specified here, default to eth. e.g. --clients eth,bsc.\n",
+)
+def discover(endpoint: str | None, clients: list[str]):
+    if not endpoint:
+        click.echo("Target endpoint is required.")
+        sys.exit(1)
+
+    from chainbench.tools.discovery.rpc import RPCDiscovery
+
+    click.echo(f"Please wait, discovering methods available on {endpoint}...")
+    results = RPCDiscovery.discover_methods(endpoint, clients)
+
+    # Print the results
+    for result in results:
+        if result.supported is True:
+            click.echo(f"{result.method} ✔")
+        elif result.supported is False:
+            click.echo(f"{result.method} ✖")
+        else:
+            click.echo(f"{result.method}: {result.error_message}")
+
+
+@cli.command(
+    help="Lists all available client options for method discovery.",
+)
+def clients():
+    from chainbench.tools.discovery.rpc import RPCDiscovery
+
+    for client in RPCDiscovery.get_clients():
+        for unique_client in client.get_name_and_version():
+            click.echo(unique_client)
+
+
+@cli.command(
+    help="Lists all available load profiles.",
+)
+def profiles():
+    from os import walk
+
+    profile_dir = get_base_path(__file__)
+    for dir_path, _, files in walk(profile_dir):
+        for file in files:
+            if file.endswith(".py") and file != "__init__.py":
+                click.echo(f"{os.path.basename(dir_path)}.{file[:-3]}")
+
+
 if __name__ == "__main__":
     cli()
