@@ -74,24 +74,40 @@ cd chainbench && poetry install --without dev
 
 When installing using Poetry, you can run the tool using the following command:
 ```shell
-poetry run chainbench start --help
+poetry run chainbench
 ```
 
 ## Example Usage
 All the examples below assume that you have installed the tool using `pip`. If you installed it using `poetry`, replace `chainbench` with `poetry run chainbench`.
 
-To learn about the parameters and flags, run the following command:
+To list all available commands and options, run:
+```shell
+chainbench --help
+```
+`start` command is used to start a load test. To learn about the parameters and flags, run the following command:
 ```shell
 chainbench start --help
 ```
 
-Basic usage is:
+You may specify a method to test, for example:
+```shell
+chainbench start eth_blockNumber --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit 
+```
+This will run a load test with `eth_blockNumber` method calls with 2 workers, 50 users and 12 hours test time in headless mode with default test data size S.
+After the test is finished, the tool will automatically quit.
+If you run the command above without '--headless' flag, it will start a web UI where you may select other methods to run tests with.
+
+To see which methods are supported, run:
+```shell
+chainbench list methods
+```
+
+You may also specify a profile with multiple methods and weights to use for the test instead of testing a single method. For example:
 ```shell
 chainbench start --profile bsc.general --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
+This will run a load test with a general BSC profile.
 
-This will run a load test for BSC with 2 workers, 50 users and 12 hours test time in headless mode with default test data size S.
-After the test is finished, the tool will automatically quit.
 
 ### Parameters and Flags
 - `-p, --profile`: Specifies the profile to use for the benchmark. Available profiles can be found in the profile directory. Sample usage `-p bsc.general`
@@ -114,7 +130,7 @@ Default profiles are located in the [`profile`](chainbench/profile) directory. F
 
 You may use the following command to list all profiles available out of the box:
 ```shell
-chainbench profiles
+chainbench list profiles
 ```
 
 The `-d` or `--profile-dir` flag can be used to specify a custom directory with profiles. For example:
@@ -165,11 +181,15 @@ chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --ta
 
 Run the following command to run a load test for BSC in UI mode. It will start a web server on port 8089. 
 Target is required to initialize the test data, however you may change the target endpoint later in the UI, along with the number of users, spawn rate and test time.
-
+Do take note when changing the target option that test data initialized with an Ethereum node endpoint, for example, can only be used to test other Ethereum node endpoints.
 ```shell
 chainbench start --profile bsc.general --workers 1 --target https://any-working-node-endpoint.com
 ```
-
+If you'd like to select which profiles or more specifically which user classes to use for the test, you may start a test in Web UI Mode without specifying a profile or passing in the method argument.
+```shell
+chainbench start --workers 1 --target https://any-working-node-endpoint.com --profile-dir chainbench/profile/evm
+```
+This will start a test with all the EVM profiles and user classes available in the UI for you to select.
 ### Headless Mode
 
 If you want to run a load test for BSC in headless mode, run the following command:
@@ -194,7 +214,7 @@ chainbench discover --target https://node-url --clients geth,erigon
 ```
 To list valid arguments for `--clients` option and the reference client version, run:
 ```shell
-chainbench clients
+chainbench list clients
 ```
 If you don't specify the `--clients` option, the tool will default to Ethereum JSON-RPC Specification (eth).
 

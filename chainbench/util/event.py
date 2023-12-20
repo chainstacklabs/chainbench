@@ -14,9 +14,16 @@ def cli_custom_arguments(parser):
         "--use-recent-blocks",
         type=bool,
         default=False,
-        help="Use recent blocks as test data",
+        help="Use recent blocks as test data. Default is False.",
+        include_in_web_ui=False,
     )
-    parser.add_argument("--size", type=str, default=None, help="Set the size of the test data. e.g. --size S")
+    parser.add_argument(
+        "--size",
+        type=str,
+        default=None,
+        help="Set the size of the test data. e.g. --size S",
+        include_in_web_ui=False,
+    )
 
 
 def setup_test_data(environment, msg, **kwargs):
@@ -28,7 +35,7 @@ def setup_test_data(environment, msg, **kwargs):
         if not hasattr(user, "test_data"):
             continue
 
-        user.test_data.init_data_from_json(test_data[user.__class__.__name__])
+        user.test_data.init_data_from_json(test_data[type(user.test_data).__name__])
     environment.runner.send_message("acknowledge_data", f"Test data received by worker {worker_index}")
     logger.info("Test Data received from master")
 
@@ -58,16 +65,16 @@ def on_init(environment, **_kwargs):
         # Print master details to the log
         logger.info("I'm a master. Running tests for %s", host_under_test)
         environment.runner.register_message("acknowledge_data", on_acknowledge)
-
-        logger.info("Initializing test data...")
-        print("Initializing test data...")
         try:
             for user in environment.runner.user_classes:
                 if not hasattr(user, "test_data"):
                     continue
-                if user.__class__.__name__ not in test_data:
+                test_data_class_name = type(user.test_data).__name__
+                if test_data_class_name not in test_data:
+                    logger.info(f"Initializing test data for {test_data_class_name}")
+                    print(f"Initializing test data for {test_data_class_name}")
                     user.test_data.update(environment.host, environment.parsed_options)
-                    test_data[user.__class__.__name__] = user.test_data.data.to_json()
+                    test_data[test_data_class_name] = user.test_data.data.to_json()
         except Exception:
             logger.error(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
             print(f"Failed to update test data: {traceback.format_exc()}. Exiting...")

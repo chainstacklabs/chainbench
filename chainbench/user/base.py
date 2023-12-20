@@ -35,6 +35,10 @@ class BaseBenchUser(FastHttpUser):
         self.logger = logging.getLogger(__name__)
         self.rng = RNGManager()
 
+    @classmethod
+    def get_method(cls, method: str) -> t.Callable:
+        return getattr(cls, method)
+
     def on_start(self):
         self.test_data.wait()
 
