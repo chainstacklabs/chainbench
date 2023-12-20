@@ -243,7 +243,7 @@ def start(
             for key, value in _user_classes.items():
                 user_classes[key] = value
         for user_class in user_classes.values():
-            test_data_types.add(type(user_class.test_data).__name__)
+            test_data_types.add(type(getattr(user_class, "test_data")).__name__)
         if len(test_data_types) > 1:
             click.echo(
                 "Error occurred: Multiple test data types detected. "

@@ -28,8 +28,8 @@ def cli_custom_arguments(parser):
 
 def setup_test_data(environment, msg, **kwargs):
     # Fired when the worker receives a message of type 'test_data'
-    test_data = msg.data[0]
-    worker_index = msg.data[1]
+    test_data = msg.data["data"][0]
+    worker_index = msg.data["data"][1]
 
     for user in environment.runner.user_classes:
         if not hasattr(user, "test_data"):
@@ -69,12 +69,12 @@ def on_init(environment, **_kwargs):
             for user in environment.runner.user_classes:
                 if not hasattr(user, "test_data"):
                     continue
-                test_data_class_name = type(user.test_data).__name__
+                test_data_class_name = type(getattr(user, "test_data")).__name__
                 if test_data_class_name not in test_data:
                     logger.info(f"Initializing test data for {test_data_class_name}")
                     print(f"Initializing test data for {test_data_class_name}")
-                    user.test_data.update(environment.host, environment.parsed_options)
-                    test_data[test_data_class_name] = user.test_data.data.to_json()
+                    getattr(user, "test_data").update(environment.host, environment.parsed_options)
+                    test_data[test_data_class_name] = getattr(user, "test_data").data.to_json()
         except Exception:
             logger.error(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
             print(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
@@ -83,7 +83,7 @@ def on_init(environment, **_kwargs):
         else:
             logger.info("Test data is ready")
             for i, worker in enumerate(environment.runner.clients):
-                environment.runner.send_message("test_data", (test_data, i), worker)
+                environment.runner.send_message("test_data", {"data": (test_data, i)}, worker)
                 logger.info(f"Test data is sent to worker {i}")
 
 
