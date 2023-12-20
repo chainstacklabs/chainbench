@@ -32,10 +32,11 @@ class BlockchainDataSize:
 
 @dataclass(frozen=True)
 class Sizes:
-    S = BlockchainDataSize(10, 100, 100)
-    M = BlockchainDataSize(100, 1000, 1000)
-    L = BlockchainDataSize(1000, 10000, 10000)
-    XL = BlockchainDataSize(10000, 100000, 100000)
+    XS = BlockchainDataSize(10, 100, 100)
+    S = BlockchainDataSize(100, 1_000, 1_000)
+    M = BlockchainDataSize(1_000, 10_000, 10_000)
+    L = BlockchainDataSize(10_000, 100_000, 100_000)
+    XL = BlockchainDataSize(100_000, 1_000_000, 1_000_000)
 
     @classmethod
     def get_size(cls, size: str) -> BlockchainDataSize:

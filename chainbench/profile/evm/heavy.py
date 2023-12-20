@@ -1,5 +1,5 @@
 """
-Ethereum profile (heavy mode).
+EVM profile (heavy mode).
 """
 from random import randint
 
@@ -9,7 +9,7 @@ from chainbench.user.evm import EVMBenchUser
 from chainbench.util.rng import get_rng
 
 
-class EthereumHeavyProfile(EVMBenchUser):
+class EVMHeavyProfile(EVMBenchUser):
     wait_time = constant_pacing(10)
 
     @task

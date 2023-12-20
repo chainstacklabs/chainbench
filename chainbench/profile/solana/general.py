@@ -71,7 +71,6 @@ class SolanaProfile(SolanaBenchUser):
     def get_latest_blockhash(self):
         self.make_call(
             method="getLatestBlockhash",
-            params=[],
         ),
 
     @task(75)
@@ -85,14 +84,12 @@ class SolanaProfile(SolanaBenchUser):
     def get_slot(self):
         self.make_call(
             method="getSlot",
-            params=[],
         ),
 
     @task(15)
     def get_block_height(self):
         self.make_call(
             method="getBlockHeight",
-            params=[],
         ),
 
     @task(5)
@@ -117,7 +114,6 @@ class SolanaProfile(SolanaBenchUser):
     def get_recent_blockhash(self):
         self.make_call(
             method="getRecentBlockhash",
-            params=[],
         ),
 
     @task(2)
@@ -131,7 +127,6 @@ class SolanaProfile(SolanaBenchUser):
     def get_epoch_info(self):
         self.make_call(
             method="getEpochInfo",
-            params=[],
         ),
 
     @task(2)

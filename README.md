@@ -105,7 +105,7 @@ After the test is finished, the tool will automatically quit.
 - `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
 - `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
 - `--use-recent-blocks`: Use recent blocks for test data generation.
-- `--size`: Specifies the test data size. Available values are S, M, L, XL. Default is S.
+- `--size`: Specifies the test data size. Available values are XS, S, M, L, XL. Default is S.
 
 You may also run `chainbench start --help` for the full list of parameters and flags.
 

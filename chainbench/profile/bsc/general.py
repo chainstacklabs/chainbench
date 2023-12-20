@@ -51,7 +51,6 @@ class BscProfile(EVMBenchUser):
         self.make_call(
             name="block_number",
             method="eth_blockNumber",
-            params=[],
         ),
 
     @task(18)
@@ -59,7 +58,6 @@ class BscProfile(EVMBenchUser):
         self.make_call(
             name="chain_id",
             method="eth_chainId",
-            params=[],
         ),
 
     @task(13)
@@ -83,7 +81,7 @@ class BscProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory_latest(get_rng()),
+            params=self._get_account_and_block_number_params_factory_latest(get_rng()),
         ),
 
     @task(3)
@@ -95,7 +93,7 @@ class BscProfile(EVMBenchUser):
         ),
 
 
-class GetLogsProfile(EVMBenchUser):
+class BscGetLogsProfile(EVMBenchUser):
     wait_time = constant_pacing(10)
     weight = 12
 
