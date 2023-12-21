@@ -74,7 +74,7 @@ class AvalancheProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory_latest(get_rng()),
+            params=self._get_account_and_block_number_params_factory_latest(get_rng()),
         ),
 
     @task(10)
@@ -129,7 +129,7 @@ class AvalancheProfile(EVMBenchUser):
         ),
 
 
-class GetLogsProfile(EVMBenchUser):
+class AvalancheGetLogsProfile(EVMBenchUser):
     wait_time = constant_pacing(10)
     weight = 9
 

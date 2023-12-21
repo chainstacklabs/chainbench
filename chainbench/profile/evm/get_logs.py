@@ -1,5 +1,5 @@
 """
-
+EVM eth_getLogs profile.
 """
 
 from locust import constant_pacing, task
@@ -8,7 +8,7 @@ from chainbench.user.evm import EVMBenchUser
 from chainbench.util.rng import get_rng
 
 
-class GetLogsProfile(EVMBenchUser):
+class EVMGetLogsProfile(EVMBenchUser):
     wait_time = constant_pacing(10)
 
     @task

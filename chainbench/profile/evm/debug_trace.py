@@ -1,5 +1,5 @@
 """
-Ethereum profile (heavy mode).
+EVM profile (debug_trace methods).
 """
 
 from locust import constant_pacing, task
@@ -8,7 +8,7 @@ from chainbench.user.evm import EVMBenchUser
 from chainbench.util.rng import get_rng
 
 
-class EthereumDebugTraceProfile(EVMBenchUser):
+class EVMDebugTraceProfile(EVMBenchUser):
     wait_time = constant_pacing(10)
 
     @task(324)

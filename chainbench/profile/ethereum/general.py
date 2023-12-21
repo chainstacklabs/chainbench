@@ -52,7 +52,6 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="block_number",
             method="eth_blockNumber",
-            params=[],
         ),
 
     @task(12)
@@ -60,7 +59,7 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="get_balance",
             method="eth_getBalance",
-            params=self._get_balance_params_factory_latest(get_rng()),
+            params=self._get_account_and_block_number_params_factory_latest(get_rng()),
         ),
 
     @task(11)
@@ -68,7 +67,6 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="chain_id",
             method="eth_chainId",
-            params=[],
         ),
 
     @task(9)
@@ -93,7 +91,6 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="trace_transaction",
             method="debug_traceTransaction",
-            params=[],
         ),
 
     @task(2)
@@ -101,11 +98,10 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="client_version",
             method="web3_clientVersion",
-            params=[],
         ),
 
 
-class GetLogsProfile(EVMBenchUser):
+class EthGetLogsProfile(EVMBenchUser):
     wait_time = constant_pacing(10)
     weight = 13
 
