@@ -14,7 +14,7 @@ class RNGManager:
         self._seed = seed
         self._rngs: dict[str, RNG] = {}
 
-    def get_rng(self, name: str | None = None, seed: int | None = None):
+    def get_rng(self, name: str | None = None, seed: int | None = None) -> RNG:
         seed = seed if seed is not None else self._seed
         if name is not None:
             if name not in self._rngs.keys():

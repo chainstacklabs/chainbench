@@ -7,6 +7,7 @@ from multiprocessing import Process
 from pathlib import Path
 
 import click
+from click import Context, Parameter
 from locust import runners
 
 from chainbench.user.evm import EVMMethods
@@ -44,11 +45,11 @@ logger = logging.getLogger(__name__)
 )
 @click.version_option(message="%(prog)s-%(version)s")
 @click.pass_context
-def cli(ctx: click.Context):
+def cli(ctx: Context):
     ctx.obj = ContextData()
 
 
-def validate_method(ctx, param, value) -> str:
+def validate_method(ctx: Context, param: Parameter, value: str) -> str:
     if value is not None:
         method_list = [task_to_method(task) for task in get_subclass_methods(EVMMethods)]
         if value not in method_list:
@@ -60,7 +61,7 @@ def validate_method(ctx, param, value) -> str:
     return value
 
 
-def profile_exists(profile, profile_dir):
+def profile_exists(profile: str, profile_dir: Path) -> None:
     profile_list = get_profiles(profile_dir)
     if profile not in profile_list:
         raise click.BadParameter(
@@ -69,13 +70,9 @@ def profile_exists(profile, profile_dir):
         )
 
 
-def validate_profile_dir(ctx, param, value) -> Path | None:
+def validate_profile_dir(ctx: Context, param: Parameter, value: Path) -> Path | None:
     if value is not None:
         profile_dir = Path(value)
-        if not profile_dir.exists():
-            raise click.BadParameter(f"Profile directory {value} does not exist.")
-        if not profile_dir.is_dir():
-            raise click.BadParameter(f"Profile directory {value} is not a directory.")
         if "profile" in ctx.params:
             profile_exists(ctx.params["profile"], profile_dir)
         return profile_dir
@@ -83,7 +80,7 @@ def validate_profile_dir(ctx, param, value) -> Path | None:
         return None
 
 
-def validate_profile(ctx, param, value) -> str:
+def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
     if value is not None:
         if "profile_dir" in ctx.params:
             profile_exists(value, ctx.params["profile_dir"])
@@ -100,7 +97,12 @@ def validate_profile(ctx, param, value) -> str:
 )
 @click.argument("method", default=None, callback=validate_method, required=False)
 @click.option(
-    "-d", "--profile-dir", default=None, callback=validate_profile_dir, type=click.Path(), help="Profile directory"
+    "-d",
+    "--profile-dir",
+    default=None,
+    callback=validate_profile_dir,
+    type=click.Path(exists=True, dir_okay=True, file_okay=False, path_type=Path),
+    help="Profile directory",
 )
 @click.option(
     "-p",
@@ -133,7 +135,7 @@ def validate_profile(ctx, param, value) -> str:
     "--results-dir",
     default=Path("results"),
     help="Results directory",
-    type=click.Path(),
+    type=click.Path(dir_okay=True, file_okay=False, writable=True, path_type=Path),
     show_default=True,
 )
 @click.option("--headless", is_flag=True, help="Run in headless mode")
@@ -176,7 +178,7 @@ def validate_profile(ctx, param, value) -> str:
 @click.option("--size", default=None, help="Set the size of the test data. e.g. --size S")
 @click.pass_context
 def start(
-    ctx: click.Context,
+    ctx: Context,
     profile: str,
     profile_dir: Path | None,
     host: str,
@@ -203,7 +205,7 @@ def start(
     use_recent_blocks: bool,
     size: str | None,
     method: str | None = None,
-):
+) -> None:
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
         notifier = Notifier(topic=notify)
@@ -383,7 +385,7 @@ def start(
     ctx.obj.notifier.notify(title="Test finished", message=f"Test finished for {profile}", tags=["tada"])
 
 
-def validate_clients(ctx, param, value) -> list[str]:
+def validate_clients(ctx: Context, param: Parameter, value: str) -> list[str]:
     from chainbench.tools.discovery.rpc import RPCDiscovery
 
     if value is not None:
@@ -414,7 +416,7 @@ def validate_clients(ctx, param, value) -> list[str]:
     help="List of methods used to test the endpoint will "
     "be based on the clients specified here, default to eth. e.g. --clients eth,bsc.\n",
 )
-def discover(endpoint: str | None, clients: list[str]):
+def discover(endpoint: str | None, clients: list[str]) -> None:
     if not endpoint:
         click.echo("Target endpoint is required.")
         sys.exit(1)
@@ -435,14 +437,14 @@ def discover(endpoint: str | None, clients: list[str]):
 
 
 @cli.group(name="list", help="Lists values of the given type.")
-def _list():
+def _list() -> None:
     pass
 
 
 @_list.command(
     help="Lists all available client options for method discovery.",
 )
-def clients():
+def clients() -> None:
     from chainbench.tools.discovery.rpc import RPCDiscovery
 
     for client in RPCDiscovery.get_clients():
@@ -458,10 +460,10 @@ def clients():
     "--profile-dir",
     default=get_base_path(__file__) / "profile",
     callback=validate_profile_dir,
-    type=click.Path(),
+    type=click.Path(exists=True, dir_okay=True, file_okay=False, path_type=Path),
     help="Profile directory",
 )
-def profiles(profile_dir: Path):
+def profiles(profile_dir: Path) -> None:
     for profile in get_profiles(profile_dir):
         click.echo(profile)
 
@@ -469,7 +471,7 @@ def profiles(profile_dir: Path):
 @_list.command(
     help="Lists all available evm methods.",
 )
-def methods():
+def methods() -> None:
     task_list = get_subclass_methods(EVMMethods)
     for task in task_list:
         click.echo(task_to_method(task))

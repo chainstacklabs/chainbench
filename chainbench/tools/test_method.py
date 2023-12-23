@@ -2,13 +2,14 @@
 User profile for testing a specific EVM method.
 """
 from locust import constant_pacing, events, task
+from locust.argument_parser import LocustArgumentParser
 
 from chainbench.user.evm import EVMMethods
 from chainbench.util.cli import get_subclass_methods, method_to_task, task_to_method
 
 
 @events.init_command_line_parser.add_listener
-def _(parser):
+def _(parser: LocustArgumentParser) -> None:
     parser.add_argument(
         "--method",
         type=str,
@@ -23,5 +24,5 @@ class TestEVMMethod(EVMMethods):
     wait_time = constant_pacing(1)
 
     @task
-    def run_task(self):
+    def run_task(self) -> None:
         self.get_method(method_to_task(self.environment.parsed_options.method))(self)

@@ -36,11 +36,11 @@ class StarkNetTestData(EVMTestData):
     def _fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("starknet_chainId"))
 
-    def _fetch_latest_block_number(self) -> int:
+    def _fetch_latest_block_number(self) -> BlockNumber:
         result = self._make_call("starknet_blockNumber")
         return result
 
-    def _fetch_block(self, block_number: int | str, return_txs: bool = True) -> tuple[int, dict]:
+    def _fetch_block(self, block_number: BlockNumber | str, return_txs: bool = True) -> tuple[BlockNumber, Block]:
         if isinstance(block_number, str) and (block_number := block_number.lower()) not in (
             "latest",
             "pending",
@@ -64,7 +64,7 @@ class StarkNetTestData(EVMTestData):
         blocks: set[tuple[BlockNumber, BlockHash]],
         size: BlockchainDataSize,
         return_txs: bool = True,
-    ):
+    ) -> None:
         if size.blocks > len(blocks):
             self._append_if_not_none(blocks, (block_number, block["block_hash"]))
         if return_txs:

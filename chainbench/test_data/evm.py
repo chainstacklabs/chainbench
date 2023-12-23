@@ -1,6 +1,8 @@
 import logging
 from typing import Mapping
 
+from configargparse import Namespace
+
 from chainbench.test_data.base import (
     Account,
     BaseTestData,
@@ -51,7 +53,7 @@ class EVMTestData(BaseTestData):
     def _fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("eth_chainId"))
 
-    def _fetch_latest_block_number(self) -> int:
+    def _fetch_latest_block_number(self) -> BlockNumber:
         result = self._make_call("eth_blockNumber")
         return self._parse_hex_to_int(result)
 
@@ -67,7 +69,7 @@ class EVMTestData(BaseTestData):
         result = self._make_call("eth_getBlockByNumber", [block_number, return_txs])
         return self._parse_hex_to_int(result["number"]), result
 
-    def _get_start_and_end_blocks(self, parsed_options) -> tuple[BlockNumber, BlockNumber]:
+    def _get_start_and_end_blocks(self, parsed_options: Namespace) -> tuple[BlockNumber, BlockNumber]:
         chain_id: int = self._fetch_chain_id()
         end_block_number = self._fetch_latest_block_number()
         if not parsed_options.use_recent_blocks and chain_id in self.CHAIN_INFO:
@@ -88,7 +90,7 @@ class EVMTestData(BaseTestData):
         blocks: set[tuple[BlockNumber, BlockHash]],
         size: BlockchainDataSize,
         return_txs: bool = True,
-    ):
+    ) -> None:
         if size.blocks > len(blocks):
             self._append_if_not_none(blocks, (block_number, block["hash"]))
         if return_txs:

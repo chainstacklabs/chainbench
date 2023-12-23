@@ -1,5 +1,6 @@
 import logging
 
+from configargparse import Namespace
 from tenacity import retry, stop_after_attempt
 
 from chainbench.test_data.base import (
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 class SolanaTestData(BaseTestData):
     BLOCK_TIME = 0.4
 
-    def _fetch_block(self, block_number: int, return_txs: bool = True) -> tuple[BlockNumber, Block]:
+    def _fetch_block(self, block_number: BlockNumber, return_txs: bool = True) -> tuple[BlockNumber, Block]:
         if return_txs:
             transaction_details = "accounts"
         else:
@@ -37,21 +38,21 @@ class SolanaTestData(BaseTestData):
             raise e
         return block_number, result
 
-    def _fetch_latest_slot_number(self):
+    def _fetch_latest_slot_number(self) -> BlockNumber:
         slot = self._make_call("getLatestBlockhash")["context"]["slot"]
         return slot
 
     @retry(reraise=True, stop=stop_after_attempt(5))
-    def _fetch_latest_block(self):
+    def _fetch_latest_block(self) -> tuple[BlockNumber, Block]:
         slot_number = self._fetch_latest_slot_number()
-        latest_block = self._fetch_block(slot_number, return_txs=True)
-        return slot_number, latest_block
+        latest_block_number, latest_block = self._fetch_block(slot_number, return_txs=True)
+        return latest_block_number, latest_block
 
-    def _fetch_first_available_block(self):
-        block = self._make_call("getFirstAvailableBlock")
-        return block
+    def _fetch_first_available_block(self) -> BlockNumber:
+        block_number = self._make_call("getFirstAvailableBlock")
+        return block_number
 
-    def _get_start_and_end_blocks(self, parsed_options) -> tuple[int, int]:
+    def _get_start_and_end_blocks(self, parsed_options: Namespace) -> tuple[BlockNumber, BlockNumber]:
         end_block_number, _latest_block = self._fetch_latest_block()
         start_block_number = self._fetch_first_available_block()
 
@@ -71,7 +72,7 @@ class SolanaTestData(BaseTestData):
         blocks: set[tuple[BlockNumber, BlockHash]],
         size: BlockchainDataSize,
         return_txs: bool = True,
-    ):
+    ) -> None:
         if size.blocks > len(blocks):
             self._append_if_not_none(blocks, (block_number, block["blockhash"]))
         if return_txs:

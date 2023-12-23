@@ -1,4 +1,7 @@
+import typing as t
+
 from chainbench.test_data import StarkNetTestData
+from chainbench.test_data.base import Account, TxHash
 from chainbench.user.base import BaseBenchUser
 from chainbench.util.rng import RNG
 
@@ -8,7 +11,7 @@ class StarkNetBenchUser(BaseBenchUser):
     test_data = StarkNetTestData()
 
     @staticmethod
-    def _call_params_factory(rng: RNG):
+    def _call_params_factory(rng: RNG) -> dict[str, t.Any]:
         return {
             "request": {
                 "contract_address": "0x10884171baf1914edc28d7afb619b40a4051cfae78a094a55d230f19e944a28",
@@ -19,7 +22,7 @@ class StarkNetBenchUser(BaseBenchUser):
         }
 
     @staticmethod
-    def _simulate_transaction_params_factory(rng: RNG):
+    def _simulate_transaction_params_factory(rng: RNG) -> list[dict | list[dict] | list[str]]:
         return [
             {"block_number": rng.random.randint(124000, 124400)},
             [
@@ -50,7 +53,7 @@ class StarkNetBenchUser(BaseBenchUser):
         ]
 
     @staticmethod
-    def _estimate_fee_params_factory(rng: RNG):
+    def _estimate_fee_params_factory(rng: RNG) -> dict[str, t.Any]:
         return {
             "request": [
                 {
@@ -79,11 +82,11 @@ class StarkNetBenchUser(BaseBenchUser):
             "block_id": {"block_number": rng.random.randint(368000, 368900)},
         }
 
-    def _get_class_params_factory(self, rng: RNG):
+    def _get_class_params_factory(self, rng: RNG) -> list[Account | str]:
         return ["latest", self.test_data.get_random_account(rng)]
 
-    def _get_tx_hash_params_factory(self, rng: RNG):
+    def _get_tx_hash_params_factory(self, rng: RNG) -> list[TxHash]:
         return [self.test_data.get_random_tx_hash(rng)]
 
-    def _get_contract_address(self, rng: RNG):
+    def _get_contract_address(self, rng: RNG) -> Account:
         return self.test_data.get_random_account(rng)

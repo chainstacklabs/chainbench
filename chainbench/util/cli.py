@@ -50,7 +50,7 @@ def ensure_results_dir(profile: str, parent_dir: Path, run_id: str | None = None
     return results_dir
 
 
-def get_subclass_methods(cls) -> list[str]:
+def get_subclass_methods(cls: type) -> list[str]:
     methods = set(dir(cls))
     unique_subclass_methods = methods.difference(*(dir(base) for base in cls.__bases__))
     return sorted(list(unique_subclass_methods))

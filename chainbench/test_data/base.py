@@ -1,11 +1,11 @@
 import json
 import logging
 import typing as t
-from argparse import Namespace
 from dataclasses import dataclass, field
 from secrets import token_hex
 
 import httpx
+from configargparse import Namespace
 from gevent.lock import Semaphore as GeventSemaphore
 from tenacity import retry, stop_after_attempt
 
@@ -59,10 +59,10 @@ class BlockchainData:
     tx_hashes: TxHashes = field(default_factory=list)
     accounts: Accounts = field(default_factory=list)
 
-    def to_json(self):
+    def to_json(self) -> str:
         return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
 
-    def from_json(self, json_data):
+    def from_json(self, json_data: str) -> None:
         data = json.loads(json_data)
         self.start_block_number = data["start_block_number"]
         self.end_block_number = data["end_block_number"]
@@ -93,7 +93,7 @@ class BaseTestData:
 
         self._data: BlockchainData | None = None
 
-    def update(self, host_url: str, parsed_options: Namespace):
+    def update(self, host_url: str, parsed_options: Namespace) -> None:
         self._logger.info("Updating data")
         self._host = host_url
         self._logger.debug("Host: %s", self._host)
@@ -104,14 +104,24 @@ class BaseTestData:
         self._lock.release()
         self._logger.info("Lock released")
 
-    def _process_block(self, block_number, block, txs, tx_hashes, accounts, blocks, size, return_txs):
+    def _process_block(
+        self,
+        block_number: BlockNumber,
+        block: Block,
+        txs: list[Tx],
+        tx_hashes: set[TxHash],
+        accounts: set[Account],
+        blocks: set[tuple[BlockNumber, BlockHash]],
+        size: BlockchainDataSize,
+        return_txs: bool = True,
+    ) -> None:
         raise NotImplementedError
 
-    def _get_start_and_end_blocks(self, parsed_options):
+    def _get_start_and_end_blocks(self, parsed_options: Namespace) -> tuple[BlockNumber, BlockNumber]:
         raise NotImplementedError
 
     # get initial data from blockchain
-    def _get_init_data_from_blockchain(self, parsed_options) -> BlockchainData:
+    def _get_init_data_from_blockchain(self, parsed_options: Namespace) -> BlockchainData:
         def print_progress():
             print(
                 f"txs = {len(txs)}/{size.txs}  "
@@ -155,7 +165,7 @@ class BaseTestData:
             accounts=sorted(list(accounts)),
         )
 
-    def init_data_from_json(self, json_data: str):
+    def init_data_from_json(self, json_data: str) -> None:
         self._data = BlockchainData()
         self._data.from_json(json_data)
         self._logger.info("Data updated. Releasing lock")
@@ -185,14 +195,14 @@ class BaseTestData:
         return int(value, 16)
 
     @staticmethod
-    def _append_if_not_none(data, val):
+    def _append_if_not_none(data: list | set, val: t.Any) -> None:
         if val is not None:
             if isinstance(data, list):
                 data.append(val)
             elif isinstance(data, set):
                 data.add(val)
 
-    def _make_body(self, method: str, params: list[t.Any] | None = None):
+    def _make_body(self, method: str, params: list[t.Any] | None = None) -> dict[str, t.Any]:
         if params is None:
             params = []
 
@@ -203,7 +213,7 @@ class BaseTestData:
             "id": token_hex(8),
         }
 
-    def _make_call(self, method: str, params: list[t.Any] | None = None):
+    def _make_call(self, method: str, params: list[t.Any] | None = None) -> t.Any:
         if params is None:
             params = []
 
@@ -236,17 +246,22 @@ class BaseTestData:
 
         return data["result"]
 
-    def close(self):
+    def close(self) -> None:
         self._client.close()
 
-    def wait(self):
+    def wait(self) -> None:
         self._lock.wait()
 
-    def _fetch_block(self, block_number, return_txs: bool = True) -> tuple[BlockNumber, Block]:
+    def _fetch_block(self, block_number: BlockNumber, return_txs: bool = True) -> tuple[BlockNumber, Block]:
         raise NotImplementedError
 
     @retry(reraise=True, stop=stop_after_attempt(5))
-    def _fetch_random_block(self, start: int, end: int, return_txs: bool = True) -> tuple[BlockNumber, Block]:
+    def _fetch_random_block(
+        self,
+        start: BlockNumber,
+        end: BlockNumber,
+        return_txs: bool = True,
+    ) -> tuple[BlockNumber, Block]:
         rng = get_rng()
         block_number = rng.random.randint(start, end)
         return self._fetch_block(block_number, return_txs=return_txs)
