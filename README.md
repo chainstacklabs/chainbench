@@ -159,12 +159,13 @@ Take note that larger data size will result in longer test data generation time 
 We plan to add an option to reuse previously generated test data in the future to avoid regenerating the same
 test data for multiple test runs.
 
-| Size | Blocks | Txs    | Accounts/Addresses |
-|------|--------|--------|--------------------|
-| S    | 10     | 100    | 100                |
-| M    | 100    | 1000   | 1000               |
-| L    | 1000   | 10000  | 10000              |
-| XL   | 10000  | 100000 | 100000             |
+| Size  | Blocks  | Txs       | Accounts/Addresses |
+|-------|---------|-----------|--------------------|
+| XS    | 10      | 100       | 100                |
+| S     | 100     | 1,000     | 1,000              |
+| M     | 1,000   | 10,000    | 10,000             |
+| L     | 10,000  | 100,000   | 100,000            |
+| XL    | 100,000 | 1,000,000 | 1,000,000          |
 
 ### Monitors
 Monitors are separate processes that run during the test to collect or process some additional data and metrics relevant to the test.
