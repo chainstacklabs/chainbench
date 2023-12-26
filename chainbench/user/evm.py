@@ -1,7 +1,7 @@
 from chainbench.test_data import EVMTestData
 from chainbench.test_data.base import Account, BlockHash, BlockNumber, TxHash
 from chainbench.user.base import BaseBenchUser
-from chainbench.util.rng import RNG, get_rng
+from chainbench.util.rng import RNG
 
 
 class EVMBenchUser(BaseBenchUser):
@@ -31,7 +31,7 @@ class EVMBenchUser(BaseBenchUser):
         return [self.test_data.get_random_block_hash(rng), True]
 
     def _get_account_and_block_number_params_factory_latest(self, rng: RNG) -> list[Account | str]:
-        return [self.test_data.get_random_account(rng), "latest"]
+        return [self.test_data.get_random_account(rng), hex(self.test_data.get_random_block_number(rng))]
 
     def _get_balance_params_factory(self, rng: RNG) -> list[Account | str]:
         return [
@@ -114,9 +114,19 @@ class EVMBenchUser(BaseBenchUser):
             }
         ]
 
-    @staticmethod
-    def _eth_fee_history_params_factory(rng: RNG) -> list[int | str | list[int]]:
-        return [rng.random.randint(1, 1024), "latest", [25, 75]]
+    def _eth_fee_history_params_factory(self, rng: RNG) -> list[int | str | list[int]]:
+        return [rng.random.randint(1, 1024), hex(self.test_data.get_random_block_number(rng)), [25, 75]]
+
+    def _erc20_eth_call_params_factory(self, rng: RNG):
+        if self.test_data.chain_info is None:
+            raise ValueError("Chain info is not set")
+        contracts = self.test_data.chain_info.get_contracts()
+        contract = rng.random.choice(contracts)
+        function_params = rng.random.choice(contract.function_params)
+        return [
+            function_params(address=self.test_data.get_random_account(rng)),
+            hex(self.test_data.get_random_block_number(rng)),
+        ]
 
 
 class EVMMethods(EVMBenchUser):
@@ -132,21 +142,21 @@ class EVMMethods(EVMBenchUser):
             method="eth_blockNumber",
         )
 
-    def eth_chain_id_task(self) -> None:
+    def eth_call_task(self):
         self.make_call(
-            method="eth_chainId",
+            method="eth_call",
+            params=self._erc20_eth_call_params_factory(self.rng.get_rng()),
         )
 
-    def eth_estimate_gas_task(self) -> None:
+    def eth_chain_id_task(self):
         self.make_call(
-            method="eth_estimateGas",
-            params=self._eth_estimate_gas_params_factory(get_rng()),
+            method="eth_chainId",
         )
 
     def eth_fee_history_task(self) -> None:
         self.make_call(
             method="eth_feeHistory",
-            params=self._eth_fee_history_params_factory(get_rng()),
+            params=self._eth_fee_history_params_factory(self.rng.get_rng()),
         )
 
     def eth_gas_price_task(self) -> None:
@@ -157,75 +167,75 @@ class EVMMethods(EVMBenchUser):
     def eth_get_logs_task(self) -> None:
         self.make_call(
             method="eth_getLogs",
-            params=self._get_logs_params_factory(get_rng()),
+            params=self._get_logs_params_factory(self.rng.get_rng()),
         )
 
     def eth_get_balance_task(self) -> None:
         self.make_call(
             method="eth_getBalance",
-            params=self._get_account_and_block_number_params_factory_latest(get_rng()),
+            params=self._get_account_and_block_number_params_factory_latest(self.rng.get_rng()),
         )
 
     def eth_get_block_by_hash_task(self) -> None:
         self.make_call(
             method="eth_getBlockByHash",
-            params=self._block_by_hash_params_factory(get_rng()),
+            params=self._block_by_hash_params_factory(self.rng.get_rng()),
         )
 
     def eth_get_block_by_number_task(self) -> None:
         self.make_call(
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(self.rng.get_rng()),
         )
 
     def eth_get_block_receipts_task(self) -> None:
         self.make_call(
             method="eth_getBlockReceipts",
-            params=[hex(self.test_data.get_random_block_number(get_rng()))],
+            params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
         )
 
     def eth_get_block_transaction_count_by_hash_task(self) -> None:
         self.make_call(
             method="eth_getBlockTransactionCountByHash",
-            params=[self.test_data.get_random_block_hash(get_rng())],
+            params=[self.test_data.get_random_block_hash(self.rng.get_rng())],
         )
 
     def eth_get_block_transaction_count_by_number_task(self) -> None:
         self.make_call(
             method="eth_getBlockTransactionCountByNumber",
-            params=[hex(self.test_data.get_random_block_number(get_rng()))],
+            params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
         )
 
     def eth_get_header_by_hash_task(self) -> None:
         self.make_call(
             method="eth_getHeaderByHash",
-            params=[self.test_data.get_random_block_hash(get_rng())],
+            params=[self.test_data.get_random_block_hash(self.rng.get_rng())],
         )
 
     def eth_get_header_by_number_task(self) -> None:
         self.make_call(
             method="eth_getHeaderByNumber",
-            params=[hex(self.test_data.get_random_block_number(get_rng()))],
+            params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
         )
 
     def eth_get_transaction_by_hash_task(self) -> None:
         self.make_call(
             method="eth_getTransactionByHash",
-            params=self._transaction_by_hash_params_factory(get_rng()),
+            params=self._transaction_by_hash_params_factory(self.rng.get_rng()),
         )
 
     def eth_get_transaction_receipt_task(self) -> None:
         self.make_call(
             method="eth_getTransactionReceipt",
-            params=self._transaction_by_hash_params_factory(get_rng()),
+            params=self._transaction_by_hash_params_factory(self.rng.get_rng()),
         )
 
     def eth_get_transaction_by_block_hash_and_index_task(self) -> None:
         self.make_call(
             method="eth_getTransactionByBlockHashAndIndex",
             params=[
-                self.test_data.get_random_block_hash(get_rng()),
-                hex(get_rng().random.randint(0, 20)),
+                self.test_data.get_random_block_hash(self.rng.get_rng()),
+                hex(self.rng.get_rng().random.randint(0, 20)),
             ],
         )
 
@@ -233,27 +243,27 @@ class EVMMethods(EVMBenchUser):
         self.make_call(
             method="eth_getTransactionByBlockNumberAndIndex",
             params=[
-                hex(self.test_data.get_random_block_number(get_rng())),
-                hex(get_rng().random.randint(0, 20)),
+                hex(self.test_data.get_random_block_number(self.rng.get_rng())),
+                hex(self.rng.get_rng().random.randint(0, 20)),
             ],
         )
 
     def eth_get_transaction_count_task(self) -> None:
         self.make_call(
             method="eth_getTransactionCount",
-            params=self._get_account_and_block_number_params_factory_latest(get_rng()),
+            params=self._get_account_and_block_number_params_factory_latest(self.rng.get_rng()),
         )
 
     def eth_get_uncle_count_by_block_hash_task(self) -> None:
         self.make_call(
             method="eth_getUncleCountByBlockHash",
-            params=[self.test_data.get_random_block_hash(get_rng())],
+            params=[self.test_data.get_random_block_hash(self.rng.get_rng())],
         )
 
     def eth_get_uncle_count_by_block_number_task(self) -> None:
         self.make_call(
             method="eth_getUncleCountByBlockNumber",
-            params=[hex(self.test_data.get_random_block_number(get_rng()))],
+            params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
         )
 
     def eth_max_priority_fee_per_gas_task(self) -> None:
@@ -269,25 +279,25 @@ class EVMMethods(EVMBenchUser):
     def debug_trace_block_by_hash_task(self) -> None:
         self.make_call(
             method="debug_traceBlockByHash",
-            params=self._trace_block_by_hash_params_factory(get_rng()),
+            params=self._trace_block_by_hash_params_factory(self.rng.get_rng()),
         )
 
     def debug_trace_block_by_number_task(self) -> None:
         self.make_call(
             method="debug_traceBlockByNumber",
-            params=self._trace_block_by_number_params_factory(get_rng()),
+            params=self._trace_block_by_number_params_factory(self.rng.get_rng()),
         )
 
     def debug_trace_call_task(self) -> None:
         self.make_call(
             method="debug_traceCall",
-            params=self._trace_call_params_factory(get_rng()),
+            params=self._trace_call_params_factory(self.rng.get_rng()),
         )
 
     def debug_trace_transaction_task(self) -> None:
         self.make_call(
             method="debug_traceTransaction",
-            params=self._trace_transaction_params_factory(get_rng()),
+            params=self._trace_transaction_params_factory(self.rng.get_rng()),
         )
 
     def net_listening_task(self) -> None:
@@ -308,19 +318,19 @@ class EVMMethods(EVMBenchUser):
     def trace_block_task(self) -> None:
         self.make_call(
             method="trace_block",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(self.rng.get_rng()),
         )
 
     def trace_replay_block_transactions_task(self) -> None:
         self.make_call(
             method="trace_replayBlockTransactions",
-            params=self._trace_replay_block_transaction_params_factory(get_rng()),
+            params=self._trace_replay_block_transaction_params_factory(self.rng.get_rng()),
         )
 
     def trace_replay_transaction_task(self) -> None:
         self.make_call(
             method="trace_replayTransaction",
-            params=self._trace_replay_transaction_params_factory(get_rng()),
+            params=self._trace_replay_transaction_params_factory(self.rng.get_rng()),
         )
 
     def web3_client_version_task(self) -> None:
@@ -331,5 +341,5 @@ class EVMMethods(EVMBenchUser):
     def web3_sha3_task(self) -> None:
         self.make_call(
             method="web3_sha3",
-            params=[self.test_data.get_random_tx_hash(get_rng())],
+            params=[self.test_data.get_random_tx_hash(self.rng.get_rng())],
         )

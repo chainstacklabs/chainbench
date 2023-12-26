@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from typing import Mapping
 
 from chainbench.test_data import EVMTestData
@@ -8,12 +9,16 @@ from chainbench.test_data.base import (
     BlockchainDataSize,
     BlockHash,
     BlockNumber,
-    ChainInfo,
     Tx,
     TxHash,
 )
 
 logger = logging.getLogger(__name__)
+
+
+class ChainInfo(t.TypedDict):
+    name: str
+    start_block: BlockNumber
 
 
 class StarkNetTestData(EVMTestData):
@@ -33,7 +38,7 @@ class StarkNetTestData(EVMTestData):
         # },
     }
 
-    def _fetch_chain_id(self) -> int:
+    def fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("starknet_chainId"))
 
     def _fetch_latest_block_number(self) -> BlockNumber:

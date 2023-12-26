@@ -234,6 +234,10 @@ def start(
     else:
         profile_path = profile_dir
 
+    if not profile_path.exists():
+        click.echo(f"Profile path {profile_path} does not exist.")
+        sys.exit(1)
+
     if test_by_directory:
         from locust.argument_parser import find_locustfiles
         from locust.util.load_locustfile import load_locustfile
@@ -256,23 +260,20 @@ def start(
             for test_data_type in test_data_types:
                 click.echo(test_data_type)
             sys.exit(1)
-
-    if headless:
-        if method:
-            profile = method
-        elif not profile:
-            profile = profile_path.name
-    else:
-        if test_by_directory:
+        profile = profile_path.name
+        if not headless:
             enable_class_picker = True
-        if method:
-            profile = "test_method"
-        else:
-            profile = profile_path.name
 
-    if not profile_path.exists():
-        click.echo(f"Profile path {profile_path} does not exist.")
-        sys.exit(1)
+    click.echo(f"Testing target endpoint: {target}")
+
+    if method:
+        if headless:
+            profile = method
+        else:
+            profile = "test_method"
+        click.echo(f"Testing method: {method}")
+    else:
+        click.echo(f"Testing profile: {profile}")
 
     results_dir = Path(results_dir).resolve()
     results_path = ensure_results_dir(profile=profile, parent_dir=results_dir, run_id=run_id)
@@ -319,9 +320,9 @@ def start(
         enable_class_picker=enable_class_picker,
     )
     if headless:
-        click.echo(f"Starting master in headless mode for {profile}")
+        click.echo("Starting master in headless mode")
     else:
-        click.echo(f"Starting master for {profile}")
+        click.echo("Starting master")
 
     is_posix = os.name == "posix"
 
@@ -352,17 +353,14 @@ def start(
         worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
         ctx.obj.workers.append(worker_process)
-        click.echo(f"Starting worker {worker_id + 1} for {profile}")
+        click.echo(f"Starting worker {worker_id + 1}")
     if headless:
-        click.echo(f"Running test in headless mode for {profile}")
+        click.echo("\nRunning test in headless mode\n")
         ctx.obj.notifier.notify(
             title="Test started",
             message=f"Running test in headless mode for {profile}",
             tags=["loudspeaker"],
         )
-    else:
-        # Print out the URL to access the test
-        click.echo(f"Run test: http://{host}:8089 {profile}")
 
     unique_monitors: set[str] = set(monitor)
     for m in unique_monitors:

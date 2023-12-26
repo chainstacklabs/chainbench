@@ -30,13 +30,7 @@ class EthereumProfile(EVMBenchUser):
         self.make_call(
             name="call",
             method="eth_call",
-            params=[
-                {
-                    "to": "0x8BB4C975Ff3c250e0ceEA271728547f3802B36Fd",
-                    "data": "0x734e7fb90000000000000000000000000000000000000000000000000000000064d40c600000000000000000000000000000000000000000000000000000000064d43690",  # noqa: E501
-                },
-                "latest",
-            ],
+            params=self._erc20_eth_call_params_factory(get_rng()),
         ),
 
     @task(24)

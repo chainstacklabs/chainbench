@@ -21,6 +21,7 @@ Block = dict[str, t.Any]
 BlockNumber = int
 BlockHash = str
 Blocks = list[tuple[BlockNumber, BlockHash]]
+ChainId = int
 
 
 @dataclass(frozen=True)
@@ -72,11 +73,6 @@ class BlockchainData:
         self.accounts = data["accounts"]
 
 
-class ChainInfo(t.TypedDict):
-    name: str
-    start_block: BlockNumber
-
-
 class BaseTestData:
     DEFAULT_SIZE = "S"
 
@@ -93,10 +89,12 @@ class BaseTestData:
 
         self._data: BlockchainData | None = None
 
-    def update(self, host_url: str, parsed_options: Namespace) -> None:
-        self._logger.info("Updating data")
+    def set_host(self, host_url: str):
         self._host = host_url
         self._logger.debug("Host: %s", self._host)
+
+    def update(self, parsed_options: Namespace):
+        self._logger.info("Updating data")
         self._data = self._get_init_data_from_blockchain(parsed_options)
         self._logger.info("Data fetched")
         self._logger.debug("Data: %s", self._data)
