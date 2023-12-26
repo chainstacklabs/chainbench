@@ -7,6 +7,7 @@ from locust.env import Environment
 from locust.rpc import Message
 from locust.runners import MasterRunner, WorkerRunner
 
+from chainbench.test_data import EVMTestData
 from chainbench.util.timer import Timer
 
 logger = logging.getLogger(__name__)
@@ -37,12 +38,14 @@ def setup_test_data(environment: Environment, msg: Message, **kwargs):
     if isinstance(environment.runner, WorkerRunner):
         for user in environment.runner.user_classes:
             if hasattr(user, "test_data"):
-                user.test_data.init_data_from_json(test_data[type(user.test_data).__name__])
-                environment.runner.send_message(
-                    "acknowledge_data", {"data": f"Test data received by worker {worker_index}"}
-                )
+                test_data_class_name = type(user.test_data).__name__
+                user.test_data.init_data_from_json(test_data[test_data_class_name])
+                if isinstance(user.test_data, EVMTestData):
+                    chain_id = test_data["chain_id"][test_data_class_name]
+                    user.test_data.set_chain_info(chain_id)
             else:
                 raise AttributeError(f"{user} class does not have 'test_data' attribute")
+        environment.runner.send_message("acknowledge_data", {"data": f"Test data received by worker {worker_index}"})
         logger.info("Test Data received from master")
 
 
@@ -80,7 +83,14 @@ def on_init(environment: Environment, **_kwargs):
                     if test_data_class_name not in test_data:
                         logger.info(f"Initializing test data for {test_data_class_name}")
                         print(f"Initializing test data for {test_data_class_name}")
-                        user_test_data.update(environment.host, environment.parsed_options)
+                        user_test_data.set_host(environment.host)
+                        if isinstance(user.test_data, EVMTestData):
+                            chain_id = user_test_data.fetch_chain_id()
+                            user_test_data.set_chain_info(chain_id)
+                            logger.info(f"Target endpoint network is {user_test_data.chain_info.name}")
+                            print(f"Target endpoint network is {user_test_data.chain_info.name}")
+                            test_data["chain_id"] = {test_data_class_name: chain_id}
+                        user_test_data.update(environment.parsed_options)
                         test_data[test_data_class_name] = user_test_data.data.to_json()
                 else:
                     raise AttributeError(f"{user} class does not have 'test_data' attribute")
@@ -94,6 +104,9 @@ def on_init(environment: Environment, **_kwargs):
             for i, worker in enumerate(environment.runner.clients):
                 environment.runner.send_message("test_data", {"data": (test_data, i)}, worker)
                 logger.info(f"Test data is sent to worker {i}")
+            if environment.web_ui:
+                print(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
+                logger.info(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
 
 
 def on_test_start(environment: Environment, **_kwargs):

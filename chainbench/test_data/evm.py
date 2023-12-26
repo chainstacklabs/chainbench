@@ -1,5 +1,4 @@
 import logging
-from typing import Mapping
 
 from configargparse import Namespace
 
@@ -10,47 +9,24 @@ from chainbench.test_data.base import (
     BlockchainDataSize,
     BlockHash,
     BlockNumber,
-    ChainInfo,
+    ChainId,
     Tx,
     TxHash,
 )
+from chainbench.test_data.blockchain.evm import ChainInfo
 
 logger = logging.getLogger(__name__)
 
 
 class EVMTestData(BaseTestData):
-    CHAIN_INFO: Mapping[int, ChainInfo] = {
-        1: {
-            "name": "ethereum-mainnet",
-            "start_block": 10000000,
-        },
-        56: {
-            "name": "binance-smart-chain",
-            "start_block": 20000000,
-        },
-        137: {
-            "name": "polygon-mainnet",
-            "start_block": 35000000,
-        },
-        26863: {
-            "name": "oasis-mainnet",
-            "start_block": 8000000,
-        },
-        43114: {
-            "name": "avalanche-mainnet",
-            "start_block": 20000000,
-        },
-        8453: {
-            "name": "base-mainnet",
-            "start_block": 1,
-        },
-        84531: {
-            "name": "base-testnet",
-            "start_block": 1,
-        },
-    }
+    def __init__(self, rpc_version: str = "2.0"):
+        super().__init__(rpc_version)
+        self.chain_info: ChainInfo | None = None
 
-    def _fetch_chain_id(self) -> int:
+    def set_chain_info(self, chain_id: ChainId):
+        self.chain_info = ChainInfo(chain_id)
+
+    def fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("eth_chainId"))
 
     def _fetch_latest_block_number(self) -> BlockNumber:
@@ -70,13 +46,12 @@ class EVMTestData(BaseTestData):
         return self._parse_hex_to_int(result["number"]), result
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> tuple[BlockNumber, BlockNumber]:
-        chain_id: int = self._fetch_chain_id()
         end_block_number = self._fetch_latest_block_number()
-        if not parsed_options.use_recent_blocks and chain_id in self.CHAIN_INFO:
-            start_block_number = self.CHAIN_INFO[chain_id]["start_block"]
+        if not parsed_options.use_recent_blocks and self.chain_info is not None:
+            start_block_number = self.chain_info.start_block
             logger.info("Using blocks from %s to %s as test data", start_block_number, end_block_number)
         else:
-            start_block_number = end_block_number - 10000
+            start_block_number = end_block_number - 128
             logger.info("Using recent blocks from %s to %s as test data", start_block_number, end_block_number)
         return start_block_number, end_block_number
 
