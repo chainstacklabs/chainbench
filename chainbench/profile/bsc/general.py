@@ -21,7 +21,7 @@ from chainbench.util.rng import get_rng
 
 
 class BscProfile(EVMBenchUser):
-    wait_time = constant_pacing(2)
+    wait_time = constant_pacing(1)
     weight = 89
 
     @task(100)
@@ -65,7 +65,7 @@ class BscProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(),
         ),
 
     @task(9)

@@ -2,6 +2,7 @@ import typing as t
 from typing import Mapping
 
 from chainbench.test_data.base import BlockNumber
+from chainbench.util.rng import RNG
 
 
 class SmartContract:
@@ -32,6 +33,8 @@ class ERC20Contract(SmartContract):
     def name_params(self, **kwargs) -> dict[str, str]:
         return {"data": "0x06fdde03", "to": self.address}
 
+    def get_random_function_params(self, rng: RNG) -> t.Callable:
+        return rng.random.choice(self.function_params)
 
 class NetworkInfo(t.TypedDict):
     name: str
@@ -63,6 +66,9 @@ class ChainInfo:
 
     def get_contracts(self) -> list[ERC20Contract]:
         return [ERC20Contract(address) for address in self.contract_addresses]
+
+    def get_random_contract(self, rng: RNG) -> ERC20Contract:
+        return rng.random.choice(self.get_contracts())
 
     DATA: Mapping[int, NetworkInfo] = {
         1: {

@@ -64,7 +64,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(),
         ),
 ```
 
@@ -93,7 +93,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(),
         ),
 
     @task
@@ -148,7 +148,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(),
         ),
 
     @task
@@ -186,7 +186,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(),
         ),
 
     @task
@@ -248,7 +248,7 @@ class OasisProfile(EVMBenchUser):
         self.make_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(),
         ),
 
     @task

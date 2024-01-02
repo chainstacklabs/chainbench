@@ -23,7 +23,7 @@ from chainbench.util.rng import get_rng
 
 
 class SolanaProfile(SolanaBenchUser):
-    wait_time = constant_pacing(2)
+    wait_time = constant_pacing(1)
 
     @task(1000)
     def get_account_info_task(self):
