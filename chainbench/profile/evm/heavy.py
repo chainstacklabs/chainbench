@@ -25,7 +25,7 @@ class EVMHeavyProfile(EVMBenchUser):
         self.make_call(
             name="trace_block",
             method="trace_block",
-            params=self._block_params_factory(get_rng()),
+            params=self._block_params_factory(),
         ),
 
     @tag("get-logs")

@@ -24,19 +24,20 @@ class EVMBenchUser(BaseBenchUser):
     def _random_block_number_params_factory(self, rng: RNG) -> list[str]:
         return [hex(self.test_data.get_random_block_number(rng))]
 
-    def _block_params_factory(self, rng: RNG) -> list[str | bool]:
-        return [hex(self.test_data.get_random_block_number(rng)), True]
+    @staticmethod
+    def _block_params_factory() -> list[str | bool]:
+        return ["latest", True]
 
     def _block_by_hash_params_factory(self, rng: RNG) -> list[str | bool]:
         return [self.test_data.get_random_block_hash(rng), True]
 
     def _get_account_and_block_number_params_factory_latest(self, rng: RNG) -> list[Account | str]:
-        return [self.test_data.get_random_account(rng), hex(self.test_data.get_random_block_number(rng))]
+        return [self.test_data.get_random_account(rng), "latest"]
 
     def _get_balance_params_factory(self, rng: RNG) -> list[Account | str]:
         return [
             self.test_data.get_random_account(rng),
-            hex(self.test_data.get_random_block_number(rng)),
+            "latest",
         ]
 
     def _trace_call_params_factory(self, rng: RNG) -> list[dict | BlockNumber]:
@@ -68,7 +69,7 @@ class EVMBenchUser(BaseBenchUser):
 
     def _trace_block_by_number_params_factory(self, rng: RNG) -> list[str | dict]:
         return [
-            hex(self.test_data.get_random_block_number(rng)),
+            "latest",
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
@@ -80,7 +81,7 @@ class EVMBenchUser(BaseBenchUser):
 
     def _trace_replay_block_transaction_params_factory(self, rng: RNG) -> list[str | list[str]]:
         return [
-            hex(self.test_data.get_random_block_number(rng)),
+            "latest",
             ["vmTrace", "trace", "stateDiff"],
         ]
 
@@ -115,19 +116,21 @@ class EVMBenchUser(BaseBenchUser):
         ]
 
     def _eth_fee_history_params_factory(self, rng: RNG) -> list[int | str | list[int]]:
-        return [rng.random.randint(1, 1024), hex(self.test_data.get_random_block_number(rng)), [25, 75]]
+        return [rng.random.randint(1, 1024), "latest", [25, 75]]
 
     def _erc20_eth_call_params_factory(self, rng: RNG):
-        if self.test_data.chain_info is None:
-            raise ValueError("Chain info is not set")
-        contracts = self.test_data.chain_info.get_contracts()
-        contract = rng.random.choice(contracts)
-        function_params = rng.random.choice(contract.function_params)
+        contract = self.test_data.chain_info.get_random_contract(rng)
+        function_params = contract.get_random_function_params(rng)
         return [
             function_params(address=self.test_data.get_random_account(rng)),
-            hex(self.test_data.get_random_block_number(rng)),
+            "latest",
         ]
 
+    def _erc20_eth_get_code_params_factory(self, rng:RNG):
+        return [
+            self.test_data.chain_info.get_random_contract(rng).address,
+            "latest",
+        ]
 
 class EVMMethods(EVMBenchUser):
     abstract = True
@@ -185,7 +188,7 @@ class EVMMethods(EVMBenchUser):
     def eth_get_block_by_number_task(self) -> None:
         self.make_call(
             method="eth_getBlockByNumber",
-            params=self._block_params_factory(self.rng.get_rng()),
+            params=self._block_params_factory(),
         )
 
     def eth_get_block_receipts_task(self) -> None:
@@ -204,6 +207,12 @@ class EVMMethods(EVMBenchUser):
         self.make_call(
             method="eth_getBlockTransactionCountByNumber",
             params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
+        )
+
+    def eth_get_code_task(self) -> None:
+        self.make_call(
+            method="eth_getCode",
+            params=self._erc20_eth_get_code_params_factory(self.rng.get_rng()),
         )
 
     def eth_get_header_by_hash_task(self) -> None:
@@ -318,7 +327,7 @@ class EVMMethods(EVMBenchUser):
     def trace_block_task(self) -> None:
         self.make_call(
             method="trace_block",
-            params=self._block_params_factory(self.rng.get_rng()),
+            params=self._block_params_factory(),
         )
 
     def trace_replay_block_transactions_task(self) -> None:

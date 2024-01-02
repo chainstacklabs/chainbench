@@ -19,7 +19,7 @@ from chainbench.util.rng import get_rng
 
 
 class StarkNetWalletProfile(StarkNetBenchUser):
-    wait_time = constant_pacing(2)
+    wait_time = constant_pacing(1)
 
     @task(435)
     def call_task(self):
