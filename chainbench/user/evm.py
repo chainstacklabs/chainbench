@@ -79,7 +79,8 @@ class EVMBenchUser(BaseBenchUser):
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
-    def _trace_replay_block_transaction_params_factory(self, rng: RNG) -> list[str | list[str]]:
+    @staticmethod
+    def _trace_replay_block_transaction_params_factory() -> list[str | list[str]]:
         return [
             "latest",
             ["vmTrace", "trace", "stateDiff"],
@@ -107,30 +108,29 @@ class EVMBenchUser(BaseBenchUser):
             }
         ]
 
-    def _eth_estimate_gas_params_factory(self, rng: RNG) -> list[dict]:
-        return [
-            {
-                "from": self.test_data.get_random_account(rng),
-                "to": self.test_data.get_random_account(rng),
-            }
-        ]
-
-    def _eth_fee_history_params_factory(self, rng: RNG) -> list[int | str | list[int]]:
+    @staticmethod
+    def _eth_fee_history_params_factory(rng: RNG) -> list[int | str | list[int]]:
         return [rng.random.randint(1, 1024), "latest", [25, 75]]
 
     def _erc20_eth_call_params_factory(self, rng: RNG):
-        contract = self.test_data.chain_info.get_random_contract(rng)
-        function_params = contract.get_random_function_params(rng)
+        contract = self.test_data.get_random_erc20_contract(rng)
+        functions_params = [
+            contract.total_supply_params(),
+            contract.balance_of_params(self.test_data.get_random_account(rng)),
+            contract.symbol_params(),
+            contract.name_params(),
+        ]
         return [
-            function_params(address=self.test_data.get_random_account(rng)),
+            rng.random.choice(functions_params),
             "latest",
         ]
 
-    def _erc20_eth_get_code_params_factory(self, rng:RNG):
+    def _erc20_eth_get_code_params_factory(self, rng: RNG):
         return [
-            self.test_data.chain_info.get_random_contract(rng).address,
+            self.test_data.get_random_erc20_contract(rng).address,
             "latest",
         ]
+
 
 class EVMMethods(EVMBenchUser):
     abstract = True
@@ -154,6 +154,13 @@ class EVMMethods(EVMBenchUser):
     def eth_chain_id_task(self):
         self.make_call(
             method="eth_chainId",
+        )
+
+    def eth_estimate_gas_task(self):
+        self.make_call(
+            name="eth_estimate_gas",
+            method="eth_estimateGas",
+            params=self._erc20_eth_call_params_factory(self.rng.get_rng()),
         )
 
     def eth_fee_history_task(self) -> None:
@@ -333,7 +340,7 @@ class EVMMethods(EVMBenchUser):
     def trace_replay_block_transactions_task(self) -> None:
         self.make_call(
             method="trace_replayBlockTransactions",
-            params=self._trace_replay_block_transaction_params_factory(self.rng.get_rng()),
+            params=self._trace_replay_block_transaction_params_factory(),
         )
 
     def trace_replay_transaction_task(self) -> None:

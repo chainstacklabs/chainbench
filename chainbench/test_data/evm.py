@@ -13,7 +13,8 @@ from chainbench.test_data.base import (
     Tx,
     TxHash,
 )
-from chainbench.test_data.blockchain.evm import ChainInfo
+from chainbench.test_data.blockchain.evm import ChainInfo, ERC20Contract
+from chainbench.util.rng import RNG
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,12 @@ class EVMTestData(BaseTestData):
 
     def set_chain_info(self, chain_id: ChainId):
         self.chain_info = ChainInfo(chain_id)
+
+    def get_random_erc20_contract(self, rng: RNG) -> ERC20Contract:
+        if self.chain_info is None:
+            raise ValueError("Chain info is not set")
+        else:
+            return self.chain_info.get_random_contract(rng)
 
     def fetch_chain_id(self) -> int:
         return self._parse_hex_to_int(self._make_call("eth_chainId"))

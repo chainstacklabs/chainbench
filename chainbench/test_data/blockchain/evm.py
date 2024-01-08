@@ -6,35 +6,23 @@ from chainbench.util.rng import RNG
 
 
 class SmartContract:
-    def __init__(self, address: str, function_params: list[t.Callable]):
+    def __init__(self, address: str):
         self.address = address
-        self.function_params = function_params
 
 
 class ERC20Contract(SmartContract):
-    def __init__(self, address: str):
-        function_params = [
-            self.total_supply_params,
-            self.symbol_params,
-            self.balance_of_params,
-            self.name_params,
-        ]
-        super().__init__(address, function_params)
-
-    def total_supply_params(self, **kwargs) -> dict[str, str]:
+    def total_supply_params(self) -> dict[str, str]:
         return {"data": "0x18160ddd", "to": self.address}
 
-    def balance_of_params(self, **kwargs) -> dict[str, str]:
-        return {"data": "0x70a08231" + kwargs["address"][2:].zfill(64), "to": self.address}
+    def balance_of_params(self, target_address: str) -> dict[str, str]:
+        return {"data": "0x70a08231" + target_address[2:].zfill(64), "to": self.address}
 
-    def symbol_params(self, **kwargs) -> dict[str, str]:
+    def symbol_params(self) -> dict[str, str]:
         return {"data": "0x95d89b41", "to": self.address}
 
-    def name_params(self, **kwargs) -> dict[str, str]:
+    def name_params(self) -> dict[str, str]:
         return {"data": "0x06fdde03", "to": self.address}
 
-    def get_random_function_params(self, rng: RNG) -> t.Callable:
-        return rng.random.choice(self.function_params)
 
 class NetworkInfo(t.TypedDict):
     name: str
