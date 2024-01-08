@@ -58,7 +58,7 @@ class EVMHeavyProfile(EVMBenchUser):
         self.make_call(
             name="trace_replay_block_transactions",
             method="trace_replayBlockTransactions",
-            params=self._trace_replay_block_transaction_params_factory(get_rng()),
+            params=self._trace_replay_block_transaction_params_factory(),
         )
 
     @task
@@ -137,5 +137,5 @@ class EVMHeavyProfile(EVMBenchUser):
         self.make_call(
             name="eth_estimate_gas",
             method="eth_estimateGas",
-            params=self._eth_estimate_gas_params_factory(get_rng()),
+            params=self._erc20_eth_call_params_factory(get_rng()),
         )
