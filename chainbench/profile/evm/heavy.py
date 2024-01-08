@@ -121,7 +121,7 @@ class EVMHeavyProfile(EVMBenchUser):
         self.make_call(
             name="debug_trace_block_by_number",
             method="debug_traceBlockByNumber",
-            params=self._trace_block_by_number_params_factory(get_rng()),
+            params=self._trace_block_by_number_params_factory(),
         )
 
     @task

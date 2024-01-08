@@ -67,7 +67,7 @@ class EVMBenchUser(BaseBenchUser):
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
-    def _trace_block_by_number_params_factory(self, rng: RNG) -> list[str | dict]:
+    def _trace_block_by_number_params_factory(self) -> list[str | dict]:
         return [
             "latest",
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
@@ -301,7 +301,7 @@ class EVMMethods(EVMBenchUser):
     def debug_trace_block_by_number_task(self) -> None:
         self.make_call(
             method="debug_traceBlockByNumber",
-            params=self._trace_block_by_number_params_factory(self.rng.get_rng()),
+            params=self._trace_block_by_number_params_factory(),
         )
 
     def debug_trace_call_task(self) -> None:
