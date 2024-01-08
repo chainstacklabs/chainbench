@@ -2,6 +2,7 @@ import csv
 import logging
 from datetime import datetime, timedelta
 from json import JSONDecodeError
+from pathlib import Path
 from time import sleep
 
 import httpx
@@ -10,7 +11,7 @@ from locust.util.timespan import parse_timespan
 logger = logging.getLogger(__name__)
 
 
-def calculate_lag(current_timestamp, block_timestamp):
+def calculate_lag(current_timestamp: datetime, block_timestamp: datetime) -> int:
     """
     Calculate the difference between the time the node under test received the block,
     and the time when the block producer node produced the block, in seconds.
@@ -22,22 +23,21 @@ def calculate_lag(current_timestamp, block_timestamp):
     return max(int((current_timestamp - block_timestamp).total_seconds()), 0)
 
 
-def head_lag_monitor(endpoint, result_path, duration):
+def head_lag_monitor(endpoint: str, result_path: Path, duration: str):
     data = {
         "id": 1,
         "jsonrpc": "2.0",
         "method": "eth_getBlockByNumber",
         "params": ["latest", False],
     }
-    csv_writer_kwargs = {
-        "file": f"{result_path}/head_lag.csv",
-        "mode": "a",
-        "encoding": "utf-8-sig",
-        "newline": "",
-    }
     end_time = datetime.now() + timedelta(seconds=parse_timespan(duration))
     http = httpx.Client()
-    with open(**csv_writer_kwargs) as csv_file:
+    with open(
+        file=f"{result_path}/head_lag.csv",
+        mode="a",
+        encoding="utf-8-sig",
+        newline="",
+    ) as csv_file:
         logger.info("Start monitoring head lag")
         csv_writer = csv.writer(csv_file)
         csv_writer.writerow(["timestamp", "lag (s)", "block number"])

@@ -15,6 +15,8 @@ import locust_plugins  # isort: skip  # noqa
 
 setup_event_listeners()
 
+RPCParams = list[t.Any]
+
 
 class BaseBenchUser(FastHttpUser):
     """Base class for all benchmark users."""
@@ -35,13 +37,17 @@ class BaseBenchUser(FastHttpUser):
         self.logger = logging.getLogger(__name__)
         self.rng = RNGManager()
 
-    def on_start(self):
+    @classmethod
+    def get_method(cls, method: str) -> t.Callable:
+        return getattr(cls, method)
+
+    def on_start(self) -> None:
         self.test_data.wait()
 
-    def on_stop(self):
+    def on_stop(self) -> None:
         self.test_data.close()
 
-    def check_fatal(self, response: RestResponseContextManager):
+    def check_fatal(self, response: RestResponseContextManager) -> None:
         if response.status_code == 401:
             self.logger.critical(f"Unauthorized request to {response.url}")
         elif response.status_code == 404:
@@ -51,7 +57,7 @@ class BaseBenchUser(FastHttpUser):
         elif 300 <= response.status_code <= 399:
             self.logger.critical(f"Redirect error: {response.url}")
 
-    def check_response(self, response: RestResponseContextManager, name: str):
+    def check_response(self, response: RestResponseContextManager, name: str) -> None:
         response_json: dict = response.js
 
         if response.request:
@@ -94,11 +100,11 @@ class BaseBenchUser(FastHttpUser):
 
     def make_call(
         self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, url_postfix: str = ""
-    ):
+    ) -> None:
         name = name if name else method
         return self._post(name, data=generate_request(method, params), url_postfix=url_postfix)
 
-    def _post(self, name: str, data: t.Optional[dict] = None, url_postfix: str = ""):
+    def _post(self, name: str, data: t.Optional[dict] = None, url_postfix: str = "") -> None:
         """Make a JSON-RPC call."""
         with self.rest("POST", self.rpc_path + url_postfix, json=data, name=name) as response:
             self.check_response(response, name=name)

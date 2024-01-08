@@ -7,15 +7,20 @@ from multiprocessing import Process
 from pathlib import Path
 
 import click
+from click import Context, Parameter
 from locust import runners
 
+from chainbench.user.evm import EVMMethods
 from chainbench.util.cli import (
     ContextData,
     ensure_results_dir,
     get_base_path,
     get_master_command,
     get_profile_path,
+    get_profiles,
+    get_subclass_methods,
     get_worker_command,
+    task_to_method,
 )
 from chainbench.util.monitor import monitors
 from chainbench.util.notify import NoopNotifier, Notifier
@@ -40,23 +45,73 @@ logger = logging.getLogger(__name__)
 )
 @click.version_option(message="%(prog)s-%(version)s")
 @click.pass_context
-def cli(ctx: click.Context):
+def cli(ctx: Context):
     ctx.obj = ContextData()
 
 
+def validate_method(ctx: Context, param: Parameter, value: str) -> str:
+    if value is not None:
+        method_list = [task_to_method(task) for task in get_subclass_methods(EVMMethods)]
+        if value not in method_list:
+            raise click.BadParameter(
+                f"Method {value} is not supported. " f"Use 'chainbench list methods' to list all available methods."
+            )
+        if "profile" in ctx.params:
+            click.echo("WARNING: Profile and Profile Directory options are ignored when method argument is used.")
+    return value
+
+
+def profile_exists(profile: str, profile_dir: Path) -> None:
+    profile_list = get_profiles(profile_dir)
+    if profile not in profile_list:
+        raise click.BadParameter(
+            f"Profile {profile} could not be found in {profile_dir}. "
+            f"Use 'chainbench list profiles -d {profile_dir}' to list available profiles."
+        )
+
+
+def validate_profile_dir(ctx: Context, param: Parameter, value: Path) -> Path | None:
+    if value is not None:
+        profile_dir = Path(value)
+        if "profile" in ctx.params:
+            profile_exists(ctx.params["profile"], profile_dir)
+        return profile_dir
+    else:
+        return None
+
+
+def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
+    if value is not None:
+        if "profile_dir" in ctx.params:
+            profile_exists(value, ctx.params["profile_dir"])
+        if "method" in ctx.params:
+            click.echo("WARNING: Profile and Profile Directory options are ignored when method argument is used.")
+    return value
+
+
 @cli.command(
-    help="Start the test using the configured profile. "
+    help="Start a load test on the specified method. "
+    "Alternatively, you can specify a profile to run using the --profile option instead. "
     "By default, the results are saved in the "
-    "./results/{profile}/{YYYY-mm-dd_HH-MM-SS} directory.",
+    "./results/{profile_or_method_name}/{YYYY-mm-dd_HH-MM-SS} directory.",
+)
+@click.argument("method", default=None, callback=validate_method, required=False)
+@click.option(
+    "-d",
+    "--profile-dir",
+    default=None,
+    callback=validate_profile_dir,
+    type=click.Path(exists=True, dir_okay=True, file_okay=False, path_type=Path),
+    help="Profile directory",
 )
 @click.option(
     "-p",
     "--profile",
-    default=DEFAULT_PROFILE,
+    default=None,
+    callback=validate_profile,
     help="Profile to run",
     show_default=True,
 )
-@click.option("-d", "--profile-dir", default=None, type=click.Path(), help="Profile directory")
 @click.option("-H", "--host", default=MASTER_HOST, help="Host to run on", show_default=True)
 @click.option("-P", "--port", default=MASTER_PORT, help="Port to run on", show_default=True)
 @click.option(
@@ -80,7 +135,7 @@ def cli(ctx: click.Context):
     "--results-dir",
     default=Path("results"),
     help="Results directory",
-    type=click.Path(),
+    type=click.Path(dir_okay=True, file_okay=False, writable=True, path_type=Path),
     show_default=True,
 )
 @click.option("--headless", is_flag=True, help="Run in headless mode")
@@ -123,7 +178,7 @@ def cli(ctx: click.Context):
 @click.option("--size", default=None, help="Set the size of the test data. e.g. --size S")
 @click.pass_context
 def start(
-    ctx: click.Context,
+    ctx: Context,
     profile: str,
     profile_dir: Path | None,
     host: str,
@@ -149,7 +204,8 @@ def start(
     pg_password: str | None,
     use_recent_blocks: bool,
     size: str | None,
-):
+    method: str | None = None,
+) -> None:
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
         notifier = Notifier(topic=notify)
@@ -158,9 +214,70 @@ def start(
 
     ctx.obj.notifier = notifier
 
-    if headless and target is None:
-        click.echo("Target is required when running in headless mode")
+    if target is None:
+        click.echo(
+            "Target is required. If running in Web UI mode you made change it later "
+            "but it is needed to initialize test data."
+        )
         sys.exit(1)
+
+    enable_class_picker = False
+    test_by_directory = profile is None and method is None
+
+    if profile_dir is None:
+        profile_dir = get_base_path(__file__) / "profile"
+
+    if method:
+        profile_path = get_base_path(__file__) / "tools" / "test_method.py"
+    elif profile:
+        profile_path = get_profile_path(profile_dir, profile)
+    else:
+        profile_path = profile_dir
+
+    if test_by_directory:
+        from locust.argument_parser import find_locustfiles
+        from locust.util.load_locustfile import load_locustfile
+
+        user_classes = {}
+        test_data_types = set()
+        for locustfile in find_locustfiles([profile_path.__str__()], True):
+            _, _user_classes, _ = load_locustfile(locustfile)
+            for key, value in _user_classes.items():
+                user_classes[key] = value
+        for user_class in user_classes.values():
+            test_data_types.add(type(getattr(user_class, "test_data")).__name__)
+        if len(test_data_types) > 1:
+            click.echo(
+                "Error occurred: Multiple test data types detected. "
+                "Specifying a directory that contains load profiles with same test data type "
+                "is required if --profile option or method argument is not utilized."
+            )
+            click.echo("Test data types detected:")
+            for test_data_type in test_data_types:
+                click.echo(test_data_type)
+            sys.exit(1)
+
+    if headless:
+        if method:
+            profile = method
+        elif not profile:
+            profile = profile_path.name
+    else:
+        if test_by_directory:
+            enable_class_picker = True
+        if method:
+            profile = "test_method"
+        else:
+            profile = profile_path.name
+
+    if not profile_path.exists():
+        click.echo(f"Profile path {profile_path} does not exist.")
+        sys.exit(1)
+
+    results_dir = Path(results_dir).resolve()
+    results_path = ensure_results_dir(profile=profile, parent_dir=results_dir, run_id=run_id)
+
+    click.echo(f"Results will be saved to {results_path}")
 
     if timescale and any(pg_arg is None for pg_arg in (pg_host, pg_port, pg_username, pg_password)):
         click.echo(
@@ -168,23 +285,6 @@ def start(
             "when --timescale flag is used: pg_host, pg_port, pg_username, pg_password"
         )
         sys.exit(1)
-
-    if not profile_dir:
-        profile_dir = get_base_path(__file__)
-
-    profile_path = get_profile_path(profile_dir, profile)
-
-    if not profile_path.exists():
-        click.echo(f"Profile file {profile_path} does not exist")
-        sys.exit(1)
-
-    results_dir = Path(results_dir).resolve()
-
-    click.echo(f"Results directory: {results_dir}")
-
-    results_path = ensure_results_dir(profile=profile, parent_dir=results_dir, run_id=run_id)
-
-    click.echo(f"Results will be saved to {results_path}")
 
     custom_exclude_tags: list[str] = []
     if exclude_tags:
@@ -215,6 +315,8 @@ def start(
         pg_password=pg_password,
         use_recent_blocks=use_recent_blocks,
         size=size,
+        method=method,
+        enable_class_picker=enable_class_picker,
     )
     if headless:
         click.echo(f"Starting master in headless mode for {profile}")
@@ -245,6 +347,7 @@ def start(
             pg_username=pg_username,
             pg_password=pg_password,
             use_recent_blocks=use_recent_blocks,
+            method=method,
         )
         worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
@@ -282,7 +385,7 @@ def start(
     ctx.obj.notifier.notify(title="Test finished", message=f"Test finished for {profile}", tags=["tada"])
 
 
-def validate_clients(ctx, param, value) -> list[str]:
+def validate_clients(ctx: Context, param: Parameter, value: str) -> list[str]:
     from chainbench.tools.discovery.rpc import RPCDiscovery
 
     if value is not None:
@@ -290,7 +393,10 @@ def validate_clients(ctx, param, value) -> list[str]:
         client_list = RPCDiscovery.get_client_names()
         for client in input_client_list:
             if client not in client_list:
-                raise click.BadParameter(f"Client {client} is not supported.")
+                raise click.BadParameter(
+                    f"Client {client} is not supported. "
+                    f"Use 'chainbench list clients' to list all available clients."
+                )
     else:
         click.echo("Defaulting to ethereum execution api methods.")
         input_client_list = ["eth"]
@@ -310,7 +416,7 @@ def validate_clients(ctx, param, value) -> list[str]:
     help="List of methods used to test the endpoint will "
     "be based on the clients specified here, default to eth. e.g. --clients eth,bsc.\n",
 )
-def discover(endpoint: str | None, clients: list[str]):
+def discover(endpoint: str | None, clients: list[str]) -> None:
     if not endpoint:
         click.echo("Target endpoint is required.")
         sys.exit(1)
@@ -330,10 +436,15 @@ def discover(endpoint: str | None, clients: list[str]):
             click.echo(f"{result.method}: {result.error_message}")
 
 
-@cli.command(
+@cli.group(name="list", help="Lists values of the given type.")
+def _list() -> None:
+    pass
+
+
+@_list.command(
     help="Lists all available client options for method discovery.",
 )
-def clients():
+def clients() -> None:
     from chainbench.tools.discovery.rpc import RPCDiscovery
 
     for client in RPCDiscovery.get_clients():
@@ -341,17 +452,29 @@ def clients():
             click.echo(unique_client)
 
 
-@cli.command(
+@_list.command(
     help="Lists all available load profiles.",
 )
-def profiles():
-    from os import walk
+@click.option(
+    "-d",
+    "--profile-dir",
+    default=get_base_path(__file__) / "profile",
+    callback=validate_profile_dir,
+    type=click.Path(exists=True, dir_okay=True, file_okay=False, path_type=Path),
+    help="Profile directory",
+)
+def profiles(profile_dir: Path) -> None:
+    for profile in get_profiles(profile_dir):
+        click.echo(profile)
 
-    profile_dir = get_base_path(__file__)
-    for dir_path, _, files in walk(profile_dir):
-        for file in files:
-            if file.endswith(".py") and file != "__init__.py":
-                click.echo(f"{os.path.basename(dir_path)}.{file[:-3]}")
+
+@_list.command(
+    help="Lists all available evm methods.",
+)
+def methods() -> None:
+    task_list = get_subclass_methods(EVMMethods)
+    for task in task_list:
+        click.echo(task_to_method(task))
 
 
 if __name__ == "__main__":

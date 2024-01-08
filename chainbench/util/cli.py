@@ -1,3 +1,4 @@
+import re
 import subprocess
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -9,18 +10,29 @@ from chainbench.util.notify import NoopNotifier, Notifier
 def get_base_path(src_path: str | Path) -> Path:
     """Get base path."""
     curr_path = Path(src_path).resolve()
-    base_path = curr_path.parent / "profile"
+    base_path = curr_path.parent
     return base_path
 
 
 def get_profile_path(base_path: Path, profile: str) -> Path:
     """Get profile path."""
-    subdir, _, profile = profile.rpartition(".")
-    if subdir:
-        profile_path = base_path / subdir / f"{profile}.py"
-    else:
-        profile_path = base_path / f"{profile}.py"
+    profile_parts = profile.split(".")
+    profile_path = base_path / f"{'/'.join(profile_parts)}.py"
     return profile_path
+
+
+def get_profiles(profile_dir: Path) -> list[str]:
+    """Get list of profiles in given directory."""
+    from locust.argument_parser import find_locustfiles
+
+    result = []
+    for locustfile in find_locustfiles([profile_dir.__str__()], True):
+        locustfile_path = Path(locustfile).relative_to(profile_dir)
+        if locustfile_path.parent.__str__() != ".":
+            result.append(".".join(locustfile_path.parts[:-1]) + "." + locustfile_path.parts[-1][:-3])
+        else:
+            result.append(locustfile_path.parts[0][:-3])
+    return result
 
 
 def generate_unique_dir_name() -> str:
@@ -36,6 +48,28 @@ def ensure_results_dir(profile: str, parent_dir: Path, run_id: str | None = None
         results_dir.mkdir(parents=True, exist_ok=True)
 
     return results_dir
+
+
+def get_subclass_methods(cls: type) -> list[str]:
+    methods = set(dir(cls))
+    unique_subclass_methods = methods.difference(*(dir(base) for base in cls.__bases__))
+    return sorted(list(unique_subclass_methods))
+
+
+def task_to_method(task: str) -> str:
+    task_name_stripped = task.replace("_task", "")
+    words = task_name_stripped.split("_")
+    namespace = words[0]
+    method = "".join([words[1]] + [word.capitalize() for word in words[2:]])
+    return f"{namespace}_{method}"
+
+
+def method_to_task(method: str) -> str:
+    words = method.split("_")
+    namespace = words[0]
+    method_name_split = re.split("(?<=.)(?=[A-Z])", words[1])
+    method_name = "_".join([word.lower() for word in method_name_split])
+    return f"{namespace}_{method_name}_task"
 
 
 def get_timescale_args(
@@ -67,6 +101,8 @@ def get_master_command(
     pg_password: str | None = None,
     use_recent_blocks: bool = False,
     size: str | None = None,
+    method: str | None = None,
+    enable_class_picker: bool = False,
 ) -> str:
     """Generate master command."""
     command = (
@@ -76,8 +112,8 @@ def get_master_command(
         f"-u {users} -r {spawn_rate} --run-time {test_time} "
         f"--html {results_path}/report.html --csv {results_path}/report.csv "
         f"--logfile {results_path}/report.log "
-        f"--loglevel {log_level} --expect-workers {workers}"
-        f" --size {size}"
+        f"--loglevel {log_level} --expect-workers {workers} "
+        f"--size {size}"
     )
 
     if timescale:
@@ -95,6 +131,11 @@ def get_master_command(
     if use_recent_blocks:
         command += " --use-recent-blocks True"
 
+    if method is not None:
+        command += f" --method {method}"
+
+    if enable_class_picker:
+        command += " --class-picker"
     return command
 
 
@@ -114,6 +155,7 @@ def get_worker_command(
     pg_username: str | None = None,
     pg_password: str | None = None,
     use_recent_blocks: bool = False,
+    method: str | None = None,
 ) -> str:
     """Generate worker command."""
     command = (
@@ -135,6 +177,9 @@ def get_worker_command(
 
     if use_recent_blocks:
         command += " --use-recent-blocks True"
+
+    if method is not None:
+        command += f" --method {method}"
     return command
 
 
