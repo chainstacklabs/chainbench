@@ -1,3 +1,4 @@
+import concurrent.futures
 import logging
 import os
 import shlex
@@ -10,6 +11,7 @@ import click
 from click import Context, Parameter
 from locust import runners
 
+from chainbench.tools.discovery.rpc import DiscoveryResult
 from chainbench.user.evm import EVMMethods
 from chainbench.util.cli import (
     ContextData,
@@ -421,17 +423,15 @@ def discover(endpoint: str | None, clients: list[str]) -> None:
 
     from chainbench.tools.discovery.rpc import RPCDiscovery
 
+    rpc_discovery = RPCDiscovery(endpoint, clients)
     click.echo(f"Please wait, discovering methods available on {endpoint}...")
-    results = RPCDiscovery.discover_methods(endpoint, clients)
 
-    # Print the results
-    for result in results:
-        if result.supported is True:
-            click.echo(f"{result.method} ✔")
-        elif result.supported is False:
-            click.echo(f"{result.method} ✖")
-        else:
-            click.echo(f"{result.method}: {result.error_message}")
+    def get_discovery_result(method: str) -> None:
+        result: DiscoveryResult = rpc_discovery.discover_method(method)
+        click.echo(result.to_string())
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        executor.map(get_discovery_result, rpc_discovery.methods)
 
 
 @cli.group(name="list", help="Lists values of the given type.")
