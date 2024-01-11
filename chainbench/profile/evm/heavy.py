@@ -17,7 +17,7 @@ class EVMHeavyProfile(EVMBenchUser):
         self.make_call(
             name="debug_trace_transaction",
             method="debug_traceTransaction",
-            params=self._trace_transaction_params_factory(get_rng()),
+            params=self._debug_trace_transaction_params_factory(get_rng()),
         ),
 
     @task
@@ -121,7 +121,7 @@ class EVMHeavyProfile(EVMBenchUser):
         self.make_call(
             name="debug_trace_block_by_number",
             method="debug_traceBlockByNumber",
-            params=self._trace_block_by_number_params_factory(),
+            params=self._debug_trace_block_by_number_params_factory(),
         )
 
     @task
@@ -129,7 +129,7 @@ class EVMHeavyProfile(EVMBenchUser):
         self.make_call(
             name="debug_trace_block_by_hash",
             method="debug_traceBlockByHash",
-            params=self._trace_block_by_hash_params_factory(get_rng()),
+            params=self._debug_trace_block_by_hash_params_factory(get_rng()),
         )
 
     @task

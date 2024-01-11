@@ -40,7 +40,7 @@ class EVMBenchUser(BaseBenchUser):
             "latest",
         ]
 
-    def _trace_call_params_factory(self, rng: RNG) -> list[dict | BlockNumber]:
+    def _debug_trace_call_params_factory(self, rng: RNG) -> list[dict | BlockNumber]:
         tx_data = self.test_data.get_random_tx(rng)
         tx_param = {
             "to": tx_data["to"],
@@ -67,13 +67,13 @@ class EVMBenchUser(BaseBenchUser):
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
-    def _trace_block_by_number_params_factory(self) -> list[str | dict]:
+    def _debug_trace_block_by_number_params_factory(self) -> list[str | dict]:
         return [
             "latest",
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
-    def _trace_block_by_hash_params_factory(self, rng: RNG) -> list[BlockHash | dict]:
+    def _debug_trace_block_by_hash_params_factory(self, rng: RNG) -> list[BlockHash | dict]:
         return [
             self.test_data.get_random_block_hash(rng),
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
@@ -92,7 +92,7 @@ class EVMBenchUser(BaseBenchUser):
             ["vmTrace", "trace", "stateDiff"],
         ]
 
-    def _trace_transaction_params_factory(self, rng: RNG) -> list[TxHash | dict]:
+    def _debug_trace_transaction_params_factory(self, rng: RNG) -> list[TxHash | dict]:
         return [
             self.test_data.get_random_tx_hash(rng),
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
@@ -295,25 +295,25 @@ class EVMMethods(EVMBenchUser):
     def debug_trace_block_by_hash_task(self) -> None:
         self.make_call(
             method="debug_traceBlockByHash",
-            params=self._trace_block_by_hash_params_factory(self.rng.get_rng()),
+            params=self._debug_trace_block_by_hash_params_factory(self.rng.get_rng()),
         )
 
     def debug_trace_block_by_number_task(self) -> None:
         self.make_call(
             method="debug_traceBlockByNumber",
-            params=self._trace_block_by_number_params_factory(),
+            params=self._debug_trace_block_by_number_params_factory(),
         )
 
     def debug_trace_call_task(self) -> None:
         self.make_call(
             method="debug_traceCall",
-            params=self._trace_call_params_factory(self.rng.get_rng()),
+            params=self._debug_trace_call_params_factory(self.rng.get_rng()),
         )
 
     def debug_trace_transaction_task(self) -> None:
         self.make_call(
             method="debug_traceTransaction",
-            params=self._trace_transaction_params_factory(self.rng.get_rng()),
+            params=self._debug_trace_transaction_params_factory(self.rng.get_rng()),
         )
 
     def net_listening_task(self) -> None:
@@ -347,6 +347,12 @@ class EVMMethods(EVMBenchUser):
         self.make_call(
             method="trace_replayTransaction",
             params=self._trace_replay_transaction_params_factory(self.rng.get_rng()),
+        )
+
+    def trace_transaction_task(self) -> None:
+        self.make_call(
+            method="trace_transaction",
+            params=[self.test_data.get_random_tx_hash(self.rng.get_rng())],
         )
 
     def web3_client_version_task(self) -> None:
