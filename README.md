@@ -212,7 +212,7 @@ nohup chainbench start --profile bsc.general --workers 4 --users 100 --test-time
 ### Discover Available Methods on Endpoints
 This command will discover all available rpc methods on the specified endpoint and print them to the console. List of methods that are tested are based on the `--clients` option.
 ```shell
-chainbench discover --target https://node-url --clients geth,erigon
+chainbench discover https://node-url --clients geth,erigon
 ```
 To list valid arguments for `--clients` option and the reference client version, run:
 ```shell
