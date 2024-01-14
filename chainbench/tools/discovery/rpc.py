@@ -55,9 +55,8 @@ class RPCDiscovery:
     def __init__(self, endpoint: str, clients: list[str]):
         self.endpoint = endpoint
         self.clients = clients
-
-        self.methods = self.get_methods_list(clients)
-        self.http = httpx.Client()
+        self.http = httpx.AsyncClient(timeout=5)
+        self.methods: list[str] = self.get_methods_list(clients)
 
     @staticmethod
     def _parse_methods() -> list[RPCMethod]:
@@ -125,20 +124,23 @@ class RPCDiscovery:
         except ValueError:
             return DiscoveryResult(method, None, f"Value error {response.json()}")
 
-    def discover_method(self, method: str) -> DiscoveryResult:
+    async def discover_method(self, method: str) -> DiscoveryResult:
         data = {
             "id": 1,
             "jsonrpc": "2.0",
             "method": method,
             "params": [],
         }
+        headers = {
+            "User-Agent": "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) "
+            "AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+        }
         try:
-            headers = {
-                "User-Agent": "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) "
-                "AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
-            }
-            response = self.http.post(self.endpoint, json=data, headers=headers)
+            response = await self.http.post(
+                self.endpoint,
+                json=data,
+                headers=headers,
+            )
             return self.check_response(method, response)
-
         except httpx.TimeoutException as e:
-            return DiscoveryResult(method, None, f"HTTP Timeout Exception: {e}")
+            return DiscoveryResult(method, None, f"Timeout Exception {e}")

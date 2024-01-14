@@ -1,4 +1,4 @@
-import concurrent.futures
+import asyncio
 import logging
 import os
 import shlex
@@ -11,7 +11,6 @@ import click
 from click import Context, Parameter
 from locust import runners
 
-from chainbench.tools.discovery.rpc import DiscoveryResult
 from chainbench.user.evm import EVMMethods
 from chainbench.util.cli import (
     ContextData,
@@ -426,12 +425,19 @@ def discover(endpoint: str | None, clients: list[str]) -> None:
     rpc_discovery = RPCDiscovery(endpoint, clients)
     click.echo(f"Please wait, discovering methods available on {endpoint}...")
 
-    def get_discovery_result(method: str) -> None:
-        result: DiscoveryResult = rpc_discovery.discover_method(method)
-        click.echo(result.to_string())
+    async def get_discovery_results() -> None:
+        tasks = []
+        for method in rpc_discovery.methods:
+            tasks.append(asyncio.ensure_future(rpc_discovery.discover_method(method)))
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-        executor.map(get_discovery_result, rpc_discovery.methods)
+        for task in asyncio.as_completed(tasks, timeout=60):
+            result = await task
+            click.echo(result.to_string())
+
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+    #     executor.map(get_discovery_result, rpc_discovery.methods)
+
+    asyncio.run(get_discovery_results())
 
 
 @cli.group(name="list", help="Lists values of the given type.")
