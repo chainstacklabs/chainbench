@@ -390,13 +390,13 @@ def validate_clients(ctx: Context, param: Parameter, value: str) -> list[str]:
 
     if value is not None:
         input_client_list = value.split(",")
-        client_list = []
+        client_list: list[str] = []
         for client in RPCDiscovery.get_clients():
             client_list.extend(client.get_cli_argument_names())
-        for client in input_client_list:
-            if client not in client_list:
+        for client_name in input_client_list:
+            if client_name not in client_list:
                 raise click.BadParameter(
-                    f"Client {client} is not supported. "
+                    f"Client {client_name} is not supported. "
                     f"Use 'chainbench list clients' to list all available clients."
                 )
     else:
