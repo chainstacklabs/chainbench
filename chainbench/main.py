@@ -390,7 +390,9 @@ def validate_clients(ctx: Context, param: Parameter, value: str) -> list[str]:
 
     if value is not None:
         input_client_list = value.split(",")
-        client_list = RPCDiscovery.get_client_names()
+        client_list = []
+        for client in RPCDiscovery.get_clients():
+            client_list.extend(client.get_cli_argument_names())
         for client in input_client_list:
             if client not in client_list:
                 raise click.BadParameter(
