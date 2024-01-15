@@ -1,3 +1,4 @@
+import concurrent.futures
 import logging
 import os
 import shlex
@@ -10,6 +11,7 @@ import click
 from click import Context, Parameter
 from locust import runners
 
+from chainbench.tools.discovery.rpc import DiscoveryResult
 from chainbench.user.evm import EVMMethods
 from chainbench.util.cli import (
     ContextData,
@@ -388,11 +390,13 @@ def validate_clients(ctx: Context, param: Parameter, value: str) -> list[str]:
 
     if value is not None:
         input_client_list = value.split(",")
-        client_list = RPCDiscovery.get_client_names()
-        for client in input_client_list:
-            if client not in client_list:
+        client_list: list[str] = []
+        for client in RPCDiscovery.get_clients():
+            client_list.extend(client.get_cli_argument_names())
+        for client_name in input_client_list:
+            if client_name not in client_list:
                 raise click.BadParameter(
-                    f"Client {client} is not supported. "
+                    f"Client {client_name} is not supported. "
                     f"Use 'chainbench list clients' to list all available clients."
                 )
     else:
@@ -421,17 +425,15 @@ def discover(endpoint: str | None, clients: list[str]) -> None:
 
     from chainbench.tools.discovery.rpc import RPCDiscovery
 
+    rpc_discovery = RPCDiscovery(endpoint, clients)
     click.echo(f"Please wait, discovering methods available on {endpoint}...")
-    results = RPCDiscovery.discover_methods(endpoint, clients)
 
-    # Print the results
-    for result in results:
-        if result.supported is True:
-            click.echo(f"{result.method} ✔")
-        elif result.supported is False:
-            click.echo(f"{result.method} ✖")
-        else:
-            click.echo(f"{result.method}: {result.error_message}")
+    def get_discovery_result(method: str) -> None:
+        result: DiscoveryResult = rpc_discovery.discover_method(method)
+        click.echo(result.to_string())
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        executor.map(get_discovery_result, rpc_discovery.methods)
 
 
 @cli.group(name="list", help="Lists values of the given type.")
