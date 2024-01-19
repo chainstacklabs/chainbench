@@ -1,10 +1,10 @@
-from chainbench.test_data import SolanaTestData
-from chainbench.test_data.base import Account, BlockNumber, TxHash
-from chainbench.user.base import BaseBenchUser
+from chainbench.test_data import Account, BlockNumber, SolanaTestData, TxHash
 from chainbench.util.rng import RNG
 
+from .jsonrpc import JsonRPCUser
 
-class SolanaBenchUser(BaseBenchUser):
+
+class SolanaUser(JsonRPCUser):
     abstract = True
     test_data = SolanaTestData()
     rpc_error_code_exclusions = [-32007]

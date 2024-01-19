@@ -5,11 +5,11 @@ from random import randint
 
 from locust import constant_pacing, tag, task
 
-from chainbench.user.evm import EVMBenchUser
+from chainbench.user import EVMUser
 from chainbench.util.rng import get_rng
 
 
-class EVMHeavyProfile(EVMBenchUser):
+class EVMHeavyProfile(EVMUser):
     wait_time = constant_pacing(10)
 
     @task

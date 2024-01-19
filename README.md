@@ -121,7 +121,7 @@ This will run a load test with a general BSC profile.
 - `--help`: Displays the help message.
 - `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
 - `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
-- `--use-recent-blocks`: Use recent blocks for test data generation.
+- `--use-latest-blocks`: Use latest blocks for test data generation and runs a background process to update the test data with latest blocks.
 - `--size`: Specifies the test data size. Available values are XS, S, M, L, XL. Default is S.
 
 You may also run `chainbench start --help` for the full list of parameters and flags.
@@ -160,13 +160,26 @@ Take note that larger data size will result in longer test data generation time 
 We plan to add an option to reuse previously generated test data in the future to avoid regenerating the same
 test data for multiple test runs.
 
-| Size  | Blocks  | Txs       | Accounts/Addresses |
-|-------|---------|-----------|--------------------|
-| XS    | 10      | 100       | 100                |
-| S     | 100     | 1,000     | 1,000              |
-| M     | 1,000   | 10,000    | 10,000             |
-| L     | 10,000  | 100,000   | 100,000            |
-| XL    | 100,000 | 1,000,000 | 1,000,000          |
+| Size  | Blocks  |
+|-------|---------|
+| XS    | 10      |
+| S     | 100     |
+| M     | 1,000   |
+| L     | 10,000  |
+| XL    | 100,000 |
+
+
+### Test Data - Using Latest Blocks
+When running tests on nodes that are running in sync modes that do not have access to the full blockchain history, it is recommended to use the `--use-latest-blocks` flag.
+
+Example:
+If the node runs in a sync mode that only keeps the last 128 blocks in history, you may run a test with the following command:
+```shell
+chainbench start --profile evm.light --users 50 --workers 2 --test-time 1h --target https://node-url --headless --autoquit --use-latest-blocks --size S
+```
+
+With test data size S and `--use-latest-blocks` flag, the tool will generate test data using the latest 100 blocks.
+Chainbench will keep the test data up to date by running a background process that will update the test data with latest blocks.
 
 ### Monitors
 Monitors are separate processes that run during the test to collect or process some additional data and metrics relevant to the test.

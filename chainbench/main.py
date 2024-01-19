@@ -12,7 +12,7 @@ from click import Context, Parameter
 from locust import runners
 
 from chainbench.tools.discovery.rpc import DiscoveryResult
-from chainbench.user.evm import EVMMethods
+from chainbench.user import EVMMethods
 from chainbench.util.cli import (
     ContextData,
     ensure_results_dir,
@@ -176,7 +176,7 @@ def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
 )
 @click.option("--pg-username", default="postgres", help="PG username", show_default=True)
 @click.option("--pg-password", default=None, help="PG password")
-@click.option("--use-recent-blocks", is_flag=True, help="Uses recent blocks for test data")
+@click.option("--use-latest-blocks", is_flag=True, help="Uses latest blocks for test data")
 @click.option("--size", default=None, help="Set the size of the test data. e.g. --size S")
 @click.pass_context
 def start(
@@ -204,7 +204,7 @@ def start(
     pg_port: int,
     pg_username: str,
     pg_password: str | None,
-    use_recent_blocks: bool,
+    use_latest_blocks: bool,
     size: str | None,
     method: str | None = None,
 ) -> None:
@@ -316,7 +316,7 @@ def start(
         pg_port=pg_port,
         pg_username=pg_username,
         pg_password=pg_password,
-        use_recent_blocks=use_recent_blocks,
+        use_latest_blocks=use_latest_blocks,
         size=size,
         method=method,
         enable_class_picker=enable_class_picker,
@@ -349,7 +349,7 @@ def start(
             pg_port=pg_port,
             pg_username=pg_username,
             pg_password=pg_password,
-            use_recent_blocks=use_recent_blocks,
+            use_latest_blocks=use_latest_blocks,
             method=method,
         )
         worker_args = shlex.split(worker_command, posix=is_posix)

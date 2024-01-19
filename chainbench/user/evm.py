@@ -1,20 +1,21 @@
-from chainbench.test_data import EVMTestData
-from chainbench.test_data.base import Account, BlockHash, BlockNumber, TxHash
-from chainbench.user.base import BaseBenchUser
+from chainbench.test_data import Account, BlockHash, BlockNumber, EVMTestData, TxHash
 from chainbench.util.rng import RNG
 
+from .jsonrpc import JsonRPCUser
 
-class EVMBenchUser(BaseBenchUser):
+
+class EVMUser(JsonRPCUser):
     abstract = True
     test_data = EVMTestData()
 
     _default_trace_timeout = "120s"
 
     def _get_logs_params_factory(self, rng: RNG) -> list[dict]:
+        block_range = self.test_data.get_random_block_range(20, rng)
         return [
             {
-                "fromBlock": hex(self.test_data.get_random_recent_block_number(20, rng)),
-                "toBlock": hex(self.test_data.end_block_number),
+                "fromBlock": hex(block_range.start),
+                "toBlock": hex(block_range.end),
             }
         ]
 
@@ -132,7 +133,7 @@ class EVMBenchUser(BaseBenchUser):
         ]
 
 
-class EVMMethods(EVMBenchUser):
+class EVMMethods(EVMUser):
     abstract = True
 
     def eth_accounts_task(self) -> None:
