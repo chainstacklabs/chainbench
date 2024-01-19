@@ -226,7 +226,7 @@ class TestData(HelperMixin, t.Generic[B]):
         raise NotImplementedError
 
     def _get_data_from_blockchain(self, input_size: str, use_latest_blocks: bool) -> None:
-        size: Size = Sizes.get_size(input_size) if input_size!="None" else self.DEFAULT_SIZE
+        size: Size = Sizes.get_size(input_size) if input_size != "None" else self.DEFAULT_SIZE
         print(f"Test data size: {size.label}")
         self._logger.info(f"Test data size: {size.label}")
         self._data = BlockchainData(size)
@@ -274,9 +274,7 @@ class TestData(HelperMixin, t.Generic[B]):
 
     def init_data_from_blockchain(self) -> None:
         self._update_data(
-            self._get_data_from_blockchain,
-            self.parsed_options.size,
-            self.parsed_options.use_latest_blocks
+            self._get_data_from_blockchain, self.parsed_options.size, self.parsed_options.use_latest_blocks
         )
 
     def init_data_from_json(self, json_data: str) -> None:
