@@ -1,6 +1,7 @@
 import json
 import logging
 import typing as t
+from argparse import Namespace
 from dataclasses import dataclass
 
 from chainbench.util.rng import RNG, get_rng
@@ -258,9 +259,9 @@ class EVMTestData(TestData[EVMBlock]):
         result: dict[str, t.Any] = self.client.make_call("eth_getBlockByNumber", [block_number, True])
         return EVMBlock.from_response(self._parse_hex_to_int(result["number"]), result)
 
-    def _get_start_and_end_blocks(self, use_latest_blocks: bool) -> BlockRange:
+    def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         end_block_number = self.fetch_latest_block_number()
-        if use_latest_blocks:
+        if parsed_options.use_latest_blocks:
             start_block_number = end_block_number - self.data.size.blocks_len + 1
         else:
             start_block_number = self.network.start_block

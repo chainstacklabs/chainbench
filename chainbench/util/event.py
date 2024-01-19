@@ -138,8 +138,8 @@ def on_init(environment: Environment, **_kwargs):
                             logger.info(f"Target endpoint network is {user_test_data.network.name}")
                             print(f"Target endpoint network is {user_test_data.network.name}")
                             test_data["chain_id"] = {test_data_class_name: chain_id}
-                        user_test_data.set_parsed_options(environment.parsed_options)
-                        user_test_data.init_data_from_blockchain()
+                        if environment.parsed_options:
+                            user_test_data.init_data_from_blockchain(environment.parsed_options)
                         test_data[test_data_class_name] = user_test_data.data.to_json()
                 else:
                     raise AttributeError(f"{user} class does not have 'test_data' attribute")
@@ -156,7 +156,7 @@ def on_init(environment: Environment, **_kwargs):
             if environment.web_ui:
                 print(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
                 logger.info(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
-        if environment.parsed_options.use_latest_blocks:
+        if getattr(environment.parsed_options, "use_latest_blocks", False):
             gevent.spawn(get_block_worker, environment.runner)
 
 

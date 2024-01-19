@@ -1,6 +1,7 @@
 import json
 import logging
 import typing as t
+from argparse import Namespace
 from dataclasses import dataclass
 
 from chainbench.util.rng import RNG, get_rng
@@ -83,16 +84,16 @@ class SolanaTestData(TestData[SolanaBlock]):
         slot = self.client.make_call("getFirstAvailableBlock")
         return slot
 
-    def _get_start_and_end_blocks(self, use_latest_blocks: bool) -> BlockRange:
+    def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         end_block_number = self.fetch_latest_block_number()
         earliest_available_block_number = self._fetch_first_available_block()
 
         # factor in run_time and add 10% buffer to ensure blocks used in test data are
         # not removed from the ledger
-        earliest_available_block_number += int((self.parsed_options.run_time / self.BLOCK_TIME) * 1.1)
+        earliest_available_block_number += int((parsed_options.run_time / self.BLOCK_TIME) * 1.1)
         start_block_number = earliest_available_block_number
 
-        if use_latest_blocks:
+        if parsed_options.use_latest_blocks:
             start_block_number = end_block_number - self.data.size.blocks_len + 1
 
         if start_block_number < earliest_available_block_number:

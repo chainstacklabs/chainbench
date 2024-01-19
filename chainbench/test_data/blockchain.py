@@ -168,7 +168,6 @@ class TestData(HelperMixin, t.Generic[B]):
     def __init__(self) -> None:
         self._logger = logging.getLogger(__name__)
 
-        self._parsed_options: Namespace | None = None
         self._data: BlockchainData | None = None
         self._client: HttpxClient | None = None
 
@@ -197,12 +196,6 @@ class TestData(HelperMixin, t.Generic[B]):
             raise RuntimeError("HTTP Client is not initialized")
         return self._client
 
-    @property
-    def parsed_options(self) -> Namespace:
-        if self._parsed_options is None:
-            raise RuntimeError("Parsed Options is not initialized")
-        return self._parsed_options
-
     def close(self) -> None:
         if self._client is not None:
             self._client.close()
@@ -222,17 +215,17 @@ class TestData(HelperMixin, t.Generic[B]):
                 break
         return self.fetch_block(block_number)
 
-    def _get_start_and_end_blocks(self, use_latest_blocks: bool) -> BlockRange:
+    def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         raise NotImplementedError
 
-    def _get_data_from_blockchain(self, input_size: str, use_latest_blocks: bool) -> None:
-        size: Size = Sizes.get_size(input_size) if input_size != "None" else self.DEFAULT_SIZE
+    def _get_data_from_blockchain(self, parsed_options: Namespace) -> None:
+        size: Size = Sizes.get_size(parsed_options.size) if parsed_options.size != "None" else self.DEFAULT_SIZE
         print(f"Test data size: {size.label}")
         self._logger.info(f"Test data size: {size.label}")
         self._data = BlockchainData(size)
-        self.data.block_range = self._get_start_and_end_blocks(use_latest_blocks)
+        self.data.block_range = self._get_start_and_end_blocks(parsed_options)
 
-        if use_latest_blocks:
+        if parsed_options.use_latest_blocks:
             print(f"Using latest {size.blocks_len} blocks as test data")
             self._logger.info(f"Using latest {size.blocks_len} blocks as test data")
             for block_number in range(self.data.block_range.start, self.data.block_range.end + 1):
@@ -269,13 +262,8 @@ class TestData(HelperMixin, t.Generic[B]):
         self._lock.release()
         self._logger.info("Lock released")
 
-    def set_parsed_options(self, parsed_options: Namespace) -> None:
-        self._parsed_options = parsed_options
-
-    def init_data_from_blockchain(self) -> None:
-        self._update_data(
-            self._get_data_from_blockchain, self.parsed_options.size, self.parsed_options.use_latest_blocks
-        )
+    def init_data_from_blockchain(self, parsed_options: Namespace) -> None:
+        self._update_data(self._get_data_from_blockchain, parsed_options)
 
     def init_data_from_json(self, json_data: str) -> None:
         self._update_data(self._get_data_from_json, json_data)
