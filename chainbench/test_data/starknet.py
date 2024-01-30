@@ -2,7 +2,15 @@ import json
 import logging
 import typing as t
 
-from .blockchain import Account, BlockHash, BlockNumber, Tx, TxHash
+from .blockchain import (
+    Account,
+    BlockHash,
+    BlockNumber,
+    Tx,
+    TxHash,
+    append_if_not_none,
+    parse_hex_to_int,
+)
 from .evm import ChainId, EVMBlock, EVMTestData
 
 logger = logging.getLogger(__name__)
@@ -19,10 +27,10 @@ class StarkNetBlock(EVMBlock):
             if index == 100:
                 # limit it to 100 per block
                 break
-            cls._append_if_not_none(tx_hashes, tx["transaction_hash"])
-            cls._append_if_not_none(txs, tx)
+            append_if_not_none(tx_hashes, tx["transaction_hash"])
+            append_if_not_none(txs, tx)
             try:
-                cls._append_if_not_none(accounts, tx["sender_address"])
+                append_if_not_none(accounts, tx["sender_address"])
             except KeyError:
                 pass  # skip tx if it doesn't have sender_address
         return cls(block_number, block_hash, txs, tx_hashes, list(accounts))
@@ -37,7 +45,7 @@ class StarkNetTestData(EVMTestData):
         return StarkNetBlock(**data_dict)
 
     def fetch_chain_id(self) -> ChainId:
-        return self._parse_hex_to_int(self.client.make_call("starknet_chainId"))
+        return parse_hex_to_int(self.client.make_call("starknet_chainId"))
 
     def fetch_latest_block_number(self) -> BlockNumber:
         return self.client.make_call("starknet_blockNumber")

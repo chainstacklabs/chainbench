@@ -1,6 +1,5 @@
 import logging
 import time
-import traceback
 import typing as t
 
 import gevent
@@ -123,31 +122,40 @@ def on_init(environment: Environment, **_kwargs):
         logger.info("I'm a master. Running tests for %s", host_under_test)
         environment.runner.register_message("acknowledge_data", on_acknowledge)
 
+        print("Waiting for workers to be ready...")
+        start_time = time.time()
+        while len(environment.runner.clients.ready) < getattr(environment.parsed_options, "expect_workers"):
+            if time.time() - start_time > 60:
+                print("Timeout: Workers are not ready after 60 seconds. Exiting...")
+                logger.error("Timeout: Workers are not ready after 60 seconds. Exiting...")
+                environment.runner.quit()
+                raise exit(1)
+            time.sleep(1)
         try:
             for user in environment.runner.user_classes:
-                if hasattr(user, "test_data"):
-                    user_test_data: TestData = getattr(user, "test_data")
-                    test_data_class_name: str = type(user_test_data).__name__
-                    if test_data_class_name not in test_data:
-                        logger.info(f"Initializing test data for {test_data_class_name}")
-                        print(f"Initializing test data for {test_data_class_name}")
-                        user_test_data.init_http_client(environment.host)
-                        if isinstance(user_test_data, EVMTestData):
-                            chain_id: ChainId = user_test_data.fetch_chain_id()
-                            user_test_data.init_network(chain_id)
-                            logger.info(f"Target endpoint network is {user_test_data.network.name}")
-                            print(f"Target endpoint network is {user_test_data.network.name}")
-                            test_data["chain_id"] = {test_data_class_name: chain_id}
-                        if environment.parsed_options:
-                            user_test_data.init_data_from_blockchain(environment.parsed_options)
-                        test_data[test_data_class_name] = user_test_data.data.to_json()
-                else:
+                if not hasattr(user, "test_data"):
                     raise AttributeError(f"{user} class does not have 'test_data' attribute")
-        except Exception:
-            logger.error(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
-            print(f"Failed to update test data: {traceback.format_exc()}. Exiting...")
+                user_test_data: TestData = getattr(user, "test_data")
+                test_data_class_name: str = type(user_test_data).__name__
+                if test_data_class_name in test_data:
+                    continue
+                logger.info(f"Initializing test data for {test_data_class_name}")
+                print(f"Initializing test data for {test_data_class_name}")
+                user_test_data.init_http_client(environment.host)
+                if isinstance(user_test_data, EVMTestData):
+                    chain_id: ChainId = user_test_data.fetch_chain_id()
+                    user_test_data.init_network(chain_id)
+                    logger.info(f"Target endpoint network is {user_test_data.network.name}")
+                    print(f"Target endpoint network is {user_test_data.network.name}")
+                    test_data["chain_id"] = {test_data_class_name: chain_id}
+                if environment.parsed_options:
+                    user_test_data.init_data_from_blockchain(environment.parsed_options)
+                test_data[test_data_class_name] = user_test_data.data.to_json()
+        except Exception as e:
+            logger.error(f"Failed to update test data: {e}. Exiting...")
+            print(f"Failed to update test data: {e}. Exiting...")
             environment.runner.quit()
-            raise exit()
+            raise exit(1)
         else:
             logger.info("Test data is ready")
             for i, worker in enumerate(environment.runner.clients):
@@ -156,8 +164,8 @@ def on_init(environment: Environment, **_kwargs):
             if environment.web_ui:
                 print(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
                 logger.info(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
-        if getattr(environment.parsed_options, "use_latest_blocks", False):
-            gevent.spawn(get_block_worker, environment.runner)
+            if getattr(environment.parsed_options, "use_latest_blocks", False):
+                gevent.spawn(get_block_worker, environment.runner)
 
 
 def on_test_start(environment: Environment, **_kwargs):

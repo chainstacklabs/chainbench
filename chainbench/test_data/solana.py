@@ -4,17 +4,21 @@ import typing as t
 from argparse import Namespace
 from dataclasses import dataclass
 
+from tenacity import retry, stop_after_attempt
+
 from chainbench.util.rng import RNG, get_rng
 
 from .blockchain import (
     Account,
     BlockHash,
+    BlockNotFoundError,
     BlockNumber,
     BlockRange,
     RPCError,
     TestData,
     Tx,
     TxHash,
+    append_if_not_none,
 )
 from .evm import EVMBlock
 
@@ -23,7 +27,7 @@ logger = logging.getLogger(__name__)
 Slot = BlockNumber
 
 
-@dataclass
+@dataclass(frozen=True)
 class SolanaBlock(EVMBlock):
     block_height: BlockNumber
 
@@ -38,11 +42,11 @@ class SolanaBlock(EVMBlock):
             if index == 100:
                 # limit it to 100 per block
                 break
-            cls._append_if_not_none(txs, tx)
-            cls._append_if_not_none(tx_hashes, tx["transaction"]["signatures"][0])
+            append_if_not_none(txs, tx)
+            append_if_not_none(tx_hashes, tx["transaction"]["signatures"][0])
             for account in tx["transaction"]["accountKeys"]:
                 if account["pubkey"] != "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA":
-                    cls._append_if_not_none(accounts, account["pubkey"])
+                    append_if_not_none(accounts, account["pubkey"])
         return cls(slot, block_hash, txs, tx_hashes, list(accounts), block_height)
 
 
@@ -75,10 +79,14 @@ class SolanaTestData(TestData[SolanaBlock]):
 
             if e.code in [-32004, -32007, -32014]:
                 # block not found
-                return self.fetch_block(self.fetch_latest_block_number())
+                raise BlockNotFoundError()
             else:
                 raise e
         return SolanaBlock.from_response(slot, result)
+
+    @retry(reraise=True, stop=stop_after_attempt(5))
+    def fetch_latest_block(self) -> SolanaBlock:
+        return self.fetch_block(self.fetch_latest_block_number())
 
     def _fetch_first_available_block(self) -> Slot:
         slot = self.client.make_call("getFirstAvailableBlock")

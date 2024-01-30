@@ -4,7 +4,7 @@ from chainbench.test_data import StarkNetTestData
 from chainbench.test_data.blockchain import Account, TxHash
 from chainbench.util.rng import RNG
 
-from .jsonrpc import JsonRPCUser
+from .http import JsonRPCUser
 
 
 class StarkNetUser(JsonRPCUser):

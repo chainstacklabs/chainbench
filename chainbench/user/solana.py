@@ -1,7 +1,7 @@
 from chainbench.test_data import Account, BlockNumber, SolanaTestData, TxHash
 from chainbench.util.rng import RNG
 
-from .jsonrpc import JsonRPCUser
+from .http import JsonRPCUser
 
 
 class SolanaUser(JsonRPCUser):

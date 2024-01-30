@@ -8,6 +8,7 @@ from secrets import token_hex
 
 import httpx
 from gevent.lock import Semaphore as GeventSemaphore
+from httpx import URL, Response
 from tenacity import retry, stop_after_attempt
 
 from chainbench.util.rng import RNG, get_rng
@@ -21,18 +22,16 @@ BlockNumber = int
 BlockHash = str
 
 
-class HelperMixin:
-    @staticmethod
-    def _parse_hex_to_int(value: str) -> int:
-        return int(value, 16)
+def parse_hex_to_int(value: str) -> int:
+    return int(value, 16)
 
-    @staticmethod
-    def _append_if_not_none(data: list | set, val: t.Any) -> None:
-        if val is not None:
-            if isinstance(data, list):
-                data.append(val)
-            elif isinstance(data, set):
-                data.add(val)
+
+def append_if_not_none(data: list | set, val: t.Any) -> None:
+    if val is not None:
+        if isinstance(data, list):
+            data.append(val)
+        elif isinstance(data, set):
+            data.add(val)
 
 
 class RPCError(Exception):
@@ -42,14 +41,60 @@ class RPCError(Exception):
         super().__init__(f"RPC Error: {code} - {message}")
 
 
+class BlockNotFoundError(Exception):
+    pass
+
+
 class HttpxClient:
     def __init__(self, host: str, rpc_version: str = "2.0"):
         self._rpc_version = rpc_version
-        self._host = host
-        self._client = httpx.Client()
+        self._host: URL = URL(host.strip("/"))
+        self._client = httpx.Client(timeout=60)
 
     def close(self) -> None:
         self._client.close()
+
+    def _url(self, path: str | None) -> URL:
+        if path is None:
+            path = ""
+        return self._host.join(self._host.path + path)
+
+    @staticmethod
+    def check_http_error(response: Response) -> None:
+        if response.request:
+            logger.debug(f"Request: {response.request.method} {response.request.url}")
+
+        """Check the response for errors."""
+        if response.status_code != 200:
+            logger.info(f"Request failed with {response.status_code} code")
+            logger.debug(
+                f"Request to {response.url} failed with HTTP Error {response.status_code} code: {response.text}"
+            )
+            response.raise_for_status()
+
+    @staticmethod
+    def get_json(response: Response) -> dict[str, t.Any]:
+        # check if response is json
+        try:
+            data: dict[str, t.Any] = response.json()
+        except JSONDecodeError:
+            logger.error("Response is not json: %s", response.text)
+            raise
+        else:
+            logger.debug(f"Response: {response.text}")
+            return data
+
+    def get(self, path: str | None = None, params: dict[str, t.Any] | None = None) -> Response:
+        response: Response = self._client.get(self._url(path), params=params)
+        self.check_http_error(response)
+        return response
+
+    def post(
+        self, path: str | None = None, json_data: dict[str, t.Any] | None = None, params: dict[str, t.Any] | None = None
+    ) -> Response:
+        response: Response = self._client.post(self._url(path), json=json_data, params=params)
+        self.check_http_error(response)
+        return response
 
     def _make_body(self, method: str, params: list[t.Any] | None = None) -> dict[str, t.Any]:
         if params is None:
@@ -66,38 +111,28 @@ class HttpxClient:
         if params is None:
             params = []
 
-        response = self._client.post(
-            self._host,
-            json=self._make_body(method, params),
-        )
+        response = self.post(json_data=self._make_body(method, params))
+        self.check_http_error(response)
+        response_json = self.get_json(response)
 
         logger.debug(f"Making call to {self._host} with method {method} and params {params}")
-        logger.debug(f"Response: {response.text}")
-
-        response.raise_for_status()
-
-        # check if response is json
-        try:
-            data: dict[str, t.Any] = response.json()
-        except JSONDecodeError:
-            logger.error("Response is not json: %s", response.text)
-            raise
+        logger.debug(f"Response: {response_json}")
 
         # check if response is error
-        if "error" in data:
-            logger.error("Response is error: %s", response.text)
-            raise RPCError(code=data["error"]["code"], message=data["error"]["message"])
+        if "error" in response_json:
+            logger.error("Response is error: %s", response_json["error"]["message"])
+            raise RPCError(code=response_json["error"]["code"], message=response_json["error"]["message"])
 
         # check if response is valid
-        if "result" not in data:
-            logger.error("Response is not valid: %s", response.text)
-            raise ValueError(response.text)
+        if "result" not in response_json:
+            logger.error("Response is not valid: %s", response_json)
+            raise ValueError(response_json)
 
-        return data["result"]
+        return response_json["result"]
 
 
-@dataclass
-class Block(HelperMixin):
+@dataclass(frozen=True)
+class Block:
     block_number: BlockNumber
 
     def to_json(self) -> str:
@@ -162,7 +197,7 @@ class BlockchainData(t.Generic[B]):
         )
 
 
-class TestData(HelperMixin, t.Generic[B]):
+class TestData(t.Generic[B]):
     DEFAULT_SIZE: Size = Sizes.S
 
     def __init__(self) -> None:
@@ -207,6 +242,10 @@ class TestData(HelperMixin, t.Generic[B]):
         raise NotImplementedError
 
     @retry(reraise=True, stop=stop_after_attempt(5))
+    def fetch_latest_block(self) -> B:
+        raise NotImplementedError
+
+    @retry(reraise=True, stop=stop_after_attempt(5))
     def _fetch_random_block(self, block_numbers: list[BlockNumber]) -> B:
         rng: RNG = get_rng()
         while True:
@@ -229,14 +268,18 @@ class TestData(HelperMixin, t.Generic[B]):
             print(f"Using latest {size.blocks_len} blocks as test data")
             self._logger.info(f"Using latest {size.blocks_len} blocks as test data")
             for block_number in range(self.data.block_range.start, self.data.block_range.end + 1):
-                self.data.push_block(self.fetch_block(block_number))
+                try:
+                    block = self.fetch_block(block_number)
+                except BlockNotFoundError:
+                    block = self.fetch_latest_block()
+                self.data.push_block(block)
                 print(self.data.stats(), end="\r")
             else:
                 print(self.data.stats(), end="\r")
                 print("\n")  # new line after progress display upon exiting loop
         else:
             while size.blocks_len > len(self.data.blocks):
-                block: B = self._fetch_random_block(self.data.block_numbers)
+                block = self._fetch_random_block(self.data.block_numbers)
                 self.data.push_block(block)
                 print(self.data.stats(), end="\r")
             else:
