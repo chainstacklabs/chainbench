@@ -4,8 +4,7 @@ import typing as t
 from locust import FastHttpUser
 from locust.contrib.fasthttp import RestResponseContextManager
 
-from chainbench.test_data import BaseTestData, DummyTestData
-from chainbench.util.event import setup_event_listeners
+from chainbench.test_data import TestData
 from chainbench.util.rng import RNGManager
 from chainbench.util.rpc import generate_request
 
@@ -13,39 +12,32 @@ from chainbench.util.rpc import generate_request
 import locust_plugins  # isort: skip  # noqa
 
 
-setup_event_listeners()
-
-RPCParams = list[t.Any]
-
-
-class BaseBenchUser(FastHttpUser):
-    """Base class for all benchmark users."""
+class JsonRPCUser(FastHttpUser):
+    """Extension of FastHttpUser to provide JsonRPC support."""
 
     abstract = True
+    test_data: TestData = TestData()
 
     rpc_path: str = ""
+    rpc_error_code_exclusions: list[int] = []
 
     connection_timeout = 120
     network_timeout = 360
-
-    rpc_error_code_exclusions: list[int] = []
-
-    test_data: BaseTestData = DummyTestData()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger(__name__)
         self.rng = RNGManager()
 
-    @classmethod
-    def get_method(cls, method: str) -> t.Callable:
-        return getattr(cls, method)
-
     def on_start(self) -> None:
         self.test_data.wait()
 
     def on_stop(self) -> None:
         self.test_data.close()
+
+    @classmethod
+    def get_method(cls, method: str) -> t.Callable:
+        return getattr(cls, method)
 
     def check_fatal(self, response: RestResponseContextManager) -> None:
         if response.status_code == 401:
@@ -101,10 +93,10 @@ class BaseBenchUser(FastHttpUser):
     def make_call(
         self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, url_postfix: str = ""
     ) -> None:
+        """Make a JSON-RPC call."""
         name = name if name else method
         return self._post(name, data=generate_request(method, params), url_postfix=url_postfix)
 
     def _post(self, name: str, data: t.Optional[dict] = None, url_postfix: str = "") -> None:
-        """Make a JSON-RPC call."""
         with self.rest("POST", self.rpc_path + url_postfix, json=data, name=name) as response:
             self.check_response(response, name=name)

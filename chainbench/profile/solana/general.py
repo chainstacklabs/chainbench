@@ -18,11 +18,11 @@ pie title Methods Distribution
 """
 from locust import constant_pacing, tag, task
 
-from chainbench.user.solana import SolanaBenchUser
+from chainbench.user import SolanaUser
 from chainbench.util.rng import get_rng
 
 
-class SolanaProfile(SolanaBenchUser):
+class SolanaProfile(SolanaUser):
     wait_time = constant_pacing(1)
 
     @task(1000)

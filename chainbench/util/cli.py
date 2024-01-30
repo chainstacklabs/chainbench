@@ -99,7 +99,7 @@ def get_master_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
-    use_recent_blocks: bool = False,
+    use_latest_blocks: bool = False,
     size: str | None = None,
     method: str | None = None,
     enable_class_picker: bool = False,
@@ -128,8 +128,8 @@ def get_master_command(
     if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
-    if use_recent_blocks:
-        command += " --use-recent-blocks True"
+    if use_latest_blocks:
+        command += " --use-latest-blocks True"
 
     if method is not None:
         command += f" --method {method}"
@@ -154,7 +154,7 @@ def get_worker_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
-    use_recent_blocks: bool = False,
+    use_latest_blocks: bool = False,
     method: str | None = None,
 ) -> str:
     """Generate worker command."""
@@ -175,8 +175,8 @@ def get_worker_command(
     if len(exclude_tags) > 0:
         command += f" --exclude-tags {' '.join(exclude_tags)}"
 
-    if use_recent_blocks:
-        command += " --use-recent-blocks True"
+    if use_latest_blocks:
+        command += " --use-latest-blocks True"
 
     if method is not None:
         command += f" --method {method}"

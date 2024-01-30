@@ -4,7 +4,7 @@ User profile for testing a specific EVM method.
 from locust import constant_pacing, events, task
 from locust.argument_parser import LocustArgumentParser
 
-from chainbench.user.evm import EVMMethods
+from chainbench.user import EVMMethods
 from chainbench.util.cli import get_subclass_methods, method_to_task, task_to_method
 
 

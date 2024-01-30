@@ -1,10 +1,10 @@
 from locust import constant_pacing, task
 
-from chainbench.user.evm import EVMBenchUser
+from chainbench.user import EVMUser
 from chainbench.util.rng import get_rng
 
 
-class OasisProfile(EVMBenchUser):
+class OasisProfile(EVMUser):
     wait_time = constant_pacing(1)
 
     @task

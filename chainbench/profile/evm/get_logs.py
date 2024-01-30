@@ -4,11 +4,11 @@ EVM eth_getLogs profile.
 
 from locust import constant_pacing, task
 
-from chainbench.user.evm import EVMBenchUser
+from chainbench.user import EVMUser
 from chainbench.util.rng import get_rng
 
 
-class EVMGetLogsProfile(EVMBenchUser):
+class EVMGetLogsProfile(EVMUser):
     wait_time = constant_pacing(10)
 
     @task

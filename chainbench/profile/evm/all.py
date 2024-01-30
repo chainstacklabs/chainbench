@@ -4,7 +4,7 @@
 
 from locust import constant_pacing
 
-from chainbench.user.evm import EVMMethods
+from chainbench.user import EVMMethods
 from chainbench.util.cli import get_subclass_methods
 
 

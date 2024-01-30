@@ -14,11 +14,11 @@ pie title Methods Distribution
 """
 from locust import constant_pacing, task
 
-from chainbench.user.starknet import StarkNetBenchUser
+from chainbench.user import StarkNetUser
 from chainbench.util.rng import get_rng
 
 
-class StarkNetWalletProfile(StarkNetBenchUser):
+class StarkNetWalletProfile(StarkNetUser):
     wait_time = constant_pacing(1)
 
     @task(435)

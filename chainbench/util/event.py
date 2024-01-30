@@ -1,13 +1,17 @@
 import logging
+import time
 import traceback
+import typing as t
 
-from locust import events
+import gevent
+from locust import User, events
 from locust.argument_parser import LocustArgumentParser
 from locust.env import Environment
 from locust.rpc import Message
-from locust.runners import MasterRunner, WorkerRunner
+from locust.runners import STATE_CLEANUP, MasterRunner, WorkerRunner
 
-from chainbench.test_data import EVMTestData
+from chainbench.test_data import Block, EVMTestData, TestData
+from chainbench.test_data.evm import ChainId
 from chainbench.util.timer import Timer
 
 logger = logging.getLogger(__name__)
@@ -15,10 +19,10 @@ logger = logging.getLogger(__name__)
 
 def cli_custom_arguments(parser: LocustArgumentParser):
     parser.add_argument(
-        "--use-recent-blocks",
+        "--use-latest-blocks",
         type=bool,
         default=False,
-        help="Use recent blocks as test data. Default is False.",
+        help="Use latest blocks as test data. Default is False.",
         include_in_web_ui=False,
     )
     parser.add_argument(
@@ -32,17 +36,17 @@ def cli_custom_arguments(parser: LocustArgumentParser):
 
 def setup_test_data(environment: Environment, msg: Message, **kwargs):
     # Fired when the worker receives a message of type 'test_data'
-    test_data = msg.data["data"][0]
-    worker_index = msg.data["data"][1]
+    test_data: dict[str, t.Any] = msg.data["data"][0]
+    worker_index: int = msg.data["data"][1]
 
     if isinstance(environment.runner, WorkerRunner):
         for user in environment.runner.user_classes:
             if hasattr(user, "test_data"):
-                test_data_class_name = type(user.test_data).__name__
+                test_data_class_name: str = type(user.test_data).__name__
                 user.test_data.init_data_from_json(test_data[test_data_class_name])
                 if isinstance(user.test_data, EVMTestData):
-                    chain_id = test_data["chain_id"][test_data_class_name]
-                    user.test_data.set_chain_info(chain_id)
+                    chain_id: ChainId = test_data["chain_id"][test_data_class_name]
+                    user.test_data.init_network(chain_id)
             else:
                 raise AttributeError(f"{user} class does not have 'test_data' attribute")
         environment.runner.send_message("acknowledge_data", {"data": f"Test data received by worker {worker_index}"})
@@ -54,6 +58,49 @@ def on_acknowledge(msg: Message, **kwargs):
     print(msg.data["data"])
 
 
+def get_block_worker(master_runner: MasterRunner):
+    logger.info("Getting blocks in real time.")
+    active_users: list[t.Type[User]] = []
+    for user in master_runner.user_classes:
+        if hasattr(user, "test_data"):
+            if user.test_data.initialized:
+                active_users.append(user)
+        continue
+
+    while master_runner.state not in [STATE_CLEANUP]:
+        blocks: dict[str, t.Any] = {}
+        for user in active_users:
+            if hasattr(user, "test_data"):
+                test_data_class_name: str = type(user.test_data).__name__
+                if test_data_class_name in blocks:
+                    continue
+                latest_block_number = user.test_data.fetch_latest_block_number()
+                if latest_block_number not in user.test_data.data.block_numbers:
+                    block = user.test_data.fetch_block(latest_block_number)
+                    user.test_data.data.push_block(block)
+                    blocks[test_data_class_name] = block.to_json()
+                    print(f"Block {block.block_number} fetched and updated in test data")
+        if len(blocks) > 0:
+            for i, worker in enumerate(master_runner.clients):
+                master_runner.send_message("block_data", {"data": blocks}, worker)
+                logger.info(f"Block data is sent to worker {i}")
+        time.sleep(1)
+
+
+def on_receive_block(environment: Environment, msg: Message, **kwargs):
+    # Fired when the worker receives a message of type 'block_data'
+    blocks: dict[str, t.Any] = msg.data["data"]
+
+    if isinstance(environment.runner, WorkerRunner):
+        for user in environment.runner.user_classes:
+            if hasattr(user, "test_data"):
+                test_data_class_name = type(user.test_data).__name__
+                block: Block = user.test_data.get_block_from_data(blocks[test_data_class_name])
+                if block.block_number not in user.test_data.data.block_numbers:
+                    user.test_data.data.push_block(block)
+                    logger.debug(f"Block {block.block_number} received from master and updated in test data")
+
+
 # Listener for the init event
 def on_init(environment: Environment, **_kwargs):
     # It will be called for any runner (master, worker, local)
@@ -61,14 +108,15 @@ def on_init(environment: Environment, **_kwargs):
     logger.debug("init.add_listener: Environment: %s", environment.runner)
     logger.debug("init.add_listener: Host: %s", environment.host)
 
-    host_under_test = environment.host or "Default host"
+    host_under_test: str = environment.host or "Default host"
 
     if isinstance(environment.runner, WorkerRunner):
         # Print worker details to the log
         logger.info("I'm a worker. Running tests for %s", host_under_test)
         environment.runner.register_message("test_data", setup_test_data)
+        environment.runner.register_message("block_data", on_receive_block)
 
-    test_data = {}
+    test_data: dict[str, t.Any] = {}
 
     if isinstance(environment.runner, MasterRunner):
         # Print master details to the log
@@ -78,19 +126,20 @@ def on_init(environment: Environment, **_kwargs):
         try:
             for user in environment.runner.user_classes:
                 if hasattr(user, "test_data"):
-                    user_test_data = getattr(user, "test_data")
-                    test_data_class_name = type(user_test_data).__name__
+                    user_test_data: TestData = getattr(user, "test_data")
+                    test_data_class_name: str = type(user_test_data).__name__
                     if test_data_class_name not in test_data:
                         logger.info(f"Initializing test data for {test_data_class_name}")
                         print(f"Initializing test data for {test_data_class_name}")
-                        user_test_data.set_host(environment.host)
-                        if isinstance(user.test_data, EVMTestData):
-                            chain_id = user_test_data.fetch_chain_id()
-                            user_test_data.set_chain_info(chain_id)
-                            logger.info(f"Target endpoint network is {user_test_data.chain_info.name}")
-                            print(f"Target endpoint network is {user_test_data.chain_info.name}")
+                        user_test_data.init_http_client(environment.host)
+                        if isinstance(user_test_data, EVMTestData):
+                            chain_id: ChainId = user_test_data.fetch_chain_id()
+                            user_test_data.init_network(chain_id)
+                            logger.info(f"Target endpoint network is {user_test_data.network.name}")
+                            print(f"Target endpoint network is {user_test_data.network.name}")
                             test_data["chain_id"] = {test_data_class_name: chain_id}
-                        user_test_data.update(environment.parsed_options)
+                        if environment.parsed_options:
+                            user_test_data.init_data_from_blockchain(environment.parsed_options)
                         test_data[test_data_class_name] = user_test_data.data.to_json()
                 else:
                     raise AttributeError(f"{user} class does not have 'test_data' attribute")
@@ -107,6 +156,8 @@ def on_init(environment: Environment, **_kwargs):
             if environment.web_ui:
                 print(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
                 logger.info(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
+        if getattr(environment.parsed_options, "use_latest_blocks", False):
+            gevent.spawn(get_block_worker, environment.runner)
 
 
 def on_test_start(environment: Environment, **_kwargs):
