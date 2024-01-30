@@ -8,26 +8,17 @@ from chainbench.test_data import TestData
 from chainbench.util.rng import RNGManager
 from chainbench.util.rpc import generate_request
 
-# importing plugins here as all profiles depend on it
-import locust_plugins  # isort: skip  # noqa
 
-
-class JsonRPCUser(FastHttpUser):
-    """Extension of FastHttpUser to provide JsonRPC support."""
+class HttpUser(FastHttpUser):
+    """Extension of FastHttpUser for Chainbench."""
 
     abstract = True
     test_data: TestData = TestData()
-
-    rpc_path: str = ""
-    rpc_error_code_exclusions: list[int] = []
+    logger = logging.getLogger(__name__)
+    rng = RNGManager()
 
     connection_timeout = 120
     network_timeout = 360
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.logger = logging.getLogger(__name__)
-        self.rng = RNGManager()
 
     def on_start(self) -> None:
         self.test_data.wait()
@@ -49,11 +40,11 @@ class JsonRPCUser(FastHttpUser):
         elif 300 <= response.status_code <= 399:
             self.logger.critical(f"Redirect error: {response.url}")
 
-    def check_response(self, response: RestResponseContextManager, name: str) -> None:
-        response_json: dict = response.js
-
+    def is_http_error(self, response: RestResponseContextManager) -> bool:
         if response.request:
-            self.logger.debug(f"Request: {response.request.body}")
+            self.logger.debug(f"Request: {response.request.method} {response.request.url_split}")
+        if response.request.body:
+            self.logger.debug(f"{response.request.body}")
 
         """Check the response for errors."""
         if response.status_code != 200:
@@ -63,31 +54,58 @@ class JsonRPCUser(FastHttpUser):
             )
             self.check_fatal(response)
             response.failure(f"Request failed with {response.status_code} code")
-            return
+            return True
+        return False
 
-        if response_json is None:
+    def is_json(self, response: RestResponseContextManager, name: str) -> bool:
+        if response.js is None:
             self.logger.error(f"Response for {name}  is not a JSON: {response.text}")
             response.failure(f"Response for {name}  is not a JSON")
-            return
+            return False
+        return True
 
-        if "jsonrpc" not in response_json:
+    def post(
+        self, name: str, data: t.Optional[dict] = None, params: t.Optional[dict] = None, url_postfix: str = ""
+    ) -> RestResponseContextManager | None:
+        with self.rest("POST", url_postfix.strip("/"), json=data, params=params, name=name) as response:
+            if self.is_http_error(response):
+                return None
+            return response
+
+    def get(
+        self, name: str, params: t.Optional[dict] = None, url_postfix: str = ""
+    ) -> RestResponseContextManager | None:
+        with self.rest("GET", url_postfix.strip("/"), params=params, name=name) as response:
+            if self.is_http_error(response):
+                return None
+            return response
+
+
+class JsonRPCUser(HttpUser):
+    """Extension of HttpUser to provide JsonRPC support."""
+
+    rpc_path: str = ""
+    rpc_error_code_exclusions: list[int] = []
+
+    def check_json_rpc_response(self, response: RestResponseContextManager, name: str) -> None:
+        if "jsonrpc" not in response.js:
             self.logger.error(f"Response for {name} is not a JSON-RPC: {response.text}")
             response.failure(f"Response for {name} is not a JSON-RPC")
             return
 
-        if "error" in response_json:
+        if "error" in response.js:
             self.logger.error(f"Response for {name} has a JSON-RPC error: {response.text}")
-            if "code" in response_json["error"]:
-                if response_json["error"]["code"] not in self.rpc_error_code_exclusions:
+            if "code" in response.js["error"]:
+                if response.js["error"]["code"] not in self.rpc_error_code_exclusions:
                     response.failure(
-                        f"Response for {name} has a JSON-RPC error {response_json['error']['code']} - "
-                        f"{response_json['error']['message']}"
+                        f"Response for {name} has a JSON-RPC error {response.js['error']['code']} - "
+                        f"{response.js['error']['message']}"
                     )
             else:
                 response.failure("Unspecified JSON-RPC error")
             return
 
-        if not response_json.get("result"):
+        if not response.js.get("result"):
             self.logger.error(f"Response for {name} call has no result: {response.text}")
 
     def make_call(
@@ -95,8 +113,8 @@ class JsonRPCUser(FastHttpUser):
     ) -> None:
         """Make a JSON-RPC call."""
         name = name if name else method
-        return self._post(name, data=generate_request(method, params), url_postfix=url_postfix)
 
-    def _post(self, name: str, data: t.Optional[dict] = None, url_postfix: str = "") -> None:
-        with self.rest("POST", self.rpc_path + url_postfix, json=data, name=name) as response:
-            self.check_response(response, name=name)
+        response = self.post(name, data=generate_request(method, params), url_postfix=self.rpc_path + url_postfix)
+        if response is not None:
+            if self.is_json(response, name=name):
+                self.check_json_rpc_response(response, name=name)

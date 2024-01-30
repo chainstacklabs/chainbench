@@ -17,6 +17,8 @@ from .blockchain import (
     TestData,
     Tx,
     TxHash,
+    append_if_not_none,
+    parse_hex_to_int,
 )
 
 logger = logging.getLogger(__name__)
@@ -185,7 +187,7 @@ class EVMNetwork:
     }
 
 
-@dataclass
+@dataclass(frozen=True)
 class EVMBlock(Block):
     block_hash: BlockHash
     txs: list[Tx]
@@ -202,9 +204,9 @@ class EVMBlock(Block):
             if index == 100:
                 # limit it to 100 per block
                 break
-            cls._append_if_not_none(accounts, tx["from"])
-            cls._append_if_not_none(accounts, tx["to"])
-            cls._append_if_not_none(tx_hashes, tx["hash"])
+            append_if_not_none(accounts, tx["from"])
+            append_if_not_none(accounts, tx["to"])
+            append_if_not_none(tx_hashes, tx["hash"])
         return cls(block_number, block_hash, txs, tx_hashes, list(accounts))
 
     def get_random_tx(self, rng: RNG) -> Tx:
@@ -242,10 +244,10 @@ class EVMTestData(TestData[EVMBlock]):
         return EVMBlock(**data_dict)
 
     def fetch_chain_id(self) -> ChainId:
-        return self._parse_hex_to_int(self.client.make_call("eth_chainId"))
+        return parse_hex_to_int(self.client.make_call("eth_chainId"))
 
     def fetch_latest_block_number(self) -> BlockNumber:
-        return self._parse_hex_to_int(self.client.make_call("eth_blockNumber"))
+        return parse_hex_to_int(self.client.make_call("eth_blockNumber"))
 
     def fetch_block(self, block_number: BlockNumber | str) -> EVMBlock:
         if isinstance(block_number, int):
@@ -257,7 +259,7 @@ class EVMTestData(TestData[EVMBlock]):
         ]:
             raise ValueError("Invalid block number")
         result: dict[str, t.Any] = self.client.make_call("eth_getBlockByNumber", [block_number, True])
-        return EVMBlock.from_response(self._parse_hex_to_int(result["number"]), result)
+        return EVMBlock.from_response(parse_hex_to_int(result["number"]), result)
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         end_block_number = self.fetch_latest_block_number()
