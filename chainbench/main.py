@@ -386,12 +386,12 @@ def start(
 
 
 def validate_clients(ctx: Context, param: Parameter, value: str) -> list[str]:
-    from chainbench.tools.discovery.rpc import RPCDiscovery
+    from chainbench.tools.discovery.rpc import RpcDiscovery
 
     if value is not None:
         input_client_list = value.split(",")
         client_list: list[str] = []
-        for client in RPCDiscovery.get_clients():
+        for client in RpcDiscovery.get_clients():
             client_list.extend(client.get_cli_argument_names())
         for client_name in input_client_list:
             if client_name not in client_list:
@@ -423,9 +423,9 @@ def discover(endpoint: str | None, clients: list[str]) -> None:
         click.echo("Target endpoint is required.")
         sys.exit(1)
 
-    from chainbench.tools.discovery.rpc import RPCDiscovery
+    from chainbench.tools.discovery.rpc import RpcDiscovery
 
-    rpc_discovery = RPCDiscovery(endpoint, clients)
+    rpc_discovery = RpcDiscovery(endpoint, clients)
     click.echo(f"Please wait, discovering methods available on {endpoint}...")
 
     def get_discovery_result(method: str) -> None:
@@ -445,9 +445,9 @@ def _list() -> None:
     help="Lists all available client options for method discovery.",
 )
 def clients() -> None:
-    from chainbench.tools.discovery.rpc import RPCDiscovery
+    from chainbench.tools.discovery.rpc import RpcDiscovery
 
-    for client in RPCDiscovery.get_clients():
+    for client in RpcDiscovery.get_clients():
         for unique_client in client.get_name_and_version():
             click.echo(unique_client)
 

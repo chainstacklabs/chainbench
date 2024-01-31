@@ -27,7 +27,7 @@ class AvalancheProfile(EvmUser):
 
     @task(100)
     def call_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="call",
             method="eth_call",
             params=[
@@ -41,7 +41,7 @@ class AvalancheProfile(EvmUser):
 
     @task(50)
     def get_block_by_number_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
             params=self._block_params_factory(),
@@ -49,7 +49,7 @@ class AvalancheProfile(EvmUser):
 
     @task(17)
     def get_transaction_receipt_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_transaction_receipt",
             method="eth_getTransactionReceipt",
             params=self._transaction_by_hash_params_factory(get_rng()),
@@ -57,21 +57,21 @@ class AvalancheProfile(EvmUser):
 
     @task(15)
     def chain_id_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="chain_id",
             method="eth_chainId",
         ),
 
     @task(15)
     def block_number_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="block_number",
             method="eth_blockNumber",
         ),
 
     @task(11)
     def get_balance_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_balance",
             method="eth_getBalance",
             params=self._get_account_and_block_number_params_factory_latest(get_rng()),
@@ -79,7 +79,7 @@ class AvalancheProfile(EvmUser):
 
     @task(10)
     def get_transaction_by_hash_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_transaction_by_hash",
             method="eth_getTransactionByHash",
             params=self._transaction_by_hash_params_factory(get_rng()),
@@ -87,7 +87,7 @@ class AvalancheProfile(EvmUser):
 
     @task(5)
     def estimate_gas_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="estimate_gas",
             method="eth_estimateGas",
             params=[
@@ -101,14 +101,14 @@ class AvalancheProfile(EvmUser):
 
     @task(4)
     def client_version_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="client_version",
             method="web3_clientVersion",
         ),
 
     @task(3)
     def get_block_by_hash_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_block_by_hash",
             method="eth_getBlockByHash",
             params=self._block_by_hash_params_factory(get_rng()),
@@ -116,14 +116,14 @@ class AvalancheProfile(EvmUser):
 
     @task(3)
     def gas_price_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="gas_price",
             method="eth_gasPrice",
         ),
 
     @task(3)
     def max_priority_fee_per_gas_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="max_priority_fee_per_gas",
             method="eth_maxPriorityFeePerGas",
         ),
@@ -136,7 +136,7 @@ class AvalancheGetLogsProfile(EvmUser):
     @tag("get-logs")
     @task
     def get_logs_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_logs",
             method="eth_getLogs",
             params=self._get_logs_params_factory(get_rng()),

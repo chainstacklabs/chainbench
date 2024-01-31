@@ -13,7 +13,7 @@ class EvmGetLogsProfile(EvmUser):
 
     @task
     def get_logs_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_logs",
             method="eth_getLogs",
             params=self._get_logs_params_factory(get_rng()),

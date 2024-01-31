@@ -14,7 +14,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def debug_trace_transaction_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="debug_trace_transaction",
             method="debug_traceTransaction",
             params=self._debug_trace_transaction_params_factory(get_rng()),
@@ -22,7 +22,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def trace_block_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="trace_block",
             method="trace_block",
             params=self._block_params_factory(),
@@ -31,7 +31,7 @@ class EvmHeavyProfile(EvmUser):
     @tag("get-logs")
     @task
     def eth_get_logs_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="eth_get_logs",
             method="eth_getLogs",
             params=self._get_logs_params_factory(get_rng()),
@@ -39,7 +39,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def eth_get_blocks_receipts_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="eth_get_block_receipts",
             method="eth_getBlockReceipts",
             params=[hex(self.test_data.get_random_block_number(get_rng()))],
@@ -47,7 +47,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def trace_replay_transaction_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="trace_replay_transaction",
             method="trace_replayTransaction",
             params=self._trace_replay_transaction_params_factory(get_rng()),
@@ -55,7 +55,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def trace_replay_block_transactions_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="trace_replay_block_transactions",
             method="trace_replayBlockTransactions",
             params=self._trace_replay_block_transaction_params_factory(),
@@ -63,7 +63,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def trace_call_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="trace_call",
             method="trace_call",
             params=[
@@ -78,7 +78,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def trace_filter_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="trace_filter",
             method="trace_filter",
             params=self._trace_filter_params_factory(get_rng()),
@@ -86,7 +86,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def debug_trace_call_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="debug_trace_call",
             method="debug_traceCall",
             params=[
@@ -104,7 +104,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def debug_storage_range_at_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="debug_storage_range_at",
             method="debug_storageRangeAt",
             params=[
@@ -118,7 +118,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def debug_trace_block_by_number_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="debug_trace_block_by_number",
             method="debug_traceBlockByNumber",
             params=self._debug_trace_block_by_number_params_factory(),
@@ -126,7 +126,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def debug_trace_block_by_hash_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="debug_trace_block_by_hash",
             method="debug_traceBlockByHash",
             params=self._debug_trace_block_by_hash_params_factory(get_rng()),
@@ -134,7 +134,7 @@ class EvmHeavyProfile(EvmUser):
 
     @task
     def eth_estimate_gas_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="eth_estimate_gas",
             method="eth_estimateGas",
             params=self._erc20_eth_call_params_factory(get_rng()),

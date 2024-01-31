@@ -9,7 +9,7 @@ from chainbench.util.rng import RNGManager
 from chainbench.util.rpc import generate_request
 
 
-class ChainbenchHttpUser(FastHttpUser):
+class HttpUser(FastHttpUser):
     """Extension of FastHttpUser for Chainbench."""
 
     abstract = True
@@ -81,10 +81,10 @@ class ChainbenchHttpUser(FastHttpUser):
             return response
 
 
-class JsonRpcUser(ChainbenchHttpUser):
+class JsonRpcUser(HttpUser):
     """Extension of HttpUser to provide JsonRPC support."""
 
-    rpc_path: str = ""
+    rpc_path = ""
     rpc_error_code_exclusions: list[int] = []
 
     def check_json_rpc_response(self, response: RestResponseContextManager, name: str) -> None:
@@ -108,7 +108,7 @@ class JsonRpcUser(ChainbenchHttpUser):
         if not response.js.get("result"):
             self.logger.error(f"Response for {name} call has no result: {response.text}")
 
-    def make_call(
+    def make_rpc_call(
         self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, url_postfix: str = ""
     ) -> None:
         """Make a JSON-RPC call."""

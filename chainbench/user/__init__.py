@@ -1,7 +1,7 @@
 from chainbench.util.event import setup_event_listeners
 
 from .evm import EvmMethods, EvmUser
-from .http import ChainbenchHttpUser, JsonRpcUser
+from .http import HttpUser, JsonRpcUser
 from .solana import SolanaUser
 from .starknet import StarkNetUser
 
@@ -12,7 +12,7 @@ setup_event_listeners()
 
 __all__ = [
     "EvmUser",
-    "ChainbenchHttpUser",
+    "HttpUser",
     "JsonRpcUser",
     "SolanaUser",
     "StarkNetUser",
