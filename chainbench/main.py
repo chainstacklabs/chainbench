@@ -218,7 +218,7 @@ def start(
 
     if target is None:
         click.echo(
-            "Target is required. If running in Web UI mode you made change it later "
+            "Target is required. If running in Web UI mode you may change it later "
             "but it is needed to initialize test data."
         )
         sys.exit(1)
