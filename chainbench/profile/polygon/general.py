@@ -20,11 +20,11 @@ pie title Methods Distribution
 """
 from locust import constant_pacing, tag, task
 
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 
 
-class PolygonGeneral(EVMUser):
+class PolygonGeneral(EvmUser):
     wait_time = constant_pacing(1)
     weight = 19
 
@@ -98,7 +98,7 @@ class PolygonGeneral(EVMUser):
         ),
 
 
-class PolygonGetLogsProfile(EVMUser):
+class PolygonGetLogsProfile(EvmUser):
     wait_time = constant_pacing(10)
     weight = 1
 

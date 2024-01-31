@@ -10,18 +10,18 @@ from .blockchain import (
     Tx,
     TxHash,
 )
-from .evm import EVMBlock, EVMTestData
+from .evm import EvmBlock, EvmTestData
 from .solana import SolanaBlock, SolanaTestData
 from .starknet import StarkNetBlock, StarkNetTestData
 
 __all__ = [
     "TestData",
-    "EVMTestData",
+    "EvmTestData",
     "SolanaTestData",
     "StarkNetTestData",
     "BlockchainData",
     "Block",
-    "EVMBlock",
+    "EvmBlock",
     "SolanaBlock",
     "StarkNetBlock",
     "BlockHash",

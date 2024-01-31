@@ -34,7 +34,7 @@ def append_if_not_none(data: list | set, val: t.Any) -> None:
             data.add(val)
 
 
-class RPCError(Exception):
+class RpcError(Exception):
     def __init__(self, code: int, message: str):
         self.code = code
         self.message = message
@@ -121,7 +121,7 @@ class HttpxClient:
         # check if response is error
         if "error" in response_json:
             logger.error("Response is error: %s", response_json["error"]["message"])
-            raise RPCError(code=response_json["error"]["code"], message=response_json["error"]["message"])
+            raise RpcError(code=response_json["error"]["code"], message=response_json["error"]["message"])
 
         # check if response is valid
         if "result" not in response_json:

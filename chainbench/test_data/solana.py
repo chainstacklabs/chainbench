@@ -14,13 +14,13 @@ from .blockchain import (
     BlockNotFoundError,
     BlockNumber,
     BlockRange,
-    RPCError,
+    RpcError,
     TestData,
     Tx,
     TxHash,
     append_if_not_none,
 )
-from .evm import EVMBlock
+from .evm import EvmBlock
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ Slot = BlockNumber
 
 
 @dataclass(frozen=True)
-class SolanaBlock(EVMBlock):
+class SolanaBlock(EvmBlock):
     block_height: BlockNumber
 
     @classmethod
@@ -73,7 +73,7 @@ class SolanaTestData(TestData[SolanaBlock]):
         }
         try:
             result = self.client.make_call("getBlock", [slot, config_object])
-        except RPCError as e:
+        except RpcError as e:
             self._logger.error(f"Failed to fetch block {slot}: {e.code} {e.message}")
             print(f"Failed to fetch block {slot}: {e.code} {e.message}")
 

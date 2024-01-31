@@ -2,12 +2,12 @@ import logging
 import typing as t
 
 from chainbench.test_data.ethereum import EthConsensusTestData
-from chainbench.user import HttpUser
+from chainbench.user import ChainbenchHttpUser
 
 logger = logging.getLogger(__name__)
 
 
-class EthConsensusUser(HttpUser):
+class EthConsensusUser(ChainbenchHttpUser):
     abstract = True
     test_data = EthConsensusTestData()
 

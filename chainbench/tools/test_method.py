@@ -4,7 +4,7 @@ User profile for testing a specific EVM method.
 from locust import constant_pacing, events, task
 from locust.argument_parser import LocustArgumentParser
 
-from chainbench.user import EVMMethods
+from chainbench.user import EvmMethods
 from chainbench.util.cli import get_subclass_methods, method_to_task, task_to_method
 
 
@@ -14,13 +14,13 @@ def _(parser: LocustArgumentParser) -> None:
         "--method",
         type=str,
         default="eth_blocknumber",
-        choices=[task_to_method(method) for method in get_subclass_methods(EVMMethods)],
+        choices=[task_to_method(method) for method in get_subclass_methods(EvmMethods)],
         help="Test a specific method",
         include_in_web_ui=True,
     )
 
 
-class TestEVMMethod(EVMMethods):
+class TestEVMMethod(EvmMethods):
     wait_time = constant_pacing(1)
 
     @task

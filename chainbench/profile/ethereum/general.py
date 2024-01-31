@@ -17,11 +17,11 @@ pie title Methods Distribution
 """
 from locust import constant_pacing, tag, task
 
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 
 
-class EthereumProfile(EVMUser):
+class EthereumProfile(EvmUser):
     wait_time = constant_pacing(1)
     weight = 487
 
@@ -95,7 +95,7 @@ class EthereumProfile(EVMUser):
         ),
 
 
-class EthGetLogsProfile(EVMUser):
+class EthGetLogsProfile(EvmUser):
     wait_time = constant_pacing(10)
     weight = 13
 

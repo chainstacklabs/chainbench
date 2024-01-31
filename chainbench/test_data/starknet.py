@@ -11,12 +11,12 @@ from .blockchain import (
     append_if_not_none,
     parse_hex_to_int,
 )
-from .evm import ChainId, EVMBlock, EVMTestData
+from .evm import ChainId, EvmBlock, EvmTestData
 
 logger = logging.getLogger(__name__)
 
 
-class StarkNetBlock(EVMBlock):
+class StarkNetBlock(EvmBlock):
     @classmethod
     def from_response(cls, block_number: BlockNumber, data: dict[str, t.Any]):
         block_hash: BlockHash = data["block_hash"]
@@ -36,7 +36,7 @@ class StarkNetBlock(EVMBlock):
         return cls(block_number, block_hash, txs, tx_hashes, list(accounts))
 
 
-class StarkNetTestData(EVMTestData):
+class StarkNetTestData(EvmTestData):
     def get_block_from_data(self, data: dict[str, t.Any] | str) -> StarkNetBlock:
         if isinstance(data, str):
             data_dict: dict[str, t.Any] = json.loads(data)

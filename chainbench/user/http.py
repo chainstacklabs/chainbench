@@ -9,7 +9,7 @@ from chainbench.util.rng import RNGManager
 from chainbench.util.rpc import generate_request
 
 
-class HttpUser(FastHttpUser):
+class ChainbenchHttpUser(FastHttpUser):
     """Extension of FastHttpUser for Chainbench."""
 
     abstract = True
@@ -41,10 +41,10 @@ class HttpUser(FastHttpUser):
             self.logger.critical(f"Redirect error: {response.url}")
 
     def is_http_error(self, response: RestResponseContextManager) -> bool:
-        if response.request:
+        if response.request is not None:
             self.logger.debug(f"Request: {response.request.method} {response.request.url_split}")
-        if response.request.body:
-            self.logger.debug(f"{response.request.body}")
+            if response.request.body is not None:
+                self.logger.debug(f"{response.request.body}")
 
         """Check the response for errors."""
         if response.status_code != 200:
@@ -81,7 +81,7 @@ class HttpUser(FastHttpUser):
             return response
 
 
-class JsonRPCUser(HttpUser):
+class JsonRpcUser(ChainbenchHttpUser):
     """Extension of HttpUser to provide JsonRPC support."""
 
     rpc_path: str = ""

@@ -3,11 +3,11 @@ EVM profile (light mode).
 """
 from locust import constant_pacing, task
 
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 
 
-class EVMLightProfile(EVMUser):
+class EvmLightProfile(EvmUser):
     wait_time = constant_pacing(1)
 
     @task

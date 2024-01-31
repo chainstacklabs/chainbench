@@ -12,7 +12,7 @@ from click import Context, Parameter
 from locust import runners
 
 from chainbench.tools.discovery.rpc import DiscoveryResult
-from chainbench.user import EVMMethods
+from chainbench.user import EvmMethods
 from chainbench.util.cli import (
     ContextData,
     ensure_results_dir,
@@ -53,7 +53,7 @@ def cli(ctx: Context):
 
 def validate_method(ctx: Context, param: Parameter, value: str) -> str:
     if value is not None:
-        method_list = [task_to_method(task) for task in get_subclass_methods(EVMMethods)]
+        method_list = [task_to_method(task) for task in get_subclass_methods(EvmMethods)]
         if value not in method_list:
             raise click.BadParameter(
                 f"Method {value} is not supported. " f"Use 'chainbench list methods' to list all available methods."
@@ -472,7 +472,7 @@ def profiles(profile_dir: Path) -> None:
     help="Lists all available evm methods.",
 )
 def methods() -> None:
-    task_list = get_subclass_methods(EVMMethods)
+    task_list = get_subclass_methods(EvmMethods)
     for task in task_list:
         click.echo(task_to_method(task))
 
