@@ -9,7 +9,7 @@ from locust.env import Environment
 from locust.rpc import Message
 from locust.runners import STATE_CLEANUP, MasterRunner, WorkerRunner
 
-from chainbench.test_data import Block, EVMTestData, TestData
+from chainbench.test_data import Block, EvmTestData, TestData
 from chainbench.test_data.evm import ChainId
 from chainbench.util.timer import Timer
 
@@ -43,7 +43,7 @@ def setup_test_data(environment: Environment, msg: Message, **kwargs):
             if hasattr(user, "test_data"):
                 test_data_class_name: str = type(user.test_data).__name__
                 user.test_data.init_data_from_json(test_data[test_data_class_name])
-                if isinstance(user.test_data, EVMTestData):
+                if isinstance(user.test_data, EvmTestData):
                     chain_id: ChainId = test_data["chain_id"][test_data_class_name]
                     user.test_data.init_network(chain_id)
             else:
@@ -142,7 +142,7 @@ def on_init(environment: Environment, **_kwargs):
                 logger.info(f"Initializing test data for {test_data_class_name}")
                 print(f"Initializing test data for {test_data_class_name}")
                 user_test_data.init_http_client(environment.host)
-                if isinstance(user_test_data, EVMTestData):
+                if isinstance(user_test_data, EvmTestData):
                     chain_id: ChainId = user_test_data.fetch_chain_id()
                     user_test_data.init_network(chain_id)
                     logger.info(f"Target endpoint network is {user_test_data.network.name}")

@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 ChainId = int
 
 
-class ERC20Contract(SmartContract):
+class Erc20Contract(SmartContract):
     def total_supply_params(self) -> dict[str, str]:
         return {"data": "0x18160ddd", "to": self.address}
 
@@ -40,7 +40,7 @@ class ERC20Contract(SmartContract):
         return {"data": "0x06fdde03", "to": self.address}
 
 
-class EVMNetwork:
+class EvmNetwork:
     def __new__(cls, chain_id: ChainId):
         if chain_id not in cls.DATA:
             raise ValueError(f"Unsupported chain id: {chain_id}")
@@ -68,10 +68,10 @@ class EVMNetwork:
         else:
             return result
 
-    def get_contracts(self) -> list[ERC20Contract]:
-        return [ERC20Contract(address) for address in self.contract_addresses]
+    def get_contracts(self) -> list[Erc20Contract]:
+        return [Erc20Contract(address) for address in self.contract_addresses]
 
-    def get_random_contract(self, rng: RNG) -> ERC20Contract:
+    def get_random_contract(self, rng: RNG) -> Erc20Contract:
         return rng.random.choice(self.get_contracts())
 
     DATA: t.Mapping[ChainId, NetworkData] = {
@@ -188,7 +188,7 @@ class EVMNetwork:
 
 
 @dataclass(frozen=True)
-class EVMBlock(Block):
+class EvmBlock(Block):
     block_hash: BlockHash
     txs: list[Tx]
     tx_hashes: list[TxHash]
@@ -219,13 +219,13 @@ class EVMBlock(Block):
         return rng.random.choice(self.accounts)
 
 
-class EVMTestData(TestData[EVMBlock]):
-    def __init__(self, network: EVMNetwork | None = None):
+class EvmTestData(TestData[EvmBlock]):
+    def __init__(self, network: EvmNetwork | None = None):
         super().__init__()
         self._network = network
 
     def init_network(self, chain_id: ChainId):
-        self._network = EVMNetwork(chain_id)
+        self._network = EvmNetwork(chain_id)
 
     @property
     def network(self):
@@ -233,15 +233,15 @@ class EVMTestData(TestData[EVMBlock]):
             raise RuntimeError("Network is not set")
         return self._network
 
-    def get_random_erc20_contract(self, rng: RNG) -> ERC20Contract:
+    def get_random_erc20_contract(self, rng: RNG) -> Erc20Contract:
         return self.network.get_random_contract(rng)
 
-    def get_block_from_data(self, data: dict[str, t.Any] | str) -> EVMBlock:
+    def get_block_from_data(self, data: dict[str, t.Any] | str) -> EvmBlock:
         if isinstance(data, str):
             data_dict = json.loads(data)
         else:
             data_dict = data
-        return EVMBlock(**data_dict)
+        return EvmBlock(**data_dict)
 
     def fetch_chain_id(self) -> ChainId:
         return parse_hex_to_int(self.client.make_call("eth_chainId"))
@@ -249,7 +249,7 @@ class EVMTestData(TestData[EVMBlock]):
     def fetch_latest_block_number(self) -> BlockNumber:
         return parse_hex_to_int(self.client.make_call("eth_blockNumber"))
 
-    def fetch_block(self, block_number: BlockNumber | str) -> EVMBlock:
+    def fetch_block(self, block_number: BlockNumber | str) -> EvmBlock:
         if isinstance(block_number, int):
             block_number = hex(block_number)
         elif (block_number := block_number.lower()) not in [
@@ -259,7 +259,7 @@ class EVMTestData(TestData[EVMBlock]):
         ]:
             raise ValueError("Invalid block number")
         result: dict[str, t.Any] = self.client.make_call("eth_getBlockByNumber", [block_number, True])
-        return EVMBlock.from_response(parse_hex_to_int(result["number"]), result)
+        return EvmBlock.from_response(parse_hex_to_int(result["number"]), result)
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         end_block_number = self.fetch_latest_block_number()

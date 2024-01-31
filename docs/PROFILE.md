@@ -15,10 +15,10 @@ Let's create a profile for the Oasis blockchain. We will use the `Oasis` profile
 Let's create a new file called `oasis.py` in the `chainbench/profile/oasis/` directory and add the following code:
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 
 
-class OasisProfile(EVMUser):
+class OasisProfile(EvmUser):
     pass
 ```
 
@@ -33,11 +33,11 @@ If response time is greater than `n`, then the wait time is set to 0, and the ne
 There are other ways to set wait time, see the [Locust docs](https://docs.locust.io/en/stable/writing-a-locustfile.html#wait-time-attribute) for more details.
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from locust import constant_pacing
 
 
-class OasisProfile(EVMUser):
+class OasisProfile(EvmUser):
     wait_time = constant_pacing(2)
 ```
 
@@ -52,12 +52,12 @@ The block ranges are defined in the [`chainbench/test_data/evm.py`](../chainbenc
 After that, blockchain data such as block numbers, block hashes, transactions, transaction hashes and addresses are fetched from the blockchain node and stored in memory.
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 from locust import task, constant_pacing
 
 
-class OasisProfile(EVMUser):
+class OasisProfile(EvmUser):
     wait_time = constant_pacing(2)
 
     @task
@@ -81,12 +81,12 @@ See the [`chainbench/user/evm.py`](../chainbench/user/evm.py) file for all suppo
 Adding task for a call with static parameters is as simple as:
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 from locust import task, constant_pacing
 
 
-class OasisProfile(EVMUser):
+class OasisProfile(EvmUser):
     wait_time = constant_pacing(2)
 
     @task
@@ -111,11 +111,11 @@ In case of `eth_syncing` we can omit the `params` argument because it doesn't ha
 Here's an example of `eth_call` call with static parameters from [BSC profile](../chainbench/profile/bsc/general.py):
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from locust import task
 
 
-class BscProfile(EVMUser):
+class BscProfile(EvmUser):
     @task(100)
     def call_task(self):
         self.make_call(
@@ -137,12 +137,12 @@ If we want tasks to have different weights, we can use the `@task` decorator wit
 For `eth_getTransactionByHash` we can use the `_transaction_by_hash_params_factory` method:
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 from locust import task, constant_pacing
 
 
-class OasisProfile(EVMUser):
+class OasisProfile(EvmUser):
     wait_time = constant_pacing(2)
 
     @task
@@ -174,12 +174,12 @@ class OasisProfile(EVMUser):
 `eth_getCode`, `eth_getBalance`, and `eth_getTransactionCount` share the same parameters format, so we can use the `_get_balance_params_factory` method:
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 from locust import task, constant_pacing
 
 
-class OasisProfile(EVMUser):
+class OasisProfile(EvmUser):
     wait_time = constant_pacing(2)
 
     @task
@@ -235,12 +235,12 @@ class OasisProfile(EVMUser):
 Here's the final version of the profile:
 
 ```python
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 from locust import task, constant_pacing
 
 
-class OasisProfile(EVMUser):
+class OasisProfile(EvmUser):
     wait_time = constant_pacing(2)
 
     @task

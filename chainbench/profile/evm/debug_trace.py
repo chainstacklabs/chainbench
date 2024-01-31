@@ -4,11 +4,11 @@ EVM profile (debug_trace methods).
 
 from locust import constant_pacing, task
 
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 
 
-class EVMDebugTraceProfile(EVMUser):
+class EvmDebugTraceProfile(EvmUser):
     wait_time = constant_pacing(10)
 
     @task(324)

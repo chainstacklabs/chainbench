@@ -16,11 +16,11 @@ pie title Methods Distribution
 """
 from locust import constant_pacing, tag, task
 
-from chainbench.user import EVMUser
+from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 
 
-class BscProfile(EVMUser):
+class BscProfile(EvmUser):
     wait_time = constant_pacing(1)
     weight = 89
 
@@ -93,7 +93,7 @@ class BscProfile(EVMUser):
         ),
 
 
-class BscGetLogsProfile(EVMUser):
+class BscGetLogsProfile(EvmUser):
     wait_time = constant_pacing(10)
     weight = 12
 

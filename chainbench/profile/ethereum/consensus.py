@@ -5,6 +5,8 @@ from locust import constant_pacing
 
 from chainbench.user.ethereum import EthConsensusMethods
 
+# mypy: ignore_errors
+
 
 class EthereumConsensusProfile(EthConsensusMethods):
     wait_time = constant_pacing(1)

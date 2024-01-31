@@ -1,12 +1,12 @@
-from chainbench.test_data import Account, BlockHash, BlockNumber, EVMTestData, TxHash
+from chainbench.test_data import Account, BlockHash, BlockNumber, EvmTestData, TxHash
 from chainbench.util.rng import RNG
 
-from .http import JsonRPCUser
+from .http import JsonRpcUser
 
 
-class EVMUser(JsonRPCUser):
+class EvmUser(JsonRpcUser):
     abstract = True
-    test_data = EVMTestData()
+    test_data = EvmTestData()
 
     _default_trace_timeout = "120s"
 
@@ -133,7 +133,7 @@ class EVMUser(JsonRPCUser):
         ]
 
 
-class EVMMethods(EVMUser):
+class EvmMethods(EvmUser):
     abstract = True
 
     def eth_accounts_task(self) -> None:
