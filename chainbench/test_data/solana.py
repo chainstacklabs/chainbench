@@ -61,7 +61,7 @@ class SolanaTestData(TestData[SolanaBlock]):
         return SolanaBlock(**data_dict)
 
     def fetch_latest_block_number(self) -> Slot:
-        slot = self.client.make_call("getLatestBlockhash")["context"]["slot"]
+        slot = self.client.make_rpc_call("getLatestBlockhash")["context"]["slot"]
         return slot
 
     def fetch_block(self, slot: Slot) -> SolanaBlock:
@@ -72,7 +72,7 @@ class SolanaTestData(TestData[SolanaBlock]):
             "maxSupportedTransactionVersion": 0,
         }
         try:
-            result = self.client.make_call("getBlock", [slot, config_object])
+            result = self.client.make_rpc_call("getBlock", [slot, config_object])
         except RpcError as e:
             self._logger.error(f"Failed to fetch block {slot}: {e.code} {e.message}")
             print(f"Failed to fetch block {slot}: {e.code} {e.message}")
@@ -89,7 +89,7 @@ class SolanaTestData(TestData[SolanaBlock]):
         return self.fetch_block(self.fetch_latest_block_number())
 
     def _fetch_first_available_block(self) -> Slot:
-        slot = self.client.make_call("getFirstAvailableBlock")
+        slot = self.client.make_rpc_call("getFirstAvailableBlock")
         return slot
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:

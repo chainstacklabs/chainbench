@@ -45,10 +45,10 @@ class StarkNetTestData(EvmTestData):
         return StarkNetBlock(**data_dict)
 
     def fetch_chain_id(self) -> ChainId:
-        return parse_hex_to_int(self.client.make_call("starknet_chainId"))
+        return parse_hex_to_int(self.client.make_rpc_call("starknet_chainId"))
 
     def fetch_latest_block_number(self) -> BlockNumber:
-        return self.client.make_call("starknet_blockNumber")
+        return self.client.make_rpc_call("starknet_blockNumber")
 
     def fetch_block(self, block_number: BlockNumber | str) -> StarkNetBlock:
         if isinstance(block_number, str) and (block_number := block_number.lower()) not in (
@@ -58,5 +58,5 @@ class StarkNetTestData(EvmTestData):
             raise ValueError("Invalid block number")
         params: dict[str, int] | str = {"block_number": block_number} if isinstance(block_number, int) else block_number
 
-        result = self.client.make_call("starknet_getBlockWithTxs", [params])
+        result = self.client.make_rpc_call("starknet_getBlockWithTxs", [params])
         return StarkNetBlock.from_response(result["block_number"], result)

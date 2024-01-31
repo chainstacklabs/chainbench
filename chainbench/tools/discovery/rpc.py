@@ -10,13 +10,13 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 
 
 @dataclass
-class RPCMethod:
+class RpcMethod:
     name: str
     supported_clients: list[str]
 
 
 @dataclass
-class RPCClient:
+class RpcClient:
     name: str
     version: str
     endpoints: list[str]
@@ -48,7 +48,7 @@ class DiscoveryResult:
             return f"{self.method}, {self.error_message}"
 
 
-class RPCDiscovery:
+class RpcDiscovery:
     METHODS_FILE = Path(os.path.join(__location__, "methods.json"))
     CLIENTS_FILE = Path(os.path.join(__location__, "clients.json"))
 
@@ -60,23 +60,23 @@ class RPCDiscovery:
         self.http = httpx.Client()
 
     @staticmethod
-    def _parse_methods() -> list[RPCMethod]:
+    def _parse_methods() -> list[RpcMethod]:
         methods = []
-        methods_json = json.loads(RPCDiscovery.METHODS_FILE.read_text())
+        methods_json = json.loads(RpcDiscovery.METHODS_FILE.read_text())
         for method in methods_json.keys():
-            methods.append(RPCMethod(name=method, supported_clients=methods_json[method]["clients"]))
+            methods.append(RpcMethod(name=method, supported_clients=methods_json[method]["clients"]))
         return methods
 
     @staticmethod
-    def _parse_clients() -> list[RPCClient]:
-        clients = []
-        clients_json = json.loads(RPCDiscovery.CLIENTS_FILE.read_text())
+    def _parse_clients() -> list[RpcClient]:
+        clients: list[RpcClient] = []
+        clients_json = json.loads(RpcDiscovery.CLIENTS_FILE.read_text())
         for client in clients_json.keys():
             if "endpoints" in clients_json[client]:
                 endpoints = clients_json[client]["endpoints"]
             else:
                 endpoints = []
-            clients.append(RPCClient(name=client, version=clients_json[client]["version"], endpoints=endpoints))
+            clients.append(RpcClient(name=client, version=clients_json[client]["version"], endpoints=endpoints))
         return clients
 
     @classmethod
@@ -94,7 +94,7 @@ class RPCDiscovery:
         return [client.name for client in cls._parse_clients()]
 
     @classmethod
-    def get_clients(cls) -> list[RPCClient]:
+    def get_clients(cls) -> list[RpcClient]:
         return cls._parse_clients()
 
     @classmethod

@@ -26,7 +26,7 @@ class BscProfile(EvmUser):
 
     @task(100)
     def call_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="call",
             method="eth_call",
             params=[
@@ -40,7 +40,7 @@ class BscProfile(EvmUser):
 
     @task(93)
     def get_transaction_receipt_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_transaction_receipt",
             method="eth_getTransactionReceipt",
             params=self._transaction_by_hash_params_factory(get_rng()),
@@ -48,21 +48,21 @@ class BscProfile(EvmUser):
 
     @task(28)
     def block_number_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="block_number",
             method="eth_blockNumber",
         ),
 
     @task(18)
     def chain_id_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="chain_id",
             method="eth_chainId",
         ),
 
     @task(13)
     def get_block_by_number_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_block_by_number",
             method="eth_getBlockByNumber",
             params=self._block_params_factory(),
@@ -70,7 +70,7 @@ class BscProfile(EvmUser):
 
     @task(9)
     def get_transaction_by_hash_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_transaction_by_hash",
             method="eth_getTransactionByHash",
             params=self._transaction_by_hash_params_factory(get_rng()),
@@ -78,7 +78,7 @@ class BscProfile(EvmUser):
 
     @task(5)
     def get_balance_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_balance",
             method="eth_getBalance",
             params=self._get_account_and_block_number_params_factory_latest(get_rng()),
@@ -86,7 +86,7 @@ class BscProfile(EvmUser):
 
     @task(3)
     def get_block_by_hash_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_block_by_hash",
             method="eth_getBlockByHash",
             params=self._block_by_hash_params_factory(get_rng()),
@@ -100,7 +100,7 @@ class BscGetLogsProfile(EvmUser):
     @tag("get-logs")
     @task
     def get_logs_task(self):
-        self.make_call(
+        self.make_rpc_call(
             name="get_logs",
             method="eth_getLogs",
             params=self._get_logs_params_factory(get_rng()),

@@ -2,12 +2,13 @@ import logging
 import typing as t
 
 from chainbench.test_data.ethereum import EthConsensusTestData
-from chainbench.user import ChainbenchHttpUser
+
+from .http import HttpUser
 
 logger = logging.getLogger(__name__)
 
 
-class EthConsensusUser(ChainbenchHttpUser):
+class EthConsensusUser(HttpUser):
     abstract = True
     test_data = EthConsensusTestData()
 
@@ -18,7 +19,7 @@ class EthConsensusUser(ChainbenchHttpUser):
         block_id: int | str = "head",
         path: str | None = None,
     ):
-        url_path: str = f"/eth/{version}/beacon/blocks/{block_id}"
+        url_path = f"/eth/{version}/beacon/blocks/{block_id}"
         if path:
             url_path += "/" + path.strip("/")
         self.get(

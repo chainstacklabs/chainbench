@@ -244,10 +244,10 @@ class EvmTestData(TestData[EvmBlock]):
         return EvmBlock(**data_dict)
 
     def fetch_chain_id(self) -> ChainId:
-        return parse_hex_to_int(self.client.make_call("eth_chainId"))
+        return parse_hex_to_int(self.client.make_rpc_call("eth_chainId"))
 
     def fetch_latest_block_number(self) -> BlockNumber:
-        return parse_hex_to_int(self.client.make_call("eth_blockNumber"))
+        return parse_hex_to_int(self.client.make_rpc_call("eth_blockNumber"))
 
     def fetch_block(self, block_number: BlockNumber | str) -> EvmBlock:
         if isinstance(block_number, int):
@@ -258,7 +258,7 @@ class EvmTestData(TestData[EvmBlock]):
             "pending",
         ]:
             raise ValueError("Invalid block number")
-        result: dict[str, t.Any] = self.client.make_call("eth_getBlockByNumber", [block_number, True])
+        result: dict[str, t.Any] = self.client.make_rpc_call("eth_getBlockByNumber", [block_number, True])
         return EvmBlock.from_response(parse_hex_to_int(result["number"]), result)
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:

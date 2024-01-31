@@ -46,9 +46,14 @@ class BlockNotFoundError(Exception):
 
 
 class HttpxClient:
+    import logging
+
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("httpcore").setLevel(logging.WARNING)
+
     def __init__(self, host: str, rpc_version: str = "2.0"):
         self._rpc_version = rpc_version
-        self._host: URL = URL(host.strip("/"))
+        self._host = URL(host.strip("/"))
         self._client = httpx.Client(timeout=60)
 
     def close(self) -> None:
@@ -85,14 +90,14 @@ class HttpxClient:
             return data
 
     def get(self, path: str | None = None, params: dict[str, t.Any] | None = None) -> Response:
-        response: Response = self._client.get(self._url(path), params=params)
+        response = self._client.get(self._url(path), params=params)
         self.check_http_error(response)
         return response
 
     def post(
         self, path: str | None = None, json_data: dict[str, t.Any] | None = None, params: dict[str, t.Any] | None = None
     ) -> Response:
-        response: Response = self._client.post(self._url(path), json=json_data, params=params)
+        response = self._client.post(self._url(path), json=json_data, params=params)
         self.check_http_error(response)
         return response
 
@@ -107,7 +112,7 @@ class HttpxClient:
             "id": token_hex(8),
         }
 
-    def make_call(self, method: str, params: list[t.Any] | None = None) -> t.Any:
+    def make_rpc_call(self, method: str, params: list[t.Any] | None = None) -> t.Any:
         if params is None:
             params = []
 
@@ -144,6 +149,9 @@ class BlockRange:
     start: BlockNumber
     end: BlockNumber
 
+    def get_random_block_number(self, rng: RNG) -> BlockNumber:
+        return rng.random.randint(self.start, self.end)
+
 
 @dataclass
 class Size:
@@ -173,7 +181,7 @@ B = t.TypeVar("B", bound=Block)
 class BlockchainData(t.Generic[B]):
     def __init__(self, size: Size, start: BlockNumber = 0, end: BlockNumber = 0):
         self.size = size
-        self.block_range: BlockRange = BlockRange(start, end)
+        self.block_range = BlockRange(start, end)
         self.blocks: list[B] = []
         self.block_numbers: list[BlockNumber] = []
 
@@ -198,7 +206,7 @@ class BlockchainData(t.Generic[B]):
 
 
 class TestData(t.Generic[B]):
-    DEFAULT_SIZE: Size = Sizes.S
+    DEFAULT_SIZE = Sizes.S
 
     def __init__(self) -> None:
         self._logger = logging.getLogger(__name__)
@@ -247,9 +255,9 @@ class TestData(t.Generic[B]):
 
     @retry(reraise=True, stop=stop_after_attempt(5))
     def _fetch_random_block(self, block_numbers: list[BlockNumber]) -> B:
-        rng: RNG = get_rng()
+        rng = get_rng()
         while True:
-            block_number: BlockNumber = rng.random.randint(self.data.block_range.start, self.data.block_range.end)
+            block_number = self.data.block_range.get_random_block_number(rng)
             if block_number not in block_numbers:
                 break
         return self.fetch_block(block_number)
