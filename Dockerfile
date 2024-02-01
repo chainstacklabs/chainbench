@@ -13,7 +13,6 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 RUN python -m venv --copies /app/venv
 RUN . /app/venv/bin/activate && $HOME/.local/bin/poetry install --no-directory --without dev --no-root --compile
 
-
 # runtime stage
 FROM python:3.10-slim-buster as prod
 
@@ -24,5 +23,6 @@ RUN apt-get update && apt-get install -y tini
 
 WORKDIR /app
 COPY . ./
+RUN python -m pip install .
 
-ENTRYPOINT ["/usr/bin/tini", "--", "python3", "-m", "chainbench"]
+ENTRYPOINT ["/usr/bin/tini", "--", "chainbench"]
