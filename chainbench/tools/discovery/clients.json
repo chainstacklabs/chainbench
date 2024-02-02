@@ -48,5 +48,8 @@
     },
     "solana": {
         "version": "1.16.23"
+    },
+    "zksync": {
+        "version": "2.0"
     }
 }
