@@ -24,7 +24,7 @@ class EthConsensusUser(HttpUser):
             url_path += "/" + path.strip("/")
         self.get(
             name=name,
-            url_postfix=url_path,
+            path=url_path,
         )
 
     def eth_v1_beacon_states_validators_request(
@@ -42,14 +42,14 @@ class EthConsensusUser(HttpUser):
 
         self.get(
             name=name,
-            url_postfix=f"/eth/v1/beacon/states/{state_id}/validators",
+            path=f"/eth/v1/beacon/states/{state_id}/validators",
             params=params,
         )
 
     def eth_v1_beacon_headers_request(self, name: str = "eth_v1_beacon_headers", block_id: int | str = "head"):
         self.get(
             name=name,
-            url_postfix=f"/eth/v1/beacon/headers/{block_id}",
+            path=f"/eth/v1/beacon/headers/{block_id}",
         )
 
 
@@ -59,13 +59,13 @@ class EthConsensusMethods(EthConsensusUser):
     def eth_v1_beacon_genesis_task(self):
         self.get(
             name="eth_v1_beacon_genesis",
-            url_postfix="/eth/v1/beacon/genesis",
+            path="/eth/v1/beacon/genesis",
         )
 
     def eth_v1_config_spec_task(self):
         self.get(
             name="eth_v1_config_spec",
-            url_postfix="/eth/v1/config/spec",
+            path="/eth/v1/config/spec",
         )
 
     def eth_v2_beacon_blocks_head_task(self):
@@ -132,26 +132,26 @@ class EthConsensusMethods(EthConsensusUser):
     def eth_v1_beacon_states_random_state_id_finality_checkpoints_task(self):
         self.get(
             name="eth_v1_beacon_states_finality_checkpoints",
-            url_postfix=f"/eth/v1/beacon/states/"
+            path=f"/eth/v1/beacon/states/"
             f"{self.test_data.get_random_block(self.rng.get_rng()).block_number}/finality_checkpoints",
         )
 
     def eth_v1_validator_duties_proposer_random_epoch_task(self):
         self.get(
             name="eth_v1_validator_duties_proposer_random_epoch",
-            url_postfix=f"/eth/v1/validator/duties/proposer/{self.test_data.get_random_epoch(self.rng.get_rng())}",
+            path=f"/eth/v1/validator/duties/proposer/{self.test_data.get_random_epoch(self.rng.get_rng())}",
         )
 
     def eth_v1_beacon_states_head_committees_task(self):
         self.get(
             name="eth_v1_beacon_states_committees",
-            url_postfix="/eth/v1/beacon/states/head/committees",
+            path="/eth/v1/beacon/states/head/committees",
         )
 
     def eth_v1_beacon_states_head_committees_random_epoch_task(self):
         self.get(
             name="eth_v1_beacon_states_committees_random_epoch",
-            url_postfix=f"/eth/v1/beacon/states/head/committees?"
+            path=f"/eth/v1/beacon/states/head/committees?"
             f"epoch={self.test_data.get_random_epoch(self.rng.get_rng())}",
         )
 
@@ -169,11 +169,11 @@ class EthConsensusMethods(EthConsensusUser):
     def eth_v1_node_health_task(self):
         self.get(
             name="eth_v1_node_health",
-            url_postfix="/eth/v1/node/health",
+            path="/eth/v1/node/health",
         )
 
     def eth_v1_node_version_task(self):
         self.get(
             name="eth_v1_node_version",
-            url_postfix="/eth/v1/node/version",
+            path="/eth/v1/node/version",
         )

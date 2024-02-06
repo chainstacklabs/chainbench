@@ -8,13 +8,13 @@ from tenacity import retry, stop_after_attempt
 
 from chainbench.util.rng import RNG, get_rng
 
+from ..util.http import JsonRpcError
 from .blockchain import (
     Account,
     BlockHash,
     BlockNotFoundError,
     BlockNumber,
     BlockRange,
-    RpcError,
     TestData,
     Tx,
     TxHash,
@@ -73,7 +73,7 @@ class SolanaTestData(TestData[SolanaBlock]):
         }
         try:
             result = self.client.make_rpc_call("getBlock", [slot, config_object])
-        except RpcError as e:
+        except JsonRpcError as e:
             self._logger.error(f"Failed to fetch block {slot}: {e.code} {e.message}")
             print(f"Failed to fetch block {slot}: {e.code} {e.message}")
 

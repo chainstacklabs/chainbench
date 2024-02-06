@@ -99,7 +99,7 @@ class EthConsensusTestData(TestData[EthConsensusBlock]):
         block_response = self.client.get(f"/eth/v1/beacon/headers/{block_id}")
         if block_response.status_code == 404:
             raise BlockNotFoundError
-        return self.client.get_json(block_response)["data"]["header"]["message"]
+        return block_response.json["data"]["header"]["message"]
 
     def fetch_block(self, block_id: int | str) -> EthConsensusBlock:
         if isinstance(block_id, str):
@@ -112,8 +112,7 @@ class EthConsensusTestData(TestData[EthConsensusBlock]):
         slot = int(self.fetch_block_header(block_id)["slot"])
 
         committees_response = self.client.get(f"/eth/v1/beacon/states/{block_id}/committees", params={"slot": slot})
-        committees_json = self.client.get_json(committees_response)
-        return EthConsensusBlock.from_response(slot, committees_json)
+        return EthConsensusBlock.from_response(slot, committees_response.json)
 
     def fetch_latest_block(self) -> EthConsensusBlock:
         return self.fetch_block("head")
