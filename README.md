@@ -46,7 +46,7 @@ Check out the [docs](docs/PROFILE.md) for more information about the profile cre
 ## Prerequisites
 
 - Python 3.10+
-- Poetry 1.2+ (installation instructions [here](https://python-poetry.org/docs/#installation))
+- Poetry 1.7+ (installation instructions [here](https://python-poetry.org/docs/#installation))
 
 ## Installation
 

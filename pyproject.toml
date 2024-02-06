@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chainbench"
-version = "0.5.3"
+version = "0.6.0"
 description = ""
 authors = [
     "Egor Molodik <egor.molodik@chainstack.com>",
@@ -12,13 +12,10 @@ packages = [{include = "chainbench"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-httpx = "0.24.0"
-locust = "^2.16.1"
+locust = "^2.22.0"
 click = "^8.1.6"
-locust-plugins = "^3.3.0"
-httpcore = "0.17.0"
+locust-plugins = "^4.3.2"
 tenacity = "^8.2.2"
-psycopg2-binary = "^2.9.6"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
