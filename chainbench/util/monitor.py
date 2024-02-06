@@ -5,8 +5,9 @@ from json import JSONDecodeError
 from pathlib import Path
 from time import sleep
 
-import httpx
 from locust.util.timespan import parse_timespan
+
+from .http import HttpClient
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,7 @@ def head_lag_monitor(endpoint: str, result_path: Path, duration: str):
         "params": ["latest", False],
     }
     end_time = datetime.now() + timedelta(seconds=parse_timespan(duration))
-    http = httpx.Client()
+    http = HttpClient(endpoint)
     with open(
         file=f"{result_path}/head_lag.csv",
         mode="a",
@@ -43,10 +44,10 @@ def head_lag_monitor(endpoint: str, result_path: Path, duration: str):
         csv_writer.writerow(["timestamp", "lag (s)", "block number"])
         while datetime.now() < end_time:
             current_timestamp = datetime.now()
-            response = http.post(endpoint, json=data)
+            response = http.post(data=data)
             try:
-                block_timestamp = datetime.fromtimestamp(int(response.json()["result"]["timestamp"], 0))
-                block_number = int(response.json()["result"]["number"], 0)
+                block_timestamp = datetime.fromtimestamp(int(response.json["result"]["timestamp"], 0))
+                block_number = int(response.json["result"]["number"], 0)
                 csv_writer.writerow(
                     [
                         current_timestamp,

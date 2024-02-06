@@ -1,5 +1,6 @@
 import logging
 import time
+import traceback
 import typing as t
 
 import gevent
@@ -141,7 +142,8 @@ def on_init(environment: Environment, **_kwargs):
                     continue
                 logger.info(f"Initializing test data for {test_data_class_name}")
                 print(f"Initializing test data for {test_data_class_name}")
-                user_test_data.init_http_client(environment.host)
+                if environment.host:
+                    user_test_data.init_http_client(environment.host)
                 if isinstance(user_test_data, EvmTestData):
                     chain_id: ChainId = user_test_data.fetch_chain_id()
                     user_test_data.init_network(chain_id)
@@ -152,8 +154,9 @@ def on_init(environment: Environment, **_kwargs):
                     user_test_data.init_data_from_blockchain(environment.parsed_options)
                 test_data[test_data_class_name] = user_test_data.data.to_json()
         except Exception as e:
-            logger.error(f"Failed to update test data: {e}. Exiting...")
-            print(f"Failed to update test data: {e}. Exiting...")
+            logger.error(f"Failed to update test data: {e.__class__.__name__}: {e}. Exiting...")
+            print(f"Failed to update test data:\n     {e.__class__.__name__}: {e}. Exiting...")
+            logger.debug(traceback.format_exc())
             environment.runner.quit()
             raise exit(1)
         else:

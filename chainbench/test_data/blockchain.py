@@ -3,14 +3,11 @@ import logging
 import typing as t
 from argparse import Namespace
 from dataclasses import dataclass
-from json import JSONDecodeError
-from secrets import token_hex
 
-import httpx
 from gevent.lock import Semaphore as GeventSemaphore
-from httpx import URL, Response
 from tenacity import retry, stop_after_attempt
 
+from chainbench.util.http import HttpClient, HttpErrorLevel
 from chainbench.util.rng import RNG, get_rng
 
 logger = logging.getLogger(__name__)
@@ -34,106 +31,8 @@ def append_if_not_none(data: list | set, val: t.Any) -> None:
             data.add(val)
 
 
-class RpcError(Exception):
-    def __init__(self, code: int, message: str):
-        self.code = code
-        self.message = message
-        super().__init__(f"RPC Error: {code} - {message}")
-
-
 class BlockNotFoundError(Exception):
     pass
-
-
-class HttpxClient:
-    import logging
-
-    logging.getLogger("httpx").setLevel(logging.WARNING)
-    logging.getLogger("httpcore").setLevel(logging.WARNING)
-
-    def __init__(self, host: str, rpc_version: str = "2.0"):
-        self._rpc_version = rpc_version
-        self._host = URL(host.strip("/"))
-        self._client = httpx.Client(timeout=60)
-
-    def close(self) -> None:
-        self._client.close()
-
-    def _url(self, path: str | None) -> URL:
-        if path is None:
-            path = ""
-        return self._host.join(self._host.path + path)
-
-    @staticmethod
-    def check_http_error(response: Response) -> None:
-        if response.request:
-            logger.debug(f"Request: {response.request.method} {response.request.url}")
-
-        """Check the response for errors."""
-        if response.status_code != 200:
-            logger.info(f"Request failed with {response.status_code} code")
-            logger.debug(
-                f"Request to {response.url} failed with HTTP Error {response.status_code} code: {response.text}"
-            )
-            response.raise_for_status()
-
-    @staticmethod
-    def get_json(response: Response) -> dict[str, t.Any]:
-        # check if response is json
-        try:
-            data: dict[str, t.Any] = response.json()
-        except JSONDecodeError:
-            logger.error("Response is not json: %s", response.text)
-            raise
-        else:
-            logger.debug(f"Response: {response.text}")
-            return data
-
-    def get(self, path: str | None = None, params: dict[str, t.Any] | None = None) -> Response:
-        response = self._client.get(self._url(path), params=params)
-        self.check_http_error(response)
-        return response
-
-    def post(
-        self, path: str | None = None, json_data: dict[str, t.Any] | None = None, params: dict[str, t.Any] | None = None
-    ) -> Response:
-        response = self._client.post(self._url(path), json=json_data, params=params)
-        self.check_http_error(response)
-        return response
-
-    def _make_body(self, method: str, params: list[t.Any] | None = None) -> dict[str, t.Any]:
-        if params is None:
-            params = []
-
-        return {
-            "jsonrpc": self._rpc_version,
-            "method": method,
-            "params": params,
-            "id": token_hex(8),
-        }
-
-    def make_rpc_call(self, method: str, params: list[t.Any] | None = None) -> t.Any:
-        if params is None:
-            params = []
-
-        response = self.post(json_data=self._make_body(method, params))
-        self.check_http_error(response)
-        response_json = self.get_json(response)
-
-        logger.debug(f"Making call to {self._host} with method {method} and params {params}")
-        logger.debug(f"Response: {response_json}")
-
-        # check if response is error
-        if "error" in response_json:
-            logger.error("Response is error: %s", response_json["error"]["message"])
-            raise RpcError(code=response_json["error"]["code"], message=response_json["error"]["message"])
-
-        # check if response is valid
-        if "result" not in response_json:
-            logger.error("Response is not valid: %s", response_json)
-            raise ValueError(response_json)
-
-        return response_json["result"]
 
 
 @dataclass(frozen=True)
@@ -212,7 +111,7 @@ class TestData(t.Generic[B]):
         self._logger = logging.getLogger(__name__)
 
         self._data: BlockchainData | None = None
-        self._client: HttpxClient | None = None
+        self._client: HttpClient | None = None
 
         self._lock = GeventSemaphore()
         self._logger.debug("Locking")
@@ -220,7 +119,7 @@ class TestData(t.Generic[B]):
         self._logger.debug("Locked")
 
     def init_http_client(self, host_url: str):
-        self._client = HttpxClient(host_url)
+        self._client = HttpClient(host_url, error_level=HttpErrorLevel.ServerError)
         self._logger.debug("Host: %s", host_url)
 
     @property
@@ -234,7 +133,7 @@ class TestData(t.Generic[B]):
         return self._data
 
     @property
-    def client(self) -> HttpxClient:
+    def client(self) -> HttpClient:
         if self._client is None:
             raise RuntimeError("HTTP Client is not initialized")
         return self._client

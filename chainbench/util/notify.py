@@ -3,7 +3,7 @@ from dataclasses import InitVar, dataclass, field
 from enum import IntEnum
 from pathlib import Path
 
-import httpx
+from .http import HttpClient
 
 DEFAULT_NTFY_SERVER = "https://ntfy.sh"
 
@@ -21,7 +21,7 @@ class Priority(IntEnum):
 class _NotificationData(t.TypedDict):
     """Notification request data."""
 
-    content: bytes
+    data: bytes
     headers: dict[str, str]
 
 
@@ -47,7 +47,7 @@ class Notification:
 
     def _headers(self) -> dict[str, str]:
         """Return the headers to send to the notification service."""
-        headers = {"X-Priority": str(self.priority)}
+        headers = {"X-Priority": str(int(self.priority))}
 
         if self.title:
             headers["X-Title"] = self.title
@@ -61,6 +61,8 @@ class Notification:
         if self.email:
             headers["X-Email"] = self.email
 
+        headers["Content-Type"] = "text/plain"
+
         return headers
 
     def _content(self) -> bytes:
@@ -72,7 +74,7 @@ class Notification:
     def data(self) -> _NotificationData:
         """Return the data to send to the notification service."""
         return {
-            "content": self._content(),
+            "data": self._content(),
             "headers": self._headers(),
         }
 
@@ -86,7 +88,7 @@ class Notifier:
         self.url: str = url
         self.timeout: int = timeout
 
-        self.client = httpx.Client(base_url=url, timeout=timeout)
+        self.client = HttpClient(url, timeout=timeout)
 
     def notify(
         self,
@@ -99,7 +101,7 @@ class Notifier:
         file: str | Path | None = None,
     ) -> None:
         """Send a notification."""
-        response = self.client.post(
+        self.client.post(
             self.topic,
             **Notification(
                 message=message,
@@ -110,8 +112,6 @@ class Notifier:
                 file=file,
             ).data(),
         )
-
-        response.raise_for_status()
 
     def __call__(self, *args, **kwargs):
         self.notify(*args, **kwargs)

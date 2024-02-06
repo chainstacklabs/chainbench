@@ -4,9 +4,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
 
-import httpx
+from tenacity import retry, retry_if_exception_type, wait_exponential
+
+from chainbench.util.http import HttpClient, HttpErrorLevel
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+
+
+class TooManyRequestsError(Exception):
+    pass
 
 
 @dataclass
@@ -57,7 +63,7 @@ class RpcDiscovery:
         self.clients = clients
 
         self.methods = self.get_methods_list(clients)
-        self.http = httpx.Client()
+        self.http = HttpClient(self.endpoint, timeout=5, error_level=HttpErrorLevel.ServerError)
 
     @staticmethod
     def _parse_methods() -> list[RpcMethod]:
@@ -97,35 +103,39 @@ class RpcDiscovery:
     def get_clients(cls) -> list[RpcClient]:
         return cls._parse_clients()
 
-    @classmethod
-    def check_response(cls, method: str, response: httpx.Response) -> DiscoveryResult:
-        keywords = ["not supported", "unsupported"]
-
-        if response.status_code not in [200, 400]:
-            return DiscoveryResult(method, None, f"HTTP error {response.status_code}")
-        try:
-            response_json = response.json()
-            if "error" in response_json:
-                error_code = response_json["error"]["code"]
-                if error_code in [-32600, -32604]:
-                    for keyword in keywords:
-                        if keyword in response_json["error"]["message"].lower():
-                            return DiscoveryResult(method, False)
-                if error_code == -32601:
-                    return DiscoveryResult(method, False)
-                if error_code == -32602:
-                    return DiscoveryResult(method, True)
-                return DiscoveryResult(
-                    method,
-                    None,
-                    f"Unable to determine. Unknown error {response_json['error']['code']}: "
-                    f"{response_json['error']['message']}",
-                )
-            return DiscoveryResult(method, True)
-        except ValueError:
-            return DiscoveryResult(method, None, f"Value error {response.json()}")
-
+    @retry(retry=retry_if_exception_type(TooManyRequestsError), wait=wait_exponential(multiplier=1, min=2, max=10))
     def discover_method(self, method: str) -> DiscoveryResult:
+        def check_response() -> DiscoveryResult:
+            keywords = ["not supported", "unsupported"]
+
+            if response.status_code == 429:
+                raise TooManyRequestsError
+
+            # Some providers return 400 for missing params, so we want to ignore that error
+            if response.status_code not in [200, 400]:
+                return DiscoveryResult(method, None, f"HTTP error {response.status_code}")
+            try:
+                if "error" in response.json:
+                    error_code = response.json["error"]["code"]
+                    # Some providers return -32600 or -32604 for unsupported methods
+                    if error_code in [-32600, -32604]:
+                        for keyword in keywords:
+                            if keyword in response.json["error"]["message"].lower():
+                                return DiscoveryResult(method, False)
+                    if error_code == -32601:
+                        return DiscoveryResult(method, False)
+                    if error_code == -32602:
+                        return DiscoveryResult(method, True)
+                    return DiscoveryResult(
+                        method,
+                        None,
+                        f"Unable to determine. Unknown error {response.json['error']['code']}: "
+                        f"{response.json['error']['message']}",
+                    )
+                return DiscoveryResult(method, True)
+            except ValueError:
+                return DiscoveryResult(method, None, f"Value error {response.json}")
+
         data = {
             "id": 1,
             "jsonrpc": "2.0",
@@ -137,8 +147,8 @@ class RpcDiscovery:
                 "User-Agent": "Mozilla/5.0 (iPad; CPU OS 12_2 like Mac OS X) "
                 "AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
             }
-            response = self.http.post(self.endpoint, json=data, headers=headers)
-            return self.check_response(method, response)
-
-        except httpx.TimeoutException as e:
+            response = self.http.post(data=data, headers=headers)
+            result = check_response()
+            return result
+        except TimeoutError as e:
             return DiscoveryResult(method, None, f"HTTP Timeout Exception: {e}")

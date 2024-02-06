@@ -1,4 +1,3 @@
-import concurrent.futures
 import logging
 import os
 import shlex
@@ -8,10 +7,10 @@ from multiprocessing import Process
 from pathlib import Path
 
 import click
+import gevent.pool
 from click import Context, Parameter
 from locust import runners
 
-from chainbench.tools.discovery.rpc import DiscoveryResult
 from chainbench.user import EvmMethods
 from chainbench.util.cli import (
     ContextData,
@@ -429,11 +428,15 @@ def discover(endpoint: str | None, clients: list[str]) -> None:
     click.echo(f"Please wait, discovering methods available on {endpoint}...")
 
     def get_discovery_result(method: str) -> None:
-        result: DiscoveryResult = rpc_discovery.discover_method(method)
+        result = rpc_discovery.discover_method(method)
         click.echo(result.to_string())
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-        executor.map(get_discovery_result, rpc_discovery.methods)
+    pool = gevent.pool.Pool(20)
+    for method in rpc_discovery.methods:
+        pool.spawn(get_discovery_result, method)
+
+    pool.join()
+    rpc_discovery.http.close()
 
 
 @cli.group(name="list", help="Lists values of the given type.")
