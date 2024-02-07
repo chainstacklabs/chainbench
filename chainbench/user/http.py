@@ -87,17 +87,18 @@ class JsonRpcUser(HttpUser):
             return
 
         if "error" in data:
-            self.logger.error(f"Response for {name} has a JSON-RPC error: {response.text}")
             response_js = response.json()
-            if "code" in response_js["error"]:
-                if response_js["error"]["code"] not in self.rpc_error_code_exclusions:
-                    response.failure(
-                        f"Response for {name} has a JSON-RPC error {response_js['error']['code']} - "
-                        f"{response_js['error']['message']}"
-                    )
-            else:
-                response.failure("Unspecified JSON-RPC error")
-            return
+            if "error" in response_js:
+                if "code" in response_js["error"]:
+                    self.logger.error(f"Response for {name} has a JSON-RPC error: {response.text}")
+                    if response_js["error"]["code"] not in self.rpc_error_code_exclusions:
+                        response.failure(
+                            f"Response for {name} has a JSON-RPC error {response_js['error']['code']} - "
+                            f"{response_js['error']['message']}"
+                        )
+                else:
+                    response.failure("Unspecified JSON-RPC error")
+                return
 
         if "result" not in data:
             self.logger.error(f"Response for {name} call has no result: {response.text}")
