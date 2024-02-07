@@ -70,7 +70,7 @@ class StarkNetWalletProfile(StarkNetUser):
             name="simulate_transaction",
             method="starknet_simulateTransaction",
             params=self._simulate_transaction_params_factory(get_rng()),
-            url_postfix="/rpc/v0.3",
+            path="/rpc/v0.3",
         ),
 
     @task(1)

@@ -1,4 +1,3 @@
-import re
 import subprocess
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -48,28 +47,6 @@ def ensure_results_dir(profile: str, parent_dir: Path, run_id: str | None = None
         results_dir.mkdir(parents=True, exist_ok=True)
 
     return results_dir
-
-
-def get_subclass_methods(cls: type) -> list[str]:
-    methods = set(dir(cls))
-    unique_subclass_methods = methods.difference(*(dir(base) for base in cls.__bases__))
-    return sorted(list(unique_subclass_methods))
-
-
-def task_to_method(task: str) -> str:
-    task_name_stripped = task.replace("_task", "")
-    words = task_name_stripped.split("_")
-    namespace = words[0]
-    method = "".join([words[1]] + [word.capitalize() for word in words[2:]])
-    return f"{namespace}_{method}"
-
-
-def method_to_task(method: str) -> str:
-    words = method.split("_")
-    namespace = words[0]
-    method_name_split = re.split("(?<=.)(?=[A-Z])", words[1])
-    method_name = "_".join([word.lower() for word in method_name_split])
-    return f"{namespace}_{method_name}_task"
 
 
 def get_timescale_args(
