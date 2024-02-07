@@ -13,6 +13,7 @@ from locust.runners import STATE_CLEANUP, MasterRunner, WorkerRunner
 from chainbench.test_data import Block, EvmTestData, TestData
 from chainbench.test_data.blockchain import BlockNotFoundError, InvalidBlockError
 from chainbench.test_data.evm import ChainId
+from chainbench.user.methods import all_methods
 from chainbench.util.timer import Timer
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,16 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         default=None,
         help="Set the size of the test data. e.g. --size S",
         include_in_web_ui=False,
+    )
+
+    # TODO - limit choices to the methods that are available in the selected user class
+    parser.add_argument(
+        "--method",
+        type=str,
+        default="eth_blockNumber",
+        choices=list(all_methods.keys()),
+        help="Test a specific method",
+        include_in_web_ui=True,
     )
 
 

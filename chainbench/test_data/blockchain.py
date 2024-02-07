@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from gevent.lock import Semaphore as GeventSemaphore
 from tenacity import retry, stop_after_attempt
 
-from chainbench.util.http import HttpClient, HttpErrorLevel
+from chainbench.util.http import HttpClient
 from chainbench.util.rng import RNG, get_rng
 
 logger = logging.getLogger(__name__)
@@ -124,8 +124,8 @@ class TestData(t.Generic[B]):
         self._lock.acquire()
         self._logger.debug("Locked")
 
-    def init_http_client(self, host_url: str):
-        self._client = HttpClient(host_url, error_level=HttpErrorLevel.ServerError)
+    def init_http_client(self, host_url: str) -> None:
+        self._client = HttpClient(host_url)
         self._logger.debug("Host: %s", host_url)
 
     @property

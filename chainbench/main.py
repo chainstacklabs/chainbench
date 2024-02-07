@@ -11,7 +11,11 @@ import gevent.pool
 from click import Context, Parameter
 from locust import runners
 
-from chainbench.user import EvmMethods
+from chainbench.user.methods import (
+    all_method_classes,
+    all_methods,
+    get_subclass_functions,
+)
 from chainbench.util.cli import (
     ContextData,
     ensure_results_dir,
@@ -19,9 +23,7 @@ from chainbench.util.cli import (
     get_master_command,
     get_profile_path,
     get_profiles,
-    get_subclass_methods,
     get_worker_command,
-    task_to_method,
 )
 from chainbench.util.monitor import monitors
 from chainbench.util.notify import NoopNotifier, Notifier
@@ -52,8 +54,7 @@ def cli(ctx: Context):
 
 def validate_method(ctx: Context, param: Parameter, value: str) -> str:
     if value is not None:
-        method_list = [task_to_method(task) for task in get_subclass_methods(EvmMethods)]
-        if value not in method_list:
+        if value not in all_methods.keys():
             raise click.BadParameter(
                 f"Method {value} is not supported. " f"Use 'chainbench list methods' to list all available methods."
             )
@@ -229,7 +230,7 @@ def start(
         profile_dir = get_base_path(__file__) / "profile"
 
     if method:
-        profile_path = get_base_path(__file__) / "tools" / "test_method.py"
+        profile_path = Path(all_methods[method])
     elif profile:
         profile_path = get_profile_path(profile_dir, profile)
     else:
@@ -472,12 +473,14 @@ def profiles(profile_dir: Path) -> None:
 
 
 @_list.command(
-    help="Lists all available evm methods.",
+    help="Lists all available methods.",
 )
 def methods() -> None:
-    task_list = get_subclass_methods(EvmMethods)
-    for task in task_list:
-        click.echo(task_to_method(task))
+    for method_class in all_method_classes:
+        click.echo(f"\nMethods for {method_class.__name__}:")
+        task_list = get_subclass_functions(method_class)
+        for task in task_list:
+            click.echo(f"- {method_class.task_to_method(task.name)}")
 
 
 if __name__ == "__main__":

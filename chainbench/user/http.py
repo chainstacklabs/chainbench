@@ -26,10 +26,6 @@ class HttpUser(FastHttpUser):
     def on_stop(self) -> None:
         self.test_data.close()
 
-    @classmethod
-    def get_method(cls, method: str) -> t.Callable:
-        return getattr(cls, method)
-
     def check_fatal(self, response: ResponseContextManager) -> None:
         if response.status_code == 401:
             self.logger.critical(f"Unauthorized request to {response.url}")
@@ -104,13 +100,13 @@ class JsonRpcUser(HttpUser):
             self.logger.error(f"Response for {name} call has no result: {response.text}")
 
     def make_rpc_call(
-        self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, url_postfix: str = ""
+        self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, path: str = ""
     ) -> None:
         """Make a JSON-RPC call."""
         name = name if name else method
 
         with self.client.request(
-            "POST", self.rpc_path + url_postfix, json=generate_request(method, params), name=name, catch_response=True
+            "POST", self.rpc_path + path, json=generate_request(method, params), name=name, catch_response=True
         ) as response:
             self.check_http_error(response)
             self.check_json_rpc_response(response, name=name)
