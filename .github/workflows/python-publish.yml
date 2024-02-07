@@ -15,15 +15,15 @@ jobs:
         python-version: ['3.10', '3.11']
     steps:
     - name: Check out repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
       id: setup-python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Load cached Poetry installation
       id: cached-poetry
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.local  # the path depends on the OS
         key: poetry-1.4.0-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}
@@ -37,7 +37,7 @@ jobs:
         installer-parallel: true
     - name: Load cached venv
       id: cached-poetry-dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
@@ -47,7 +47,7 @@ jobs:
     - name: Build package
       run: poetry build
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: dist-${{ matrix.python-version }}
         path: dist
@@ -63,13 +63,13 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
     steps:
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist-3.10
         path: dist
 
     - name: Download artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: dist-3.11
         path: dist
