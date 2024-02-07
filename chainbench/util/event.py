@@ -11,6 +11,7 @@ from locust.rpc import Message
 from locust.runners import STATE_CLEANUP, MasterRunner, WorkerRunner
 
 from chainbench.test_data import Block, EvmTestData, TestData
+from chainbench.test_data.blockchain import BlockNotFoundError, InvalidBlockError
 from chainbench.test_data.evm import ChainId
 from chainbench.util.timer import Timer
 
@@ -69,14 +70,25 @@ def get_block_worker(master_runner: MasterRunner):
 
     while master_runner.state not in [STATE_CLEANUP]:
         blocks: dict[str, t.Any] = {}
+        invalid_blocks: list[int] = []
         for user in active_users:
             if hasattr(user, "test_data"):
                 test_data_class_name: str = type(user.test_data).__name__
                 if test_data_class_name in blocks:
                     continue
-                latest_block_number = user.test_data.fetch_latest_block_number()
-                if latest_block_number not in user.test_data.data.block_numbers:
-                    block = user.test_data.fetch_block(latest_block_number)
+                try:
+                    latest_block_number = user.test_data.fetch_latest_block_number()
+                except BlockNotFoundError:
+                    continue
+                if (
+                    latest_block_number not in user.test_data.data.block_numbers
+                    and latest_block_number not in invalid_blocks
+                ):
+                    try:
+                        block = user.test_data.fetch_block(latest_block_number)
+                    except InvalidBlockError:
+                        invalid_blocks.append(latest_block_number)
+                        continue
                     user.test_data.data.push_block(block)
                     blocks[test_data_class_name] = block.to_json()
                     print(f"Block {block.block_number} fetched and updated in test data")

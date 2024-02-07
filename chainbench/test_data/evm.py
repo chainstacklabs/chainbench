@@ -12,6 +12,7 @@ from .blockchain import (
     BlockHash,
     BlockNumber,
     BlockRange,
+    InvalidBlockError,
     NetworkData,
     SmartContract,
     TestData,
@@ -259,7 +260,10 @@ class EvmTestData(TestData[EvmBlock]):
         ]:
             raise ValueError("Invalid block number")
         result: dict[str, t.Any] = self.client.make_rpc_call("eth_getBlockByNumber", [block_number, True])
-        return EvmBlock.from_response(parse_hex_to_int(result["number"]), result)
+        block = EvmBlock.from_response(parse_hex_to_int(result["number"]), result)
+        if len(block.txs) == 0:
+            raise InvalidBlockError
+        return block
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         end_block_number = self.fetch_latest_block_number()
