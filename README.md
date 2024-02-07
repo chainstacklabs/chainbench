@@ -120,7 +120,7 @@ This will run a load test with a general BSC profile.
 - `--autoquit`: Tells the Chainbench tool to automatically quit after the test has finished. This is useful for running the benchmark in an automated environment where manual intervention is not desired.
 - `--help`: Displays the help message.
 - `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
-- `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times --help Show this message and exit.
+- `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times.
 - `--use-latest-blocks`: Use latest blocks for test data generation and runs a background process to update the test data with latest blocks.
 - `--size`: Specifies the test data size. Available values are XS, S, M, L, XL. Default is S.
 
