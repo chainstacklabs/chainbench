@@ -6,6 +6,7 @@ from .blockchain import (
     Account,
     BlockHash,
     BlockNumber,
+    InvalidBlockError,
     Tx,
     TxHash,
     append_if_not_none,
@@ -59,4 +60,7 @@ class StarkNetTestData(EvmTestData):
         params: dict[str, int] | str = {"block_number": block_number} if isinstance(block_number, int) else block_number
 
         result = self.client.make_rpc_call("starknet_getBlockWithTxs", [params])
-        return StarkNetBlock.from_response(result["block_number"], result)
+        block = StarkNetBlock.from_response(result["block_number"], result)
+        if len(block.txs) == 0:
+            raise InvalidBlockError
+        return block

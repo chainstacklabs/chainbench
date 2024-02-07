@@ -32,6 +32,12 @@ def append_if_not_none(data: list | set, val: t.Any) -> None:
 
 
 class BlockNotFoundError(Exception):
+    # Raised when a block is not found for chains where slots can be empty
+    pass
+
+
+class InvalidBlockError(Exception):
+    # Raised when a block has empty data or is otherwise invalid
     pass
 
 
@@ -145,6 +151,9 @@ class TestData(t.Generic[B]):
     def wait(self) -> None:
         self._lock.wait()
 
+    def is_valid_block(self, block: B) -> bool:
+        raise NotImplementedError
+
     def fetch_block(self, block_number: BlockNumber) -> B:
         raise NotImplementedError
 
@@ -177,7 +186,7 @@ class TestData(t.Generic[B]):
             for block_number in range(self.data.block_range.start, self.data.block_range.end + 1):
                 try:
                     block = self.fetch_block(block_number)
-                except BlockNotFoundError:
+                except (BlockNotFoundError, InvalidBlockError):
                     block = self.fetch_latest_block()
                 self.data.push_block(block)
                 print(self.data.stats(), end="\r")
@@ -186,7 +195,10 @@ class TestData(t.Generic[B]):
                 print("\n")  # new line after progress display upon exiting loop
         else:
             while size.blocks_len > len(self.data.blocks):
-                block = self._fetch_random_block(self.data.block_numbers)
+                try:
+                    block = self._fetch_random_block(self.data.block_numbers)
+                except (BlockNotFoundError, InvalidBlockError):
+                    continue
                 self.data.push_block(block)
                 print(self.data.stats(), end="\r")
             else:

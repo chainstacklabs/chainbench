@@ -15,6 +15,7 @@ from .blockchain import (
     BlockNotFoundError,
     BlockNumber,
     BlockRange,
+    InvalidBlockError,
     TestData,
     Tx,
     TxHash,
@@ -82,7 +83,11 @@ class SolanaTestData(TestData[SolanaBlock]):
                 raise BlockNotFoundError()
             else:
                 raise e
-        return SolanaBlock.from_response(slot, result)
+
+        block = SolanaBlock.from_response(slot, result)
+        if len(block.txs) == 0:
+            raise InvalidBlockError
+        return block
 
     @retry(reraise=True, stop=stop_after_attempt(5))
     def fetch_latest_block(self) -> SolanaBlock:
