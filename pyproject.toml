@@ -14,7 +14,7 @@ packages = [{include = "chainbench"}]
 python = "^3.10"
 locust = "^2.22.0"
 click = "^8.1.6"
-locust-plugins = "^4.3.2"
+locust-plugins = {extras = ["dashboards"], version = "^4.3.4"}
 tenacity = "^8.2.2"
 
 [tool.poetry.group.dev.dependencies]
