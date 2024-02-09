@@ -3,6 +3,14 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
+from geventhttpclient import URL
+
+from chainbench.util.http import (
+    HttpClient,
+    HttpErrorLevel,
+    HttpStatusError,
+    JsonRpcError,
+)
 from chainbench.util.notify import NoopNotifier, Notifier
 
 
@@ -58,112 +66,123 @@ def get_timescale_args(
     return f" --timescale --pghost={pg_host} --pgport={pg_port}" f" --pgpassword={pg_password} --pguser={pg_username}"
 
 
-def get_master_command(
-    profile_path: Path,
-    host: str,
-    port: int,
-    users: int,
-    workers: int,
-    spawn_rate: int,
-    test_time: str,
-    log_level: str,
-    results_path: Path,
-    exclude_tags: list[str],
-    target: str | None = None,
-    headless: bool = False,
-    timescale: bool = False,
-    pg_host: str | None = None,
-    pg_port: int | None = None,
-    pg_username: str | None = None,
-    pg_password: str | None = None,
-    override_plan_name: str | None = None,
-    use_latest_blocks: bool = False,
-    size: str | None = None,
-    method: str | None = None,
-    enable_class_picker: bool = False,
-) -> str:
-    """Generate master command."""
-    command = (
-        f"locust -f {profile_path} --master "
-        f"--master-bind-host {host} --master-bind-port {port} "
-        f"--web-host {host} "
-        f"-u {users} -r {spawn_rate} --run-time {test_time} "
-        f"--html {results_path}/report.html --csv {results_path}/report.csv "
-        f"--logfile {results_path}/report.log "
-        f"--loglevel {log_level} --expect-workers {workers} "
-        f"--size {size}"
-    )
-
-    if timescale:
-        command += get_timescale_args(pg_host, pg_port, pg_username, pg_password)
-        if override_plan_name is not None:
-            command += f" --override-plan-name {override_plan_name}"
-
-    if target is not None:
-        command += f" --host {target}"
-
-    if headless:
-        command += " --headless"
-
-    if len(exclude_tags) > 0:
-        command += f" --exclude-tags {' '.join(exclude_tags)}"
-
-    if use_latest_blocks:
-        command += " --use-latest-blocks True"
-
-    if method is not None:
-        command += f" --method {method}"
-
-    if enable_class_picker:
-        command += " --class-picker"
-    return command
+def get_url_domain(target_url: str) -> str:
+    """Get domain from URL."""
+    return URL(target_url).host
 
 
-def get_worker_command(
-    profile_path: Path,
-    host: str,
-    port: int,
-    results_path: Path,
-    log_level: str,
-    exclude_tags: list[str],
-    target: str | None = None,
-    headless: bool = False,
-    worker_id: int = 0,
-    timescale: bool = False,
-    pg_host: str | None = None,
-    pg_port: int | None = None,
-    pg_username: str | None = None,
-    pg_password: str | None = None,
-    override_plan_name: str | None = None,
-    use_latest_blocks: bool = False,
-    method: str | None = None,
-) -> str:
-    """Generate worker command."""
-    command = (
-        f"locust -f {profile_path} --worker --master-host {host} --master-port {port} "
-        f"--logfile {results_path}/worker_{worker_id}.log --loglevel {log_level}"
-    )
+def get_target_client_version(target_url: str) -> str:
+    """Get client version from target URL."""
+    http = HttpClient(target_url, error_level=HttpErrorLevel.ClientError)
 
-    if timescale:
-        command += get_timescale_args(pg_host, pg_port, pg_username, pg_password)
-        if override_plan_name is not None:
-            command += f" --override-plan-name {override_plan_name}"
+    def _get_version_rpc(_method: str, _path: str) -> str:
+        try:
+            _response = http.make_rpc_call(method=_method, path=_path)
+            return str(_response)
+        except (JsonRpcError, HttpStatusError):
+            return "unknown"
 
-    if target is not None:
-        command += f" --host {target}"
+    rpc_methods = [
+        "web3_clientVersion",
+        "getVersion",
+        ("pathfinder_version", "/rpc/pathfinder/v0.1"),
+        "juno_version",
+        "nodeVersion",
+    ]
 
-    if headless:
-        command += " --headless"
+    for rpc_method in rpc_methods:
+        if isinstance(rpc_method, tuple):
+            method, path = rpc_method
+        else:
+            method = rpc_method
+            path = ""
+        version = _get_version_rpc(method, path)
+        if version != "unknown":
+            return version
 
-    if len(exclude_tags) > 0:
-        command += f" --exclude-tags {' '.join(exclude_tags)}"
+    try:
+        response = http.get("eth/v1/node/version")
+        return response.json["data"]["version"]
+    except (JsonRpcError, HttpStatusError):
+        return "unknown"
 
-    if use_latest_blocks:
-        command += " --use-latest-blocks True"
 
-    if method is not None:
-        command += f" --method {method}"
-    return command
+@dataclass
+class LocustOptions:
+    profile_path: Path
+    host: str
+    port: int
+    users: int
+    workers: int
+    spawn_rate: int
+    test_time: str
+    log_level: str
+    results_path: Path
+    exclude_tags: list[str]
+    target: str
+    headless: bool = False
+    timescale: bool = False
+    pg_host: str | None = None
+    pg_port: int | None = None
+    pg_username: str | None = None
+    pg_password: str | None = None
+    override_plan_name: str | None = None
+    use_latest_blocks: bool = False
+    size: str | None = None
+    method: str | None = None
+    enable_class_picker: bool = False
+
+    def get_master_command(self) -> str:
+        """Generate master command."""
+        command = (
+            f"locust -f {self.profile_path} --master "
+            f"--master-bind-host {self.host} --master-bind-port {self.port} "
+            f"--web-host {self.host} "
+            f"-u {self.users} -r {self.spawn_rate} --run-time {self.test_time} "
+            f"--html {self.results_path}/report.html --csv {self.results_path}/report.csv "
+            f"--logfile {self.results_path}/report.log "
+            f"--loglevel {self.log_level} --expect-workers {self.workers} "
+            f"--size {self.size}"
+        )
+
+        if self.enable_class_picker:
+            command += " --class-picker"
+
+        return self.get_extra_options(command)
+
+    def get_worker_command(self, worker_id: int = 0) -> str:
+        """Generate worker command."""
+        command = (
+            f"locust -f {self.profile_path} --worker --master-host {self.host} --master-port {self.port} "
+            f"--logfile {self.results_path}/worker_{worker_id}.log --loglevel {self.log_level}"
+        )
+        return self.get_extra_options(command)
+
+    def get_extra_options(self, command: str):
+        if self.timescale:
+            command += get_timescale_args(self.pg_host, self.pg_port, self.pg_username, self.pg_password)
+            if self.override_plan_name is not None:
+                command += f" --override-plan-name {self.override_plan_name}"
+            from importlib import metadata
+
+            command += f" --test-version chainbench-{metadata.version('chainbench')}"
+            command += f' --description "{get_url_domain(self.target)} [{get_target_client_version(self.target)}]"'
+
+        if self.target is not None:
+            command += f" --host {self.target}"
+
+        if self.headless:
+            command += " --headless"
+
+        if len(self.exclude_tags) > 0:
+            command += f" --exclude-tags {' '.join(self.exclude_tags)}"
+
+        if self.use_latest_blocks:
+            command += " --use-latest-blocks True"
+
+        if self.method is not None:
+            command += f" --method {self.method}"
+        return command
 
 
 @dataclass

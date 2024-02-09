@@ -18,12 +18,11 @@ from chainbench.user.methods import (
 )
 from chainbench.util.cli import (
     ContextData,
+    LocustOptions,
     ensure_results_dir,
     get_base_path,
-    get_master_command,
     get_profile_path,
     get_profiles,
-    get_worker_command,
 )
 from chainbench.util.monitor import monitors
 from chainbench.util.notify import NoopNotifier, Notifier
@@ -296,8 +295,7 @@ def start(
         for tag in exclude_tags:
             custom_exclude_tags.append(tag)
 
-    # Start the Locust master
-    master_command = get_master_command(
+    locust_options = LocustOptions(
         profile_path=profile_path,
         host=host,
         port=port,
@@ -321,6 +319,9 @@ def start(
         method=method,
         enable_class_picker=enable_class_picker,
     )
+    # Start the Locust master
+    master_command = locust_options.get_master_command()
+
     if headless:
         click.echo("Starting master in headless mode")
     else:
@@ -334,24 +335,7 @@ def start(
 
     # Start the Locust workers
     for worker_id in range(workers):
-        worker_command = get_worker_command(
-            profile_path=profile_path,
-            host=host,
-            port=port,
-            results_path=results_path,
-            headless=headless,
-            target=target,
-            worker_id=worker_id,
-            log_level=log_level,
-            exclude_tags=custom_exclude_tags,
-            timescale=timescale,
-            pg_host=pg_host,
-            pg_port=pg_port,
-            pg_username=pg_username,
-            pg_password=pg_password,
-            use_latest_blocks=use_latest_blocks,
-            method=method,
-        )
+        worker_command = locust_options.get_worker_command(worker_id=worker_id)
         worker_args = shlex.split(worker_command, posix=is_posix)
         worker_process = subprocess.Popen(worker_args)
         ctx.obj.workers.append(worker_process)
