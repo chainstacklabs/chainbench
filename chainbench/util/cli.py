@@ -76,6 +76,7 @@ def get_master_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
+    override_plan_name: str | None = None,
     use_latest_blocks: bool = False,
     size: str | None = None,
     method: str | None = None,
@@ -95,6 +96,8 @@ def get_master_command(
 
     if timescale:
         command += get_timescale_args(pg_host, pg_port, pg_username, pg_password)
+        if override_plan_name is not None:
+            command += f" --override-plan-name {override_plan_name}"
 
     if target is not None:
         command += f" --host {target}"
@@ -131,6 +134,7 @@ def get_worker_command(
     pg_port: int | None = None,
     pg_username: str | None = None,
     pg_password: str | None = None,
+    override_plan_name: str | None = None,
     use_latest_blocks: bool = False,
     method: str | None = None,
 ) -> str:
@@ -142,6 +146,8 @@ def get_worker_command(
 
     if timescale:
         command += get_timescale_args(pg_host, pg_port, pg_username, pg_password)
+        if override_plan_name is not None:
+            command += f" --override-plan-name {override_plan_name}"
 
     if target is not None:
         command += f" --host {target}"
