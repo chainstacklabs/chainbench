@@ -274,8 +274,10 @@ def start(
         else:
             profile = "test_method"
         click.echo(f"Testing method: {method}")
+        test_plan = method
     else:
         click.echo(f"Testing profile: {profile}")
+        test_plan = profile
 
     results_dir = Path(results_dir).resolve()
     results_path = ensure_results_dir(profile=profile, parent_dir=results_dir, run_id=run_id)
@@ -293,9 +295,6 @@ def start(
     if exclude_tags:
         for tag in exclude_tags:
             custom_exclude_tags.append(tag)
-
-    if not debug_trace_methods:
-        custom_exclude_tags = custom_exclude_tags + ["trace", "debug"]
 
     # Start the Locust master
     master_command = get_master_command(
@@ -316,6 +315,7 @@ def start(
         pg_port=pg_port,
         pg_username=pg_username,
         pg_password=pg_password,
+        override_plan_name=test_plan,
         use_latest_blocks=use_latest_blocks,
         size=size,
         method=method,
