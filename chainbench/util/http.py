@@ -151,11 +151,11 @@ class HttpClient:
             "id": token_hex(8),
         }
 
-    def make_rpc_call(self, method: str, params: list[t.Any] | None = None) -> t.Any:
+    def make_rpc_call(self, method: str, params: list[t.Any] | None = None, path: str = "") -> t.Any:
         if params is None:
             params = []
 
-        response = self.post(data=self._make_body(method, params))
+        response = self.post(path=path, data=self._make_body(method, params))
 
         logger.debug(f"Making call to {self._host} with method {method} and params {params}")
         logger.debug(f"Response: {response.json}")
