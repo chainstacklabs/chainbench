@@ -9,7 +9,6 @@ from pathlib import Path
 import click
 import gevent.pool
 from click import Context, Parameter
-from locust import runners
 
 from chainbench.user.methods import (
     all_method_classes,
