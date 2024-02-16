@@ -46,6 +46,12 @@ def cli_custom_arguments(parser: LocustArgumentParser):
     )
 
 
+def send_msg_to_workers(master_runner: MasterRunner, msg_type: str, data: dict[str, t.Any]):
+    for i, worker in enumerate(master_runner.clients):
+        master_runner.send_message(msg_type, {"data": (data, i)}, worker)
+        logger.debug(f"{msg_type} sent to worker {i}")
+
+
 def setup_test_data(environment: Environment, msg: Message, **kwargs):
     # Fired when the worker receives a message of type 'test_data'
     test_data: dict[str, t.Any] = msg.data["data"][0]
@@ -61,13 +67,23 @@ def setup_test_data(environment: Environment, msg: Message, **kwargs):
                     user.test_data.init_network(chain_id)
             else:
                 raise AttributeError(f"{user} class does not have 'test_data' attribute")
-        environment.runner.send_message("acknowledge_data", {"data": f"Test data received by worker {worker_index}"})
-        logger.info("Test Data received from master")
+        environment.runner.send_message(
+            "acknowledge_data", {"data": f"Initial test data received by worker {worker_index}"}
+        )
+        logger.info("Initial test data received from master")
 
 
 def on_acknowledge(msg: Message, **kwargs):
     # Fired when the master receives a message of type 'acknowledge_data'
     print(msg.data["data"])
+
+
+def on_release(environment: Environment, msg: Message, **kwargs):
+    # Fired when the worker receives a message of type 'release_lock'
+    if isinstance(environment.runner, WorkerRunner):
+        for user in environment.runner.user_classes:
+            if hasattr(user, "test_data"):
+                user.test_data.release_lock()
 
 
 def get_block_worker(master_runner: MasterRunner):
@@ -104,15 +120,13 @@ def get_block_worker(master_runner: MasterRunner):
                     blocks[test_data_class_name] = block.to_json()
                     print(f"Block {block.block_number} fetched and updated in test data")
         if len(blocks) > 0:
-            for i, worker in enumerate(master_runner.clients):
-                master_runner.send_message("block_data", {"data": blocks}, worker)
-                logger.info(f"Block data is sent to worker {i}")
+            send_msg_to_workers(master_runner, "block_data", blocks)
         time.sleep(1)
 
 
 def on_receive_block(environment: Environment, msg: Message, **kwargs):
     # Fired when the worker receives a message of type 'block_data'
-    blocks: dict[str, t.Any] = msg.data["data"]
+    blocks: dict[str, t.Any] = msg.data["data"][0]
 
     if isinstance(environment.runner, WorkerRunner):
         for user in environment.runner.user_classes:
@@ -121,7 +135,7 @@ def on_receive_block(environment: Environment, msg: Message, **kwargs):
                 block: Block = user.test_data.get_block_from_data(blocks[test_data_class_name])
                 if block.block_number not in user.test_data.data.block_numbers:
                     user.test_data.data.push_block(block)
-                    logger.debug(f"Block {block.block_number} received from master and updated in test data")
+                    logger.info(f"Block {block.block_number} received from master and updated in test data")
 
 
 # Listener for the init event
@@ -138,8 +152,7 @@ def on_init(environment: Environment, **_kwargs):
         logger.info("I'm a worker. Running tests for %s", host_under_test)
         environment.runner.register_message("test_data", setup_test_data)
         environment.runner.register_message("block_data", on_receive_block)
-
-    test_data: dict[str, t.Any] = {}
+        environment.runner.register_message("release_lock", on_release)
 
     if isinstance(environment.runner, MasterRunner):
         # Print master details to the log
@@ -156,6 +169,7 @@ def on_init(environment: Environment, **_kwargs):
                 raise exit(1)
             time.sleep(1)
         try:
+            test_data: dict[str, t.Any] = {}
             for user in environment.runner.user_classes:
                 if not hasattr(user, "test_data"):
                     raise AttributeError(f"{user} class does not have 'test_data' attribute")
@@ -174,19 +188,50 @@ def on_init(environment: Environment, **_kwargs):
                     print(f"Target endpoint network is {user_test_data.network.name}")
                     test_data["chain_id"] = {test_data_class_name: chain_id}
                 if environment.parsed_options:
-                    user_test_data.init_data_from_blockchain(environment.parsed_options)
+                    user_test_data.init_data(environment.parsed_options)
                 test_data[test_data_class_name] = user_test_data.data.to_json()
+                send_msg_to_workers(environment.runner, "test_data", test_data)
+                print("Fetching blocks...")
+                if environment.parsed_options.use_latest_blocks:
+                    print(f"Using latest {user_test_data.data.size.blocks_len} blocks as test data")
+                    logger.info(f"Using latest {user_test_data.data.size.blocks_len} blocks as test data")
+                    for block_number in range(
+                        user_test_data.data.block_range.start, user_test_data.data.block_range.end + 1
+                    ):
+                        try:
+                            block = user_test_data.fetch_block(block_number)
+                        except (BlockNotFoundError, InvalidBlockError):
+                            block = user_test_data.fetch_latest_block()
+                        user_test_data.data.push_block(block)
+                        block_data = {test_data_class_name: block.to_json()}
+                        send_msg_to_workers(environment.runner, "block_data", block_data)
+                        print(user_test_data.data.stats(), end="\r")
+                    else:
+                        print(user_test_data.data.stats(), end="\r")
+                        print("\n")  # new line after progress display upon exiting loop
+                else:
+                    while user_test_data.data.size.blocks_len > len(user_test_data.data.blocks):
+                        try:
+                            block = user_test_data.fetch_random_block(user_test_data.data.block_numbers)
+                        except (BlockNotFoundError, InvalidBlockError):
+                            continue
+                        user_test_data.data.push_block(block)
+                        block_data = {test_data_class_name: block.to_json()}
+                        send_msg_to_workers(environment.runner, "block_data", block_data)
+                        print(user_test_data.data.stats(), end="\r")
+                    else:
+                        print(user_test_data.data.stats(), end="\r")
+                        print("\n")  # new line after progress display upon exiting loop
+                logger.info("Test data is ready")
+                send_msg_to_workers(environment.runner, "release_lock", {})
+                user_test_data.release_lock()
         except Exception as e:
-            logger.error(f"Failed to update test data: {e.__class__.__name__}: {e}. Exiting...")
-            print(f"Failed to update test data:\n     {e.__class__.__name__}: {e}. Exiting...")
+            logger.error(f"Failed to init test data: {e.__class__.__name__}: {e}. Exiting...")
+            print(f"Failed to init test data:\n     {e.__class__.__name__}: {e}. Exiting...")
             logger.debug(traceback.format_exc())
             environment.runner.quit()
             raise exit(1)
         else:
-            logger.info("Test data is ready")
-            for i, worker in enumerate(environment.runner.clients):
-                environment.runner.send_message("test_data", {"data": (test_data, i)}, worker)
-                logger.info(f"Test data is sent to worker {i}")
             if environment.web_ui:
                 print(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")
                 logger.info(f"Web UI started at: " f"http://{environment.runner.master_bind_host}:8089")

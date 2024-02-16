@@ -125,7 +125,7 @@ class TestData(t.Generic[B]):
         self._logger.debug("Locked")
 
     def init_http_client(self, host_url: str) -> None:
-        self._client = HttpClient(host_url)
+        self._client = HttpClient(host_url, timeout=60)
         self._logger.debug("Host: %s", host_url)
 
     @property
@@ -144,15 +144,17 @@ class TestData(t.Generic[B]):
             raise RuntimeError("HTTP Client is not initialized")
         return self._client
 
+    def release_lock(self) -> None:
+        self._logger.debug("Releasing lock")
+        self._lock.release()
+        self._logger.debug("Lock released")
+
     def close(self) -> None:
         if self._client is not None:
             self._client.close()
 
     def wait(self) -> None:
         self._lock.wait()
-
-    def is_valid_block(self, block: B) -> bool:
-        raise NotImplementedError
 
     def fetch_block(self, block_number: BlockNumber) -> B:
         raise NotImplementedError
@@ -162,7 +164,7 @@ class TestData(t.Generic[B]):
         raise NotImplementedError
 
     @retry(reraise=True, stop=stop_after_attempt(5))
-    def _fetch_random_block(self, block_numbers: list[BlockNumber]) -> B:
+    def fetch_random_block(self, block_numbers: list[BlockNumber]) -> B:
         rng = get_rng()
         while True:
             block_number = self.data.block_range.get_random_block_number(rng)
@@ -173,62 +175,21 @@ class TestData(t.Generic[B]):
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         raise NotImplementedError
 
-    def _get_data_from_blockchain(self, parsed_options: Namespace) -> None:
+    def get_block_from_data(self, data: dict[str, t.Any] | str) -> B:
+        raise NotImplementedError
+
+    def init_data(self, parsed_options: Namespace) -> None:
         size: Size = Sizes.get_size(parsed_options.size) if parsed_options.size != "None" else self.DEFAULT_SIZE
         print(f"Test data size: {size.label}")
         self._logger.info(f"Test data size: {size.label}")
         self._data = BlockchainData(size)
         self.data.block_range = self._get_start_and_end_blocks(parsed_options)
 
-        if parsed_options.use_latest_blocks:
-            print(f"Using latest {size.blocks_len} blocks as test data")
-            self._logger.info(f"Using latest {size.blocks_len} blocks as test data")
-            for block_number in range(self.data.block_range.start, self.data.block_range.end + 1):
-                try:
-                    block = self.fetch_block(block_number)
-                except (BlockNotFoundError, InvalidBlockError):
-                    block = self.fetch_latest_block()
-                self.data.push_block(block)
-                print(self.data.stats(), end="\r")
-            else:
-                print(self.data.stats(), end="\r")
-                print("\n")  # new line after progress display upon exiting loop
-        else:
-            while size.blocks_len > len(self.data.blocks):
-                try:
-                    block = self._fetch_random_block(self.data.block_numbers)
-                except (BlockNotFoundError, InvalidBlockError):
-                    continue
-                self.data.push_block(block)
-                print(self.data.stats(), end="\r")
-            else:
-                print(self.data.stats(), end="\r")
-                print("\n")  # new line after progress display upon exiting loop
-
-    def get_block_from_data(self, data: dict[str, t.Any] | str) -> B:
-        raise NotImplementedError
-
-    def _get_data_from_json(self, json_data: str) -> None:
+    def init_data_from_json(self, json_data: str) -> None:
         data: dict[str, t.Any] = json.loads(json_data)
         size = Size(**data["size"])
         self._data = BlockchainData(size)
         self.data.block_range = BlockRange(**data["block_range"])
-        self.data.blocks = [self.get_block_from_data(block) for block in data["blocks"]]
-        self.data.block_numbers = data["block_numbers"]
-
-    def _update_data(self, init_function: t.Callable, *args, **kwargs) -> None:
-        self._logger.info("Updating data")
-        init_function(*args, **kwargs)
-        self._logger.debug("Data: %s", self.data.to_json())
-        self._logger.info("Data updated. Releasing lock")
-        self._lock.release()
-        self._logger.info("Lock released")
-
-    def init_data_from_blockchain(self, parsed_options: Namespace) -> None:
-        self._update_data(self._get_data_from_blockchain, parsed_options)
-
-    def init_data_from_json(self, json_data: str) -> None:
-        self._update_data(self._get_data_from_json, json_data)
 
     @staticmethod
     def get_random_bool(rng: RNG | None = None) -> bool:
