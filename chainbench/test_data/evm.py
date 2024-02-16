@@ -265,6 +265,9 @@ class EvmTestData(TestData[EvmBlock]):
             raise InvalidBlockError
         return block
 
+    def fetch_latest_block(self) -> EvmBlock:
+        return self.fetch_block("latest")
+
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
         end_block_number = self.fetch_latest_block_number()
         if parsed_options.use_latest_blocks:
