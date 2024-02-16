@@ -37,7 +37,6 @@ SPAWN_RATE = 10
 LOG_LEVEL = "INFO"
 DEFAULT_PROFILE = "ethereum.general"
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
-runners.HEARTBEAT_INTERVAL = 60
 
 logger = logging.getLogger(__name__)
 
