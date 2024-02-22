@@ -22,10 +22,10 @@ class OasisProfile(EvmUser):
     pass
 ```
 
-We inherit `EVMBenchUser` because it contains methods for benchmarking an EVM-based blockchain.
+We inherit `EvmUser` because it contains methods for benchmarking an EVM-based blockchain.
 
 ### Step 2: Configure wait time
-`EVMBenchUser` is a subclass of `FastHttpUser` from the [Locust](https://docs.locust.io/en/stable/) library. So defining wait time is straightforward.
+`EvmUser` is a subclass of `FastHttpUser` from the [Locust](https://docs.locust.io/en/stable/) library. So defining wait time is straightforward.
 Here we use `constant_pacing` to set a dynamic wait time between requests. 
 The wait time is calculated as `n - response_time` where `n` is the value passed to `constant_pacing`.
 If response time is greater than `n`, then the wait time is set to 0, and the next request is sent immediately once the previous one is finished.
@@ -44,11 +44,11 @@ class OasisProfile(EvmUser):
 ### Step 3: Add `get_block_by_number` task
 
 In a standard Locust test, `on_start` event will need to be used to fetch blockchain data before the test starts.
-But `EVMBenchUser` comes with `EVMTestData` class that handles this. Basically, before each worker starts spawning users
+But `EvmUser` comes with `EvmTestData` class that handles this. Basically, before each worker starts spawning users
 it fetches real blockchain data and stores it in memory, so it can be used for test data randomization.
 
-The `update` method of `EVMTestData` fetches the chain ID, and gets the block range from which to fetch test data based on the chain ID.
-The block ranges are defined in the [`chainbench/test_data/evm.py`](../chainbench/test_data/evm.py) file for each supported protocol.
+When Locust "on_init" event occurs, `EvmTestData` fetches the chain ID, and gets the block range from which to fetch test data based on the chain ID.
+The starting block is defined in the [`chainbench/test_data/evm.py`](../chainbench/test_data/evm.py) file for each supported protocol.
 After that, blockchain data such as block numbers, block hashes, transactions, transaction hashes and addresses are fetched from the blockchain node and stored in memory.
 
 ```python
@@ -69,7 +69,7 @@ class OasisProfile(EvmUser):
         ),
 ```
 
-`make_call` is a method from `EVMBenchUser` that sends a request to the blockchain node and checks the response.
+`make_call` is a method from `EvmUser` that sends a request to the blockchain node and checks the response.
 `_block_by_number_params_factory` returns a random list of parameters for the `eth_getBlockByNumber` method. 
 `get_rng` is a helper function that returns a random number generator unique to the function that it is called in,
 with a fixed seed. This is done to ensure that the same random number generator is used for the same function call, and
