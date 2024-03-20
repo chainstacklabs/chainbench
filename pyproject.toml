@@ -18,7 +18,7 @@ locust-plugins = {extras = ["dashboards"], version = "^4.3.4"}
 tenacity = "^8.2.2"
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.1.0"
+black = ">=23.1,<25.0"
 mypy = "^1.2.0"
 pre-commit = "^3.2.2"
 flake8 = "^6.0.0"
