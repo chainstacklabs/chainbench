@@ -113,7 +113,7 @@ def get_block_worker(master_runner: MasterRunner):
                 ):
                     try:
                         block = user.test_data.fetch_block(latest_block_number)
-                    except InvalidBlockError:
+                    except (InvalidBlockError, BlockNotFoundError):
                         invalid_blocks.append(latest_block_number)
                         continue
                     user.test_data.data.push_block(block)

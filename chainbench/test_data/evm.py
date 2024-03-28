@@ -92,6 +92,22 @@ class EvmNetwork:
                 "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
             ],
         },
+        11155111: {
+            "name": "ethereum-sepolia-testnet",
+            "start_block": 1,
+            "contract_addresses": [
+                "0x7451ee8EeCf3b8534FA07B15b4B5ceE4bCc88778",
+                "0x3593B75e2a849DFDACb7e1ADdA24cB836670532b",
+                "0xFd57b4ddBf88a4e07fF4e34C487b99af2Fe82a05",
+                "0x397a59aA02eB65702E5DAdDd5967bbe1979F9aC3",
+                "0x466D489b6d36E7E3b824ef491C225F5830E81cC1",
+                "0x26fb2eee2F48d6EB3111e5aF0b3F11E6694296a8",
+                "0xc132ec2e4B6130273AE6C6eD0a1B8bEE2C3815a0",
+                "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+                "0x4c16D8C078eF6B56700C1BE19a336915962df072",
+                "0x097D90c9d3E0B50Ca60e1ae45F6A81010f9FB534",
+            ],
+        },
         56: {
             "name": "bsc-mainnet",
             "start_block": 20000000,

@@ -50,6 +50,7 @@ class HttpUser(FastHttpUser):
             )
             self.check_fatal(response)
             response.failure(f"Request failed with {response.status_code} code")
+            response.raise_for_status()
 
     def post(
         self, name: str, data: t.Optional[dict] = None, params: t.Optional[dict] = None, path: str = ""
