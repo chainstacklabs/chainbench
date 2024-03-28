@@ -15,6 +15,7 @@ pie title Methods Distribution
     "Others" : 28
 ```
 """
+
 from locust import constant_pacing, tag, task
 
 from chainbench.user import EvmUser

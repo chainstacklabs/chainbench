@@ -1,6 +1,7 @@
 """
 EVM profile (heavy mode).
 """
+
 from random import randint
 
 from locust import constant_pacing, tag, task

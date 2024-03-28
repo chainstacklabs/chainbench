@@ -16,6 +16,7 @@ pie title Methods Distribution
     "Others" : 3
 ```
 """
+
 from locust import constant_pacing, tag, task
 
 from chainbench.user import SolanaUser

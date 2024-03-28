@@ -12,6 +12,7 @@ pie title Methods Distribution
     "Others" : 1
 ```
 """
+
 from locust import constant_pacing, task
 
 from chainbench.user import StarkNetUser
