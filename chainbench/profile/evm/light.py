@@ -1,6 +1,7 @@
 """
 EVM profile (light mode).
 """
+
 from locust import constant_pacing, task
 
 from chainbench.user import EvmUser
