@@ -4,7 +4,7 @@ import typing as t
 from argparse import Namespace
 from dataclasses import dataclass
 
-from tenacity import retry, stop_after_attempt
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from chainbench.test_data.blockchain import (
     Block,
@@ -120,19 +120,16 @@ class EthBeaconTestData(TestData[EthBeaconBlock]):
                 "finalized",
             ):
                 raise ValueError("Invalid block identifier")
-        try:
-            slot = int(self.fetch_block_header(block_id)["slot"])
+        slot = int(self.fetch_block_header(block_id)["slot"])
 
-            committees_response = self.client.get(f"/eth/v1/beacon/states/{block_id}/committees", params={"slot": slot})
-            return EthBeaconBlock.from_response(slot, committees_response.json)
-        except BlockNotFoundError:
-            return self.fetch_latest_block()
+        committees_response = self.client.get(f"/eth/v1/beacon/states/{block_id}/committees", params={"slot": slot})
+        return EthBeaconBlock.from_response(slot, committees_response.json)
 
-    @retry(reraise=True, stop=stop_after_attempt(5))
+    @retry(reraise=True, stop=stop_after_attempt(20), wait=wait_fixed(1))
     def fetch_latest_block(self) -> EthBeaconBlock:
         return self.fetch_block("head")
 
-    @retry(reraise=True, stop=stop_after_attempt(5))
+    @retry(reraise=True, stop=stop_after_attempt(20), wait=wait_fixed(1))
     def fetch_latest_block_number(self) -> BlockNumber:
         return int(self.fetch_block_header("head")["slot"])
 

@@ -145,7 +145,7 @@ class EthBeaconMethods(EthBeaconUser):
 
     def eth_v1_beacon_states_random_state_id_finality_checkpoints_task(self):
         self.get(
-            name="eth_v1_beacon_states_finality_checkpoints",
+            name="eth_v1_beacon_random_states_finality_checkpoints",
             path=f"/eth/v1/beacon/states/"
             f"{self.test_data.get_random_block(self.rng.get_rng()).block_number}/finality_checkpoints",
         )
