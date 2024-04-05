@@ -151,3 +151,16 @@ class SolanaTestData(TestData[SolanaBlock]):
         if rng is None:
             rng = get_rng()
         return self.get_random_block(rng).get_random_account(rng)
+
+    @staticmethod
+    def get_random_token_address(self, rng: RNG | None = None) -> Account:
+        if rng is None:
+            rng = get_rng()
+        token_addresses = [
+            "z3dn17yLaGMKffVogeFHQ9zWVcXgqgf3PQnDsNs2g6M",  # Oxygen Protocol
+            "2cZv8HrgcWSvC6n1uEiS48cEQGb1d3fiowP2rpa4wBL9",  # ACF Game
+            "5fTwKZP2AK39LtFN9Ayppu6hdCVKfMGVm79F2EgHCtsi",  # WHEYO
+            "NeonTjSjsuo3rexg9o6vHuMXw62f9V7zvmu8M8Zut44",  # Neon EVM
+            "8BMzMi2XxZn9afRaMx5Z6fauk9foHXqV5cLTCYWRcVje",  # Staika
+        ]
+        return rng.random.choice(token_addresses)
