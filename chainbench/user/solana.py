@@ -1,5 +1,7 @@
 from chainbench.test_data import Account, BlockNumber, SolanaTestData, TxHash
 from chainbench.util.rng import RNG
+from solders.message import Message
+import base64
 
 from .http import JsonRpcUser
 
@@ -9,6 +11,41 @@ class SolanaUser(JsonRpcUser):
     test_data = SolanaTestData()
     rpc_error_code_exclusions = [-32007]
 
+    def _create_random_transaction_message(self, rng: RNG) -> Message:
+        from solders.hash import Hash
+        from solders.instruction import Instruction, AccountMeta
+        from solders.pubkey import Pubkey
+
+        import base58
+
+        receiver = Pubkey(base58.b58decode(self.test_data.get_random_account(rng)))
+        sender = Pubkey(base58.b58decode(self.test_data.get_random_account(rng)))
+        recent_blockhash = Hash(base58.b58decode(self.test_data.get_random_block_hash(rng)))
+
+        receiver_account = AccountMeta(pubkey=receiver, is_signer=False, is_writable=True)
+        sender_account = AccountMeta(pubkey=sender, is_signer=True, is_writable=True)
+
+        inst = Instruction(program_id=Pubkey(base58.b58decode("11111111111111111111111111111111")), accounts=[
+            sender_account, receiver_account], data=bytes([2, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0]))
+        msg = Message.new_with_blockhash(instructions=[inst], blockhash=recent_blockhash, payer=sender)
+        return msg
+
+    def _get_fee_for_message_params_factory(self, rng: RNG) -> list[dict]:
+        base64_msg = base64.b64encode(bytes(self._create_random_transaction_message(rng))).decode()
+        return [
+            base64_msg,
+            {"commitment": "confirmed"}
+        ]
+
+    def _simulate_transaction_params_factory(self, rng: RNG) -> list[dict]:
+        from solders.transaction import Transaction
+        tx = Transaction.new_unsigned(self._create_random_transaction_message(rng))
+        encoded_tx = base64.b64encode(bytes(tx)).decode()
+        return [
+            encoded_tx,
+            {"commitment": "confirmed"}
+        ]
+
     def _get_account_info_params_factory(self, rng: RNG) -> list[Account | dict]:
         return [self.test_data.get_random_account(rng), {"encoding": "jsonParsed"}]
 
@@ -17,7 +54,7 @@ class SolanaUser(JsonRpcUser):
             self.test_data.get_random_block_number(rng),
             {
                 "encoding": "jsonParsed",
-                "transactionDetails": "full",
+                "transactionDetails": "signatures",
                 "maxSupportedTransactionVersion": 0,
             },
         ]
@@ -47,7 +84,7 @@ class SolanaUser(JsonRpcUser):
             {"limit": rng.random.randint(1, 10)},
         ]
 
-    def _get_balance_params_factory(self, rng: RNG) -> list[Account | dict]:
+    def _random_account_params_factory(self, rng: RNG) -> list[Account | dict]:
         return [
             self.test_data.get_random_account(rng),
             {"commitment": "processed"},
@@ -68,6 +105,16 @@ class SolanaUser(JsonRpcUser):
             {"commitment": "confirmed"},
         ]
 
+    def _get_blocks_with_limit_params_factory(self, rng: RNG) -> list[BlockNumber | dict]:
+        end_number = self.test_data.get_random_block_number(rng)
+        start_number = end_number + rng.random.randint(1, 4)
+        block_len = end_number - start_number
+        return [
+            start_number,
+            block_len,
+            {"commitment": "confirmed"},
+        ]
+
     def _get_confirmed_signatures_for_address2_params_factory(self, rng: RNG) -> list[Account | dict]:
         return [
             self.test_data.get_random_account(rng),
@@ -75,4 +122,63 @@ class SolanaUser(JsonRpcUser):
                 "limit": rng.random.randint(1, 10),
                 "commitment": "confirmed",
             },
+        ]
+
+    def _get_recent_prioritization_fees_params_factory(self, rng: RNG) -> list[list[str]]:
+        accounts_len = rng.random.randint(1, 128)
+        return [[self.test_data.get_random_account(rng) for _ in range(accounts_len)]]
+
+    def _get_inflation_reward_params_factory(self, rng: RNG) -> list[list[str]]:
+        accounts_len = rng.random.randint(1, 10)
+        return [[self.test_data.get_random_account(rng) for _ in range(accounts_len)]]
+
+    @staticmethod
+    def _get_program_accounts_params_factory() -> list[str]:
+        return [
+            "Stake11111111111111111111111111111111111111",
+            {
+                "encoding": "jsonParsed",
+                "commitment": "finalized",
+                "filters": [
+                    {
+                        "memcmp": {
+                            "bytes": "2K9XJAj3VtojUhyKdXVfGnueSvnyFNfSACkn1CwgBees",
+                            "offset": 12
+                        }
+                    }
+                ]
+            }
+        ]
+
+    @staticmethod
+    def _get_recent_performance_samples_params_factory(rng: RNG) -> list[int]:
+        return [rng.random.randint(1, 50)]
+
+    def _get_slot_leaders_params_factory(self, rng: RNG) -> list[BlockNumber | dict]:
+        end = self.test_data.get_random_block_number(rng)
+        length = rng.random.randint(1, 10)
+        start = end - length
+        return [start, length]
+
+    def _get_stake_activation_params_factory(self, rng: RNG) -> list[Account | dict]:
+        return [self.test_data.get_random_account(rng)]
+
+    def _token_mint_pubkey_params_factory(self, rng: RNG) -> list[str]:
+        return [self.test_data.get_random_token_address(rng)]
+
+    def _get_token_accounts_by_delegate_params_factory(self, rng: RNG) -> list[Account | dict]:
+        return [
+            self.test_data.get_random_account(rng),
+            {
+                "mint": self.test_data.get_random_token_address(rng),
+            },
+            {
+                "encoding": "jsonParsed"
+            },
+        ]
+
+    def _is_blockhash_valid_params_factory(self, rng: RNG) -> list[str]:
+        return [
+            self.test_data.get_random_block_hash(rng),
+            {"commitment": "processed"},
         ]
