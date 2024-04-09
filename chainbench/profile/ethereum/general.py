@@ -86,6 +86,7 @@ class EthereumProfile(EvmUser):
         self.make_rpc_call(
             name="trace_transaction",
             method="debug_traceTransaction",
+            params=self._transaction_by_hash_params_factory(get_rng()),
         ),
 
     @task(2)

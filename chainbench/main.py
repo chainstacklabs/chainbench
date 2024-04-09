@@ -293,6 +293,9 @@ def start(
         for tag in exclude_tags:
             custom_exclude_tags.append(tag)
 
+    if not debug_trace_methods:
+        custom_exclude_tags = custom_exclude_tags + ["trace", "debug"]
+
     locust_options = LocustOptions(
         profile_path=profile_path,
         host=host,
