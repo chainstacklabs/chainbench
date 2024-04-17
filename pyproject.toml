@@ -16,6 +16,8 @@ locust = "^2.24.1"
 click = "^8.1.6"
 locust-plugins = {extras = ["dashboards"], version = "^4.4.2"}
 tenacity = "^8.2.2"
+base58 = "^2.1.1"
+solders = "^0.21.0"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23.1,<25.0"
