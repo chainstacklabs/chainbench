@@ -1,7 +1,9 @@
+import base64
+
+from solders.message import Message
+
 from chainbench.test_data import Account, BlockNumber, SolanaTestData, TxHash
 from chainbench.util.rng import RNG
-from solders.message import Message
-import base64
 
 from .http import JsonRpcUser
 
@@ -12,11 +14,10 @@ class SolanaUser(JsonRpcUser):
     rpc_error_code_exclusions = [-32007]
 
     def _create_random_transaction_message(self, rng: RNG) -> Message:
-        from solders.hash import Hash
-        from solders.instruction import Instruction, AccountMeta
-        from solders.pubkey import Pubkey
-
         import base58
+        from solders.hash import Hash
+        from solders.instruction import AccountMeta, Instruction
+        from solders.pubkey import Pubkey
 
         receiver = Pubkey(base58.b58decode(self.test_data.get_random_account(rng)))
         sender = Pubkey(base58.b58decode(self.test_data.get_random_account(rng)))
@@ -25,26 +26,24 @@ class SolanaUser(JsonRpcUser):
         receiver_account = AccountMeta(pubkey=receiver, is_signer=False, is_writable=True)
         sender_account = AccountMeta(pubkey=sender, is_signer=True, is_writable=True)
 
-        inst = Instruction(program_id=Pubkey(base58.b58decode("11111111111111111111111111111111")), accounts=[
-            sender_account, receiver_account], data=bytes([2, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0]))
+        inst = Instruction(
+            program_id=Pubkey(base58.b58decode("11111111111111111111111111111111")),
+            accounts=[sender_account, receiver_account],
+            data=bytes([2, 0, 0, 0, 64, 66, 15, 0, 0, 0, 0, 0]),
+        )
         msg = Message.new_with_blockhash(instructions=[inst], blockhash=recent_blockhash, payer=sender)
         return msg
 
-    def _get_fee_for_message_params_factory(self, rng: RNG) -> list[dict]:
+    def _get_fee_for_message_params_factory(self, rng: RNG) -> list[str | dict]:
         base64_msg = base64.b64encode(bytes(self._create_random_transaction_message(rng))).decode()
-        return [
-            base64_msg,
-            {"commitment": "confirmed"}
-        ]
+        return [base64_msg, {"commitment": "confirmed"}]
 
-    def _simulate_transaction_params_factory(self, rng: RNG) -> list[dict]:
+    def _simulate_transaction_params_factory(self, rng: RNG) -> list[str | dict]:
         from solders.transaction import Transaction
+
         tx = Transaction.new_unsigned(self._create_random_transaction_message(rng))
         encoded_tx = base64.b64encode(bytes(tx)).decode()
-        return [
-            encoded_tx,
-            {"commitment": "confirmed"}
-        ]
+        return [encoded_tx, {"commitment": "confirmed"}]
 
     def _get_account_info_params_factory(self, rng: RNG) -> list[Account | dict]:
         return [self.test_data.get_random_account(rng), {"encoding": "jsonParsed"}]
@@ -98,7 +97,7 @@ class SolanaUser(JsonRpcUser):
 
     def _get_blocks_params_factory(self, rng: RNG) -> list[BlockNumber | dict]:
         start_number = self.test_data.get_random_block_number(rng)
-        end_number = start_number + rng.random.randint(1, 4)
+        end_number = start_number + rng.random.randint(20, 40)
         return [
             start_number,
             end_number,
@@ -133,21 +132,14 @@ class SolanaUser(JsonRpcUser):
         return [[self.test_data.get_random_account(rng) for _ in range(accounts_len)]]
 
     @staticmethod
-    def _get_program_accounts_params_factory() -> list[str]:
+    def _get_program_accounts_params_factory() -> list[str | dict]:
         return [
             "Stake11111111111111111111111111111111111111",
             {
                 "encoding": "jsonParsed",
                 "commitment": "finalized",
-                "filters": [
-                    {
-                        "memcmp": {
-                            "bytes": "2K9XJAj3VtojUhyKdXVfGnueSvnyFNfSACkn1CwgBees",
-                            "offset": 12
-                        }
-                    }
-                ]
-            }
+                "filters": [{"memcmp": {"bytes": "2K9XJAj3VtojUhyKdXVfGnueSvnyFNfSACkn1CwgBees", "offset": 12}}],
+            },
         ]
 
     @staticmethod
@@ -172,12 +164,10 @@ class SolanaUser(JsonRpcUser):
             {
                 "mint": self.test_data.get_random_token_address(rng),
             },
-            {
-                "encoding": "jsonParsed"
-            },
+            {"encoding": "jsonParsed"},
         ]
 
-    def _is_blockhash_valid_params_factory(self, rng: RNG) -> list[str]:
+    def _is_blockhash_valid_params_factory(self, rng: RNG) -> list[str | dict]:
         return [
             self.test_data.get_random_block_hash(rng),
             {"commitment": "processed"},

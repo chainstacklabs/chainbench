@@ -1,12 +1,31 @@
 import logging
 import typing as t
 
-from locust import FastHttpUser
+from locust import FastHttpUser, TaskSet
 from locust.contrib.fasthttp import ResponseContextManager
 
 from chainbench.test_data import TestData
 from chainbench.util.rng import RNGManager
 from chainbench.util.rpc import generate_request
+
+
+def assign_tasks(
+    tasks: dict[t.Callable | TaskSet, int] | list[t.Callable | TaskSet | tuple[t.Callable | TaskSet, int]]
+) -> list[t.Callable | TaskSet]:
+    new_tasks: list[t.Callable | TaskSet] = []
+    if isinstance(tasks, dict):
+        tasks = list(tasks.items())
+
+    if isinstance(tasks, list):
+        for task in tasks:
+            if isinstance(task, tuple):
+                task, count = task
+                for _ in range(count):
+                    new_tasks.append(task)
+            else:
+                new_tasks.append(task)
+
+    return new_tasks
 
 
 class HttpUser(FastHttpUser):

@@ -45,7 +45,7 @@ class SolanaMethods(SolanaUser):
             method="getBlockCommitment",
             params=[
                 self.test_data.get_random_block_number(get_rng()),
-            ]
+            ],
         )
 
     def get_block_height_task(self) -> None:
@@ -63,20 +63,20 @@ class SolanaMethods(SolanaUser):
             method="getBlockTime",
             params=[
                 self.test_data.get_random_block_number(get_rng()),
-            ]
+            ],
         )
 
-    def get_blocks_task(self):
+    def get_blocks_task(self) -> None:
         self.make_rpc_call(
             method="getBlocks",
             params=self._get_blocks_params_factory(get_rng()),
-        ),
+        )
 
     def get_blocks_with_limit_task(self) -> None:
         self.make_rpc_call(
             method="getBlocksWithLimit",
             params=self._get_blocks_with_limit_params_factory(get_rng()),
-        ),
+        )
 
     def get_cluster_nodes_task(self) -> None:
         self.make_rpc_call(
@@ -146,10 +146,7 @@ class SolanaMethods(SolanaUser):
         )
 
     def get_latest_blockhash_task(self) -> None:
-        self.make_rpc_call(
-            method="getLatestBlockhash",
-            params=[{"commitment": "processed"}]
-        )
+        self.make_rpc_call(method="getLatestBlockhash", params=[{"commitment": "processed"}])
 
     def get_leader_schedule_task(self) -> None:
         self.make_rpc_call(
@@ -169,7 +166,7 @@ class SolanaMethods(SolanaUser):
     def get_minimum_balance_for_rent_exemption_task(self) -> None:
         self.make_rpc_call(
             method="getMinimumBalanceForRentExemption",
-            params=get_rng().random.randint(1, 100),
+            params=[get_rng().random.randint(1, 100)],
         )
 
     def get_multiple_accounts_task(self) -> None:
