@@ -1,6 +1,7 @@
 import json
 import logging
 import typing as t
+from base64 import b64encode
 from enum import IntEnum
 from functools import cached_property
 from json import JSONDecodeError
@@ -66,6 +67,11 @@ class Response(HTTPSocketPoolResponse):
             raise HttpStatusError(self.status_code, self.status_message)
 
 
+def basic_auth(username, password):
+    token = b64encode(f"{username}:{password}".encode("utf-8")).decode("ascii")
+    return f"Basic {token}"
+
+
 class HttpClient:
     def __init__(
         self,
@@ -76,6 +82,13 @@ class HttpClient:
     ):
         self._rpc_version = rpc_version
         self._host = URL(host)
+        self._general_headers = {}
+        if "@" in host:
+            username_password = host.split("//")[1].split("@")[0].split(":")
+            username = username_password[0]
+            password = username_password[1]
+            self._general_headers["Authorization"] = f"{basic_auth(username, password)}"
+
         self._client = HTTPClient.from_url(self._host, connection_timeout=120, network_timeout=timeout)
         self.error_level = error_level
 
@@ -102,6 +115,7 @@ class HttpClient:
             headers = {}
         if "Accept" not in headers:
             headers.update({"Accept": "application/json"})
+        headers.update(self._general_headers)
         response = self._client.get(
             self._request_uri(path, params),
             headers=headers,
@@ -126,6 +140,7 @@ class HttpClient:
             headers.update({"Content-Type": "application/json"})
         if "Accept" not in headers:
             headers.update({"Accept": "application/json"})
+        headers.update(self._general_headers)
         if isinstance(data, dict):
             body = json.dumps(data).encode("utf-8")
         elif isinstance(data, bytes):
