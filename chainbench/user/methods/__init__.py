@@ -17,7 +17,7 @@ __all__ = [
 ]
 
 
-all_method_classes: list[Type[EthBeaconMethods | EvmMethods]] = [
+all_method_classes: list[Type[EthBeaconMethods | EvmMethods | SolanaMethods]] = [
     EthBeaconMethods,
     EvmMethods,
     SolanaMethods,
