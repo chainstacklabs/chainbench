@@ -43,7 +43,7 @@ class SolanaUser(JsonRpcUser):
 
         tx = Transaction.new_unsigned(self._create_random_transaction_message(rng))
         encoded_tx = base64.b64encode(bytes(tx)).decode()
-        return [encoded_tx, {"commitment": "confirmed"}]
+        return [encoded_tx, {"commitment": "confirmed", "encoding": "base64"}]
 
     def _get_account_info_params_factory(self, rng: RNG) -> list[Account | dict]:
         return [self.test_data.get_random_account(rng), {"encoding": "jsonParsed"}]
@@ -106,7 +106,7 @@ class SolanaUser(JsonRpcUser):
 
     def _get_blocks_with_limit_params_factory(self, rng: RNG) -> list[BlockNumber | dict]:
         end_number = self.test_data.get_random_block_number(rng)
-        start_number = end_number + rng.random.randint(1, 4)
+        start_number = end_number - rng.random.randint(1, 20)
         block_len = end_number - start_number
         return [
             start_number,
@@ -127,9 +127,13 @@ class SolanaUser(JsonRpcUser):
         accounts_len = rng.random.randint(1, 128)
         return [[self.test_data.get_random_account(rng) for _ in range(accounts_len)]]
 
-    def _get_inflation_reward_params_factory(self, rng: RNG) -> list[list[str]]:
+    # TODO: Fix "Block XXX cleaned up, does not exist on node." error
+    def _get_inflation_reward_params_factory(self, rng: RNG) -> list[list[str] | dict]:
         accounts_len = rng.random.randint(1, 10)
-        return [[self.test_data.get_random_account(rng) for _ in range(accounts_len)]]
+        return [
+            [self.test_data.get_random_account(rng) for _ in range(accounts_len)],
+            {"minContextSlot": self.test_data.get_random_block_number(rng)},
+        ]
 
     @staticmethod
     def _get_program_accounts_params_factory() -> list[str | dict]:
@@ -152,6 +156,7 @@ class SolanaUser(JsonRpcUser):
         start = end - length
         return [start, length]
 
+    # TODO: Fix "Invalid param: not a stake account" error
     def _get_stake_activation_params_factory(self, rng: RNG) -> list[Account | dict]:
         return [self.test_data.get_random_account(rng)]
 
