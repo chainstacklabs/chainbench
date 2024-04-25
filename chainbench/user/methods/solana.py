@@ -237,6 +237,7 @@ class SolanaMethods(SolanaUser):
             method="getSupply",
         )
 
+    # TODO: Fix "Invalid param: not a Token account" and "Invalid param: could not find account" errors
     def get_token_account_balance_task(self) -> None:
         self.make_rpc_call(
             method="getTokenAccountBalance",
