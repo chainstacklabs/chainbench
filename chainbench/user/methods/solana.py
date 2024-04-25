@@ -14,7 +14,7 @@ class SolanaMethods(SolanaUser):
     def task_to_method(task_name: str) -> str:
         task_name_stripped = task_name.replace("_task", "")
         words = task_name_stripped.split("_")
-        method = "".join([words[1]] + [word.capitalize() for word in words[2:]])
+        method = "".join([words[0]] + [word.capitalize() for word in words[1:]])
         return method
 
     def method_to_task_function(self, method: str) -> t.Callable:

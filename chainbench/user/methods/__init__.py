@@ -5,10 +5,12 @@ from typing import Type
 from .common import get_subclass_functions
 from .ethereum import EthBeaconMethods
 from .evm import EvmMethods
+from .solana import SolanaMethods
 
 __all__ = [
     "EthBeaconMethods",
     "EvmMethods",
+    "SolanaMethods",
     "get_subclass_functions",
     "all_method_classes",
     "all_methods",
@@ -18,6 +20,7 @@ __all__ = [
 all_method_classes: list[Type[EthBeaconMethods | EvmMethods]] = [
     EthBeaconMethods,
     EvmMethods,
+    SolanaMethods,
 ]
 
 
