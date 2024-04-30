@@ -205,6 +205,16 @@ class TestData(t.Generic[B]):
             rng = get_rng()
         return self.get_random_block(rng).block_number
 
+    def get_random_block_range(self, n: int, rng: RNG | None = None) -> BlockRange:
+        if rng is None:
+            rng = get_rng()
+        if n >= (self.end_block_number - self.start_block_number):
+            end = rng.random.randint(self.end_block_number - n, self.end_block_number)
+            return BlockRange(end - n, end)
+        else:
+            start = rng.random.randint(self.start_block_number, self.end_block_number - n)
+            return BlockRange(start, start + n)
+
     @property
     def start_block_number(self) -> BlockNumber:
         return self.data.block_range.start
