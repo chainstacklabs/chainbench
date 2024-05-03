@@ -1,7 +1,7 @@
 import re
 import typing as t
 
-from locust import task
+from locust import tag, task
 
 from chainbench.user.evm import EvmUser
 
@@ -181,65 +181,76 @@ class EvmMethods(EvmUser):
             method="eth_syncing",
         )
 
+    @tag("debug")
     def debug_get_bad_blocks_task(self) -> None:
         self.make_rpc_call(
             method="debug_getBadBlocks",
         )
 
+    @tag("debug")
     def debug_get_raw_block_by_number_task(self) -> None:
         self.make_rpc_call(
             method="debug_getRawBlock",
             params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
         )
 
+    @tag("debug")
     def debug_get_raw_header_by_number_task(self) -> None:
         self.make_rpc_call(
             method="debug_getRawHeader",
             params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
         )
 
+    @tag("debug")
     def debug_get_raw_receipts_by_number_task(self) -> None:
         self.make_rpc_call(
             method="debug_getRawReceipts",
             params=[hex(self.test_data.get_random_block_number(self.rng.get_rng()))],
         )
 
+    @tag("debug")
     def debug_get_raw_transaction_by_hash_task(self) -> None:
         self.make_rpc_call(
             method="debug_getRawTransaction",
             params=[self.test_data.get_random_tx_hash(self.rng.get_rng())],
         )
 
+    @tag("debug")
     def debug_trace_bad_block_task(self) -> None:
         self.make_rpc_call(
             method="debug_traceBadBlock",
             params=[self.test_data.get_random_block_hash(self.rng.get_rng())],
         )
 
+    @tag("debug")
     def debug_trace_block_task(self) -> None:
         self.make_rpc_call(
             method="debug_traceBlock",
             params=self._block_params_factory(),
         )
 
+    @tag("debug")
     def debug_trace_block_by_hash_task(self) -> None:
         self.make_rpc_call(
             method="debug_traceBlockByHash",
             params=self._debug_trace_block_by_hash_params_factory(self.rng.get_rng()),
         )
 
+    @tag("debug")
     def debug_trace_block_by_number_task(self) -> None:
         self.make_rpc_call(
             method="debug_traceBlockByNumber",
             params=self._debug_trace_block_by_number_params_factory(),
         )
 
+    @tag("debug")
     def debug_trace_call_task(self) -> None:
         self.make_rpc_call(
             method="debug_traceCall",
             params=self._debug_trace_call_params_factory(self.rng.get_rng()),
         )
 
+    @tag("debug")
     def debug_trace_transaction_task(self) -> None:
         self.make_rpc_call(
             method="debug_traceTransaction",
@@ -261,24 +272,28 @@ class EvmMethods(EvmUser):
             method="net_version",
         )
 
+    @tag("trace")
     def trace_block_task(self) -> None:
         self.make_rpc_call(
             method="trace_block",
             params=self._block_params_factory(),
         )
 
+    @tag("trace")
     def trace_replay_block_transactions_task(self) -> None:
         self.make_rpc_call(
             method="trace_replayBlockTransactions",
             params=self._trace_replay_block_transaction_params_factory(),
         )
 
+    @tag("trace")
     def trace_replay_transaction_task(self) -> None:
         self.make_rpc_call(
             method="trace_replayTransaction",
             params=self._trace_replay_transaction_params_factory(self.rng.get_rng()),
         )
 
+    @tag("trace")
     def trace_transaction_task(self) -> None:
         self.make_rpc_call(
             method="trace_transaction",
