@@ -13,7 +13,7 @@ from locust.runners import STATE_CLEANUP, MasterRunner, WorkerRunner
 from chainbench.test_data import Block, EvmTestData, TestData
 from chainbench.test_data.blockchain import BlockNotFoundError, InvalidBlockError
 from chainbench.test_data.evm import ChainId
-from chainbench.user.methods import all_methods
+from chainbench.user.tasks import all_methods
 from chainbench.util.timer import Timer
 
 logger = logging.getLogger(__name__)

@@ -1,31 +1,13 @@
+import json
 import logging
+import random
 import typing as t
 
-from locust import FastHttpUser, TaskSet
+from locust import FastHttpUser
 from locust.contrib.fasthttp import ResponseContextManager
 
 from chainbench.test_data import TestData
 from chainbench.util.rng import RNGManager
-from chainbench.util.rpc import generate_request
-
-
-def assign_tasks(
-    tasks: dict[t.Callable | TaskSet, int] | list[t.Callable | TaskSet | tuple[t.Callable | TaskSet, int]]
-) -> list[t.Callable | TaskSet]:
-    new_tasks: list[t.Callable | TaskSet] = []
-    if isinstance(tasks, dict):
-        tasks = list(tasks.items())
-
-    if isinstance(tasks, list):
-        for task in tasks:
-            if isinstance(task, tuple):
-                task, count = task
-                for _ in range(count):
-                    new_tasks.append(task)
-            else:
-                new_tasks.append(task)
-
-    return new_tasks
 
 
 class HttpUser(FastHttpUser):
@@ -84,6 +66,12 @@ class HttpUser(FastHttpUser):
             return response
 
 
+class RpcCall:
+    def __init__(self, method: str, params: list[t.Any] | dict | None = None) -> None:
+        self.method = method
+        self.params = params
+
+
 class JsonRpcUser(HttpUser):
     """Extension of HttpUser to provide JsonRPC support."""
 
@@ -120,13 +108,63 @@ class JsonRpcUser(HttpUser):
             self.logger.error(f"Response for {name} call has no result: {response.text}")
 
     def make_rpc_call(
-        self, method: str, params: list[t.Any] | dict | None = None, name: str | None = None, path: str = ""
+        self,
+        rpc_call: RpcCall | None = None,
+        method: str | None = None,
+        params: list[t.Any] | dict | None = None,
+        name: str = "",
+        path: str = "",
     ) -> None:
         """Make a JSON-RPC call."""
-        name = name if name else method
+        if rpc_call is not None:
+            method = rpc_call.method
+            params = rpc_call.params
+
+        if name == "":
+            name = method
 
         with self.client.request(
-            "POST", self.rpc_path + path, json=generate_request(method, params), name=name, catch_response=True
+            "POST", self.rpc_path + path, json=generate_request_body(method, params), name=name, catch_response=True
         ) as response:
             self.check_http_error(response)
             self.check_json_rpc_response(response, name=name)
+
+    def make_batch_rpc_call(self, rpc_calls: list[RpcCall], name: str = "", path: str = "") -> None:
+        """Make a Batch JSON-RPC call."""
+
+        if name == "":
+            name = "Batch RPC"
+
+        headers = {"Content-Type": "application/json", "accept": "application/json"}
+
+        with self.client.request(
+            "POST",
+            self.rpc_path + path,
+            data=generate_batch_request_body(rpc_calls),
+            name=name,
+            catch_response=True,
+            headers=headers,
+        ) as response:
+            self.check_http_error(response)
+            self.check_json_rpc_response(response, name=name)
+
+
+def generate_request_body(method: str | None = None, params: list | dict | None = None, version: str = "2.0") -> dict:
+    """Generate a JSON-RPC request body."""
+
+    if params is None:
+        params = []
+
+    return {
+        "jsonrpc": version,
+        "method": method,
+        "params": params,
+        "id": random.randint(1, 100000000),
+    }
+
+
+def generate_batch_request_body(rpc_calls: list[RpcCall], version: str = "2.0") -> str:
+    """Generate a batch JSON-RPC request body."""
+    return json.dumps(
+        [generate_request_body(rpc_call.method, rpc_call.params, version=version) for rpc_call in rpc_calls]
+    )

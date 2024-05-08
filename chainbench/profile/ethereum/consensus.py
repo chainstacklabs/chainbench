@@ -4,7 +4,7 @@ Ethereum Beacon profile.
 
 from locust import constant_pacing
 
-from chainbench.user.methods.ethereum import EthBeaconMethods
+from chainbench.user.tasks.ethereum import EthBeaconMethods
 
 # mypy: ignore_errors
 
