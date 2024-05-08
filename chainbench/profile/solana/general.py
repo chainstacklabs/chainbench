@@ -19,13 +19,13 @@ pie title Methods Distribution
 
 from locust import constant_pacing
 
-from chainbench.user.http import assign_tasks
-from chainbench.user.methods.solana import SolanaMethods
+from chainbench.user.tasks.common import expand_tasks
+from chainbench.user.tasks.solana import SolanaMethods
 
 
 class SolanaProfile(SolanaMethods):
     wait_time = constant_pacing(1)
-    tasks = assign_tasks(
+    tasks = expand_tasks(
         {
             SolanaMethods.get_account_info_task: 1000,
             SolanaMethods.get_block_task: 175,

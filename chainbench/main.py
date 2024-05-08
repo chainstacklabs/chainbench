@@ -10,11 +10,7 @@ import click
 import gevent.pool
 from click import Context, Parameter
 
-from chainbench.user.methods import (
-    all_method_classes,
-    all_methods,
-    get_subclass_functions,
-)
+from chainbench.user.tasks import all_method_classes, all_methods, get_subclass_tasks
 from chainbench.util.cli import (
     ContextData,
     LocustOptions,
@@ -463,7 +459,7 @@ def profiles(profile_dir: Path) -> None:
 def methods() -> None:
     for method_class in all_method_classes:
         click.echo(f"\nMethods for {method_class.__name__}:")
-        task_list = get_subclass_functions(method_class)
+        task_list = get_subclass_tasks(method_class)
         for task in task_list:
             click.echo(f"- {method_class.task_to_method(task.name)}")
 
