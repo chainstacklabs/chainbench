@@ -22,7 +22,7 @@ class SolanaMethods(SolanaUser):
         method_name = "_".join([word.lower() for word in method_name_split])
         return getattr(self, f"{method_name}_task")
 
-# TODO: Separate out rpc_methods for Solana to allow for batch request support
+    # TODO: Separate out rpc_methods for Solana to allow for batch request support
 
     def get_account_info_task(self):
         self.make_rpc_call(

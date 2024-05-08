@@ -120,7 +120,7 @@ class JsonRpcUser(HttpUser):
             method = rpc_call.method
             params = rpc_call.params
 
-        if name == "":
+        if name == "" and method is not None:
             name = method
 
         with self.client.request(
