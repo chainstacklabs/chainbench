@@ -1,5 +1,3 @@
-from locust import tag
-
 from chainbench.user.evm import EvmUser
 from chainbench.user.http import RpcCall
 
@@ -127,7 +125,7 @@ class EvmRpcMethods(EvmUser):
     def eth_syncing_rpc() -> RpcCall:
         return RpcCall(method="eth_syncing")
 
-# TODO: Implement tags for rpc methods as well to enable filtering for batch requests
+    # TODO: Implement tags for rpc methods as well to enable filtering for batch requests
 
     @staticmethod
     def debug_get_bad_blocks_rpc() -> RpcCall:
