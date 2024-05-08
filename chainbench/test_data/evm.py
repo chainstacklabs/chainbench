@@ -336,6 +336,17 @@ class EvmNetwork:
                 "0x067fbff8990c58ab90bae3c97241c5d736053f77",
             ],
         },
+        324: {
+            "name": "zksync-mainnet",
+            "start_block": 1,
+            "contract_addresses": [
+                "0x000000000000000000000000000000000000800A",
+                "0x96e4069B746bD88Db76eE126acfDA537DdcEe6FF",
+                "0x1d17CBcF0D6D143135aE902365D2E5e2A16538D4",
+                "0x4E14EC08875c88f9B0Cf2A075F481EDa0143d1f0",
+                "0x5B09802d62d213c4503B4b1Ef5F727ef62c9F4eF",
+            ],
+        },
         # TODO: Move StarkNet out of EVMNetwork
         23448594291968334: {
             "name": "starknet-mainnet",
