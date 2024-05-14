@@ -10,7 +10,8 @@ import click
 import gevent.pool
 from click import Context, Parameter
 
-from chainbench.user.tasks import all_method_classes, all_methods, get_subclass_tasks
+from chainbench.user import get_subclass_tasks
+from chainbench.user.common import all_method_classes, all_methods
 from chainbench.util.cli import (
     ContextData,
     LocustOptions,
@@ -148,6 +149,17 @@ def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
     multiple=True,
 )
 @click.option(
+    "--batch",
+    is_flag=True,
+    help="Run tests in batch mode. This will make requests in batches for json-rpc methods. The number of requests in "
+    "a batch can be specified using the `--batch-size` flag",
+)
+@click.option(
+    "--batch-size",
+    default=10,
+    help="The number of requests in " "a batch for json-rpc methods. This flag is only used when `--batch` flag is set",
+)
+@click.option(
     "--debug-trace-methods",
     is_flag=True,
     help="Enable tasks tagged with debug or trace to be executed",
@@ -190,6 +202,8 @@ def start(
     run_id: str | None,
     notify: str | None,
     monitor: list[str],
+    batch: bool,
+    batch_size: int,
     debug_trace_methods: bool,
     exclude_tags: list[str],
     timescale: bool,
@@ -290,7 +304,18 @@ def start(
             custom_exclude_tags.append(tag)
 
     if not debug_trace_methods:
-        custom_exclude_tags = custom_exclude_tags + ["trace", "debug"]
+        custom_exclude_tags.extend(["trace", "debug"])
+
+    custom_tags: list[str] = []
+
+    if batch:
+        custom_tags = ["batch_single" if method else "batch"]
+    else:
+        if method:
+            custom_tags.append("single")
+        else:
+            custom_exclude_tags.append("single")
+        custom_exclude_tags.extend(["batch", "batch_single"])
 
     locust_options = LocustOptions(
         profile_path=profile_path,
@@ -304,6 +329,7 @@ def start(
         workers=workers,
         headless=headless,
         target=target,
+        custom_tags=custom_tags,
         exclude_tags=custom_exclude_tags,
         timescale=timescale,
         pg_host=pg_host,
@@ -315,6 +341,7 @@ def start(
         size=size,
         method=method,
         enable_class_picker=enable_class_picker,
+        batch_size=batch_size,
     )
     # Start the Locust master
     master_command = locust_options.get_master_command()

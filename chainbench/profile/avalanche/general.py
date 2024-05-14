@@ -4,36 +4,35 @@ Avalanche profile.
 
 from locust import constant_pacing
 
-from chainbench.user.tasks import EvmTasks
-from chainbench.user.tasks.common import expand_tasks
+from chainbench.user.protocol.evm import EvmUser
 
 
-class AvalancheProfile(EvmTasks):
+class AvalancheProfile(EvmUser):
     wait_time = constant_pacing(1)
-    tasks = expand_tasks(
-        {
-            EvmTasks.eth_call_task: 976,
-            EvmTasks.eth_get_block_by_number_task: 516,
-            EvmTasks.eth_get_logs_task: 404,
-            EvmTasks.eth_get_transaction_receipt_task: 223,
-            EvmTasks.eth_block_number_task: 174,
-            EvmTasks.eth_chain_id_task: 155,
-            EvmTasks.eth_get_balance_task: 134,
-            EvmTasks.eth_get_transaction_by_hash_task: 70,
-            EvmTasks.eth_get_block_by_hash_task: 30,
-            EvmTasks.web3_client_version_task: 23,
-            EvmTasks.eth_gas_price_task: 15,
-            EvmTasks.eth_syncing_task: 14,
-            EvmTasks.net_version_task: 7,
-            EvmTasks.eth_get_transaction_count_task: 6,
-            EvmTasks.eth_get_block_receipts_task: 5,
-            EvmTasks.eth_get_code_task: 3,
-            EvmTasks.eth_max_priority_fee_per_gas_task: 2,
-            EvmTasks.eth_estimate_gas_task: 2,
-            EvmTasks.eth_fee_history_task: 2,
-            EvmTasks.debug_trace_transaction_task: 2,
-            EvmTasks.debug_trace_block_by_number_task: 1,
-            EvmTasks.debug_trace_block_by_hash_task: 1,
-            EvmTasks.net_listening_task: 1,
-        }
-    )
+    rpc_calls = {
+        EvmUser.eth_call: 976,
+        EvmUser.eth_get_block_by_number: 516,
+        EvmUser.eth_get_logs: 404,
+        EvmUser.eth_get_transaction_receipt: 223,
+        EvmUser.eth_block_number: 174,
+        EvmUser.eth_chain_id: 155,
+        EvmUser.eth_get_balance: 134,
+        EvmUser.eth_get_transaction_by_hash: 70,
+        EvmUser.eth_get_block_by_hash: 30,
+        EvmUser.web3_client_version: 23,
+        EvmUser.eth_gas_price: 15,
+        EvmUser.eth_syncing: 14,
+        EvmUser.net_version: 7,
+        EvmUser.eth_get_transaction_count: 6,
+        EvmUser.eth_get_block_receipts: 5,
+        EvmUser.eth_get_code: 3,
+        EvmUser.eth_max_priority_fee_per_gas: 2,
+        EvmUser.eth_estimate_gas: 2,
+        EvmUser.eth_fee_history: 2,
+        EvmUser.debug_trace_transaction: 2,
+        EvmUser.debug_trace_block_by_number: 1,
+        EvmUser.debug_trace_block_by_hash: 1,
+        EvmUser.net_listening: 1,
+    }
+
+    tasks = EvmUser.expand_tasks(rpc_calls)

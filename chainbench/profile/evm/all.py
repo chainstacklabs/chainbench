@@ -4,10 +4,11 @@
 
 from locust import constant_pacing
 
-from chainbench.user.tasks import EvmTasks
-from chainbench.user.tasks.common import get_subclass_tasks
+from chainbench.user.common import get_subclass_methods
+from chainbench.user.protocol.evm import EvmRpcMethods, EvmUser
 
 
-class EvmAllProfile(EvmTasks):
+class EvmAllProfile(EvmUser):
     wait_time = constant_pacing(1)
-    tasks = [task.method for task in get_subclass_tasks(EvmTasks)]
+    rpc_calls = {EvmUser.method_to_rpc_call(method): 1 for method in get_subclass_methods(EvmRpcMethods)}
+    tasks = EvmUser.expand_tasks(rpc_calls)

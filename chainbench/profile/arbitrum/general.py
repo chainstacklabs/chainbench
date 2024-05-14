@@ -4,38 +4,37 @@ Arbitrum profile.
 
 from locust import constant_pacing
 
-from chainbench.user.tasks import EvmTasks
-from chainbench.user.tasks.common import expand_tasks
+from chainbench.user.protocol.evm import EvmUser
 
 
-class ArbitrumProfile(EvmTasks):
+class ArbitrumProfile(EvmUser):
     wait_time = constant_pacing(1)
-    tasks = expand_tasks(
-        {
-            EvmTasks.eth_call_task: 1007,
-            EvmTasks.eth_get_block_by_number_task: 592,
-            EvmTasks.eth_get_logs_task: 397,
-            EvmTasks.eth_chain_id_task: 186,
-            EvmTasks.eth_get_transaction_receipt_task: 168,
-            EvmTasks.eth_block_number_task: 165,
-            EvmTasks.eth_get_block_by_hash_task: 61,
-            EvmTasks.eth_get_balance_task: 50,
-            EvmTasks.debug_trace_transaction_task: 48,
-            EvmTasks.eth_estimate_gas_task: 28,
-            EvmTasks.eth_gas_price_task: 22,
-            EvmTasks.eth_get_transaction_count_task: 17,
-            EvmTasks.eth_get_transaction_by_hash_task: 14,
-            EvmTasks.eth_get_block_receipts_task: 12,
-            EvmTasks.debug_trace_block_by_number_task: 12,
-            EvmTasks.eth_get_code_task: 7,
-            EvmTasks.eth_max_priority_fee_per_gas_task: 5,
-            EvmTasks.web3_client_version_task: 3,
-            EvmTasks.debug_trace_block_by_hash_task: 3,
-            EvmTasks.net_listening_task: 2,
-            EvmTasks.net_version_task: 2,
-            EvmTasks.eth_syncing_task: 1,
-            EvmTasks.eth_fee_history_task: 1,
-            EvmTasks.eth_get_transaction_by_block_hash_and_index_task: 1,
-            EvmTasks.debug_trace_call_task: 1,
-        }
-    )
+    rpc_calls = {
+        EvmUser.eth_call: 1007,
+        EvmUser.eth_get_block_by_number: 592,
+        EvmUser.eth_get_logs: 397,
+        EvmUser.eth_chain_id: 186,
+        EvmUser.eth_get_transaction_receipt: 168,
+        EvmUser.eth_block_number: 165,
+        EvmUser.eth_get_block_by_hash: 61,
+        EvmUser.eth_get_balance: 50,
+        EvmUser.debug_trace_transaction: 48,
+        EvmUser.eth_estimate_gas: 28,
+        EvmUser.eth_gas_price: 22,
+        EvmUser.eth_get_transaction_count: 17,
+        EvmUser.eth_get_transaction_by_hash: 14,
+        EvmUser.eth_get_block_receipts: 12,
+        EvmUser.debug_trace_block_by_number: 12,
+        EvmUser.eth_get_code: 7,
+        EvmUser.eth_max_priority_fee_per_gas: 5,
+        EvmUser.web3_client_version: 3,
+        EvmUser.debug_trace_block_by_hash: 3,
+        EvmUser.net_listening: 2,
+        EvmUser.net_version: 2,
+        EvmUser.eth_syncing: 1,
+        EvmUser.eth_fee_history: 1,
+        EvmUser.eth_get_transaction_by_block_hash_and_index: 1,
+        EvmUser.debug_trace_call: 1,
+    }
+
+    tasks = EvmUser.expand_tasks(rpc_calls)

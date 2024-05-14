@@ -4,27 +4,26 @@ Fantom Archive profile.
 
 from locust import constant_pacing
 
-from chainbench.user.tasks import EvmTasks
-from chainbench.user.tasks.common import expand_tasks
+from chainbench.user.protocol.evm import EvmUser
 
 
-class FantomArchiveProfile(EvmTasks):
+class FantomArchiveProfile(EvmUser):
     wait_time = constant_pacing(1)
-    tasks = expand_tasks(
-        {
-            EvmTasks.eth_get_block_by_number_task: 1025,
-            EvmTasks.eth_block_number_task: 319,
-            EvmTasks.eth_get_transaction_receipt_task: 305,
-            EvmTasks.eth_get_logs_task: 228,
-            EvmTasks.eth_call_task: 203,
-            EvmTasks.eth_get_block_by_hash_task: 146,
-            EvmTasks.eth_syncing_task: 96,
-            EvmTasks.net_peer_count_task: 96,
-            EvmTasks.eth_chain_id_task: 32,
-            EvmTasks.eth_get_transaction_by_hash_task: 9,
-            EvmTasks.eth_get_code_task: 5,
-            EvmTasks.eth_get_balance_task: 2,
-            EvmTasks.eth_gas_price_task: 2,
-            EvmTasks.eth_get_transaction_count_task: 1,
-        }
-    )
+    rpc_calls = {
+        EvmUser.eth_get_block_by_number: 1025,
+        EvmUser.eth_block_number: 319,
+        EvmUser.eth_get_transaction_receipt: 305,
+        EvmUser.eth_get_logs: 228,
+        EvmUser.eth_call: 203,
+        EvmUser.eth_get_block_by_hash: 146,
+        EvmUser.eth_syncing: 96,
+        EvmUser.net_peer_count: 96,
+        EvmUser.eth_chain_id: 32,
+        EvmUser.eth_get_transaction_by_hash: 9,
+        EvmUser.eth_get_code: 5,
+        EvmUser.eth_get_balance: 2,
+        EvmUser.eth_gas_price: 2,
+        EvmUser.eth_get_transaction_count: 1,
+    }
+
+    tasks = EvmUser.expand_tasks(rpc_calls)
