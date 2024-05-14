@@ -19,28 +19,27 @@ pie title Methods Distribution
 
 from locust import constant_pacing
 
-from chainbench.user.tasks.common import expand_tasks
-from chainbench.user.tasks.solana import SolanaMethods
+from chainbench.user.protocol.solana import SolanaUser
 
 
-class SolanaProfile(SolanaMethods):
+class SolanaProfile(SolanaUser):
     wait_time = constant_pacing(1)
-    tasks = expand_tasks(
-        {
-            SolanaMethods.get_account_info_task: 1000,
-            SolanaMethods.get_block_task: 175,
-            SolanaMethods.get_token_accounts_by_owner_task: 150,
-            SolanaMethods.get_multiple_accounts_task: 150,
-            SolanaMethods.get_transaction_task: 130,
-            SolanaMethods.get_signatures_for_address_task: 75,
-            SolanaMethods.get_latest_blockhash_task: 75,
-            SolanaMethods.get_balance_task: 75,
-            SolanaMethods.get_slot_task: 20,
-            SolanaMethods.get_block_height_task: 15,
-            SolanaMethods.get_block_time_task: 15,
-            SolanaMethods.get_program_accounts_task: 5,
-            SolanaMethods.get_signature_statuses_task: 4,
-            SolanaMethods.get_blocks_task: 2,
-            SolanaMethods.get_epoch_info_task: 2,
-        }
-    )
+    rpc_calls = {
+        SolanaUser.get_account_info: 1000,
+        SolanaUser.get_block: 175,
+        SolanaUser.get_token_accounts_by_owner: 150,
+        SolanaUser.get_multiple_accounts: 150,
+        SolanaUser.get_transaction: 130,
+        SolanaUser.get_signatures_for_address: 75,
+        SolanaUser.get_latest_blockhash: 75,
+        SolanaUser.get_balance: 75,
+        SolanaUser.get_slot: 20,
+        SolanaUser.get_block_height: 15,
+        SolanaUser.get_block_time: 15,
+        SolanaUser.get_program_accounts: 5,
+        SolanaUser.get_signature_statuses: 4,
+        SolanaUser.get_blocks: 2,
+        SolanaUser.get_epoch_info: 2,
+    }
+
+    tasks = SolanaUser.expand_tasks(rpc_calls)

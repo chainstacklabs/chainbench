@@ -118,6 +118,7 @@ class LocustOptions:
     test_time: str
     log_level: str
     results_path: Path
+    custom_tags: list[str]
     exclude_tags: list[str]
     target: str
     headless: bool = False
@@ -131,6 +132,7 @@ class LocustOptions:
     size: str | None = None
     method: str | None = None
     enable_class_picker: bool = False
+    batch_size: int | None = None
 
     def get_master_command(self) -> str:
         """Generate master command."""
@@ -177,11 +179,17 @@ class LocustOptions:
         if len(self.exclude_tags) > 0:
             command += f" --exclude-tags {' '.join(self.exclude_tags)}"
 
+        if len(self.custom_tags) > 0:
+            command += f" --tags {' '.join(self.custom_tags)}"
+
         if self.use_latest_blocks:
             command += " --use-latest-blocks True"
 
         if self.method is not None:
             command += f" --method {self.method}"
+
+        if self.batch_size is not None:
+            command += f" --batch-size {self.batch_size}"
         return command
 
 

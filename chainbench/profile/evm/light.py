@@ -2,64 +2,22 @@
 EVM profile (light mode).
 """
 
-from locust import constant_pacing, task
+from locust import constant_pacing
 
 from chainbench.user import EvmUser
-from chainbench.util.rng import get_rng
 
 
 class EvmLightProfile(EvmUser):
     wait_time = constant_pacing(1)
 
-    @task
-    def get_transaction_receipt_task(self):
-        self.make_rpc_call(
-            name="get_transaction_receipt",
-            method="eth_getTransactionReceipt",
-            params=self._transaction_by_hash_params_factory(get_rng()),
-        ),
+    rpc_calls = {
+        EvmUser.eth_get_transaction_receipt: 1,
+        EvmUser.eth_block_number: 1,
+        EvmUser.eth_get_balance: 1,
+        EvmUser.eth_chain_id: 1,
+        EvmUser.eth_get_block_by_number: 1,
+        EvmUser.eth_get_transaction_by_hash: 1,
+        EvmUser.web3_client_version: 1,
+    }
 
-    @task
-    def block_number_task(self):
-        self.make_rpc_call(
-            name="block_number",
-            method="eth_blockNumber",
-        ),
-
-    @task
-    def get_balance_task(self):
-        self.make_rpc_call(
-            name="get_balance",
-            method="eth_getBalance",
-            params=self._get_account_and_block_number_params_factory_latest(get_rng()),
-        ),
-
-    @task
-    def chain_id_task(self):
-        self.make_rpc_call(
-            name="chain_id",
-            method="eth_chainId",
-        ),
-
-    @task
-    def get_block_by_number_task(self):
-        self.make_rpc_call(
-            name="get_block_by_number",
-            method="eth_getBlockByNumber",
-            params=self._block_params_factory(),
-        ),
-
-    @task
-    def get_transaction_by_hash_task(self):
-        self.make_rpc_call(
-            name="get_transaction_by_hash",
-            method="eth_getTransactionByHash",
-            params=self._transaction_by_hash_params_factory(get_rng()),
-        ),
-
-    @task
-    def client_version_task(self):
-        self.make_rpc_call(
-            name="client_version",
-            method="web3_clientVersion",
-        ),
+    tasks = EvmUser.expand_tasks(rpc_calls)

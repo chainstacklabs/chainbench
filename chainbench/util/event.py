@@ -13,7 +13,7 @@ from locust.runners import STATE_CLEANUP, MasterRunner, WorkerRunner
 from chainbench.test_data import Block, EvmTestData, TestData
 from chainbench.test_data.blockchain import BlockNotFoundError, InvalidBlockError
 from chainbench.test_data.evm import ChainId
-from chainbench.user.tasks import all_methods
+from chainbench.user.common import all_methods
 from chainbench.util.timer import Timer
 
 logger = logging.getLogger(__name__)
@@ -33,6 +33,13 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         default=None,
         help="Set the size of the test data. e.g. --size S",
         include_in_web_ui=False,
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=10,
+        help="Set the batch size for batch requests. Default is 10.",
+        include_in_web_ui=True,
     )
 
     # TODO - limit choices to the methods that are available in the selected user class

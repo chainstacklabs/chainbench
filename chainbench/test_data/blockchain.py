@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 Account = str
 TxHash = str
-Tx = dict[str, t.Any]
+Tx = t.Dict[str, t.Any]
 BlockNumber = int
 BlockHash = str
 

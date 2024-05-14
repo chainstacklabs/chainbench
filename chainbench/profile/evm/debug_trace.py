@@ -2,43 +2,31 @@
 EVM profile (debug_trace methods).
 """
 
-from locust import constant_pacing, task
+from locust import constant_pacing
 
 from chainbench.user import EvmUser
-from chainbench.util.rng import get_rng
+from chainbench.user.tag import clear_tags
 
 
 class EvmDebugTraceProfile(EvmUser):
     wait_time = constant_pacing(10)
 
-    @task(324)
-    def debug_trace_transaction_task(self):
-        self.make_rpc_call(
-            name="debug_trace_transaction",
-            method="debug_traceTransaction",
-            params=self._debug_trace_transaction_params_factory(get_rng()),
-        ),
+    rpc_calls = {
+        # EvmUser.debug_trace_transaction: 1229,
+        # EvmUser.trace_transaction: 484,
+        # EvmUser.trace_block: 143,
+        # EvmUser.debug_trace_call: 60,
+        EvmUser.trace_call: 1,
+        EvmUser.trace_call_many: 1,
+        EvmUser.trace_filter: 1,
+        # EvmUser.trace_replay_block_transactions: 21,
+        # EvmUser.trace_replay_transaction: 11,
+        # EvmUser.debug_trace_block_by_hash: 6,
+        # EvmUser.debug_trace_block_by_number: 6,
+        # EvmUser.debug_get_raw_receipts: 1,
+    }
 
-    @task(41)
-    def debug_trace_call_task(self):
-        self.make_rpc_call(
-            name="debug_trace_call",
-            method="debug_traceCall",
-            params=self._debug_trace_call_params_factory(get_rng()),
-        ),
+    tasks = EvmUser.expand_tasks(rpc_calls)
 
-    @task(36)
-    def debug_trace_block_by_number_task(self):
-        self.make_rpc_call(
-            name="debug_trace_block_by_number",
-            method="debug_traceBlockByNumber",
-            params=self._debug_trace_block_by_number_params_factory(),
-        ),
-
-    @task(1)
-    def debug_trace_block_by_hash_task(self):
-        self.make_rpc_call(
-            name="debug_trace_block_by_hash",
-            method="debug_traceBlockByHash",
-            params=self._debug_trace_block_by_hash_params_factory(get_rng()),
-        ),
+    # Clear locust tags to ignore debug-trace method exclusion
+    clear_tags(tasks)

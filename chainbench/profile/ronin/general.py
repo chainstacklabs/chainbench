@@ -4,29 +4,28 @@ Ronin profile.
 
 from locust import constant_pacing
 
-from chainbench.user.tasks import EvmTasks
-from chainbench.user.tasks.common import expand_tasks
+from chainbench.user.protocol.evm import EvmUser
 
 
-class RoninProfile(EvmTasks):
+class RoninProfile(EvmUser):
     wait_time = constant_pacing(1)
-    tasks = expand_tasks(
-        {
-            EvmTasks.eth_get_transaction_receipt_task: 1128,
-            EvmTasks.eth_get_transaction_by_hash_task: 439,
-            EvmTasks.eth_gas_price_task: 431,
-            EvmTasks.eth_get_transaction_count_task: 431,
-            EvmTasks.eth_get_balance_task: 429,
-            EvmTasks.eth_call_task: 322,
-            EvmTasks.eth_get_block_by_number_task: 315,
-            EvmTasks.eth_estimate_gas_task: 287,
-            EvmTasks.eth_get_code_task: 285,
-            EvmTasks.debug_trace_block_by_number_task: 191,
-            EvmTasks.net_version_task: 129,
-            EvmTasks.eth_get_logs_task: 28,
-            EvmTasks.eth_chain_id_task: 19,
-            EvmTasks.eth_block_number_task: 10,
-            EvmTasks.eth_max_priority_fee_per_gas_task: 1,
-            EvmTasks.eth_get_block_by_hash_task: 1,
-        }
-    )
+    rpc_calls = {
+        EvmUser.eth_get_transaction_receipt: 1128,
+        EvmUser.eth_get_transaction_by_hash: 439,
+        EvmUser.eth_gas_price: 431,
+        EvmUser.eth_get_transaction_count: 431,
+        EvmUser.eth_get_balance: 429,
+        EvmUser.eth_call: 322,
+        EvmUser.eth_get_block_by_number: 315,
+        EvmUser.eth_estimate_gas: 287,
+        EvmUser.eth_get_code: 285,
+        EvmUser.debug_trace_block_by_number: 191,
+        EvmUser.net_version: 129,
+        EvmUser.eth_get_logs: 28,
+        EvmUser.eth_chain_id: 19,
+        EvmUser.eth_block_number: 10,
+        EvmUser.eth_max_priority_fee_per_gas: 1,
+        EvmUser.eth_get_block_by_hash: 1,
+    }
+
+    tasks = EvmUser.expand_tasks(rpc_calls)

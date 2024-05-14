@@ -3,6 +3,8 @@ from locust import constant_pacing, task
 from chainbench.user import EvmUser
 from chainbench.util.rng import get_rng
 
+# TODO: Update Oasis profile to new format and update tutorial in documentation
+
 
 class OasisProfile(EvmUser):
     wait_time = constant_pacing(1)

@@ -38,7 +38,7 @@ from locust import constant_pacing
 
 
 class OasisProfile(EvmUser):
-    wait_time = constant_pacing(2)
+    wait_time = constant_pacing(1)
 ```
 
 ### Step 3: Add `get_block_by_number` task
@@ -74,7 +74,7 @@ class OasisProfile(EvmUser):
 `get_rng` is a helper function that returns a random number generator unique to the function that it is called in,
 with a fixed seed. This is done to ensure that the same random number generator is used for the same function call, and
 that the test data is consistent across all workers, as well as across multiple runs. This increases consistency of the data across runs, and makes them more comparable.
-See the [`chainbench/user/evm.py`](../chainbench/user/evm.py) file for all supported param factories.
+See the [`chainbench/user/evm.py`](../chainbench/user/protocol/evm.py) file for all supported param factories.
 
 ### Step 4: Add `get_syncing` task
 

@@ -4,10 +4,11 @@
 
 from locust import constant_pacing
 
-from chainbench.user.tasks.common import get_subclass_tasks
-from chainbench.user.tasks.solana import SolanaMethods
+from chainbench.user.common import get_subclass_methods
+from chainbench.user.protocol.solana import SolanaRpcMethods, SolanaUser
 
 
-class SolanaAllProfile(SolanaMethods):
+class SolanaAllProfile(SolanaUser):
     wait_time = constant_pacing(1)
-    tasks = [task.method for task in get_subclass_tasks(SolanaMethods)]
+    rpc_calls = {SolanaUser.method_to_rpc_call(method): 1 for method in get_subclass_methods(SolanaRpcMethods)}
+    tasks = SolanaUser.expand_tasks(rpc_calls)
