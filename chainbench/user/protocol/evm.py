@@ -54,14 +54,8 @@ class EvmBaseUser(JsonRpcUser):
         tx_data = self.test_data.get_random_tx(rng)
         tx_param = {
             "to": tx_data["to"],
-            "gas": tx_data["gas"],
-            "value": tx_data["value"],
+            "value": "0x0",
         }
-
-        if "maxFeePerGas" in tx_data:
-            tx_param["maxFeePerGas"] = tx_data["maxFeePerGas"]
-        else:
-            tx_param["gasPrice"] = tx_data["gasPrice"]
 
         if "input" in tx_data:
             if tx_data["input"] != "0x":
