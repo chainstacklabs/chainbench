@@ -29,7 +29,6 @@ class AvalancheArchiveProfile(EvmUser):
         EvmUser.eth_get_transaction_count_task: 3,
         EvmUser.eth_get_transaction_by_hash_task: 1,
         EvmUser.eth_gas_price_task: 1,
-
     }
 
     tasks = EvmUser.expand_tasks(rpc_calls)
