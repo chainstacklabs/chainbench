@@ -347,6 +347,22 @@ class EvmNetwork:
                 "0x5B09802d62d213c4503B4b1Ef5F727ef62c9F4eF",
             ],
         },
+        100: {
+            "name": "gnosis-mainnet",
+            "start_block": 1,
+            "contract_addresses": [
+                "0x4ECaBa5870353805a9F068101A40E0f32ed605C6",
+                "0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83",
+                "0x8e5bBbb09Ed1ebdE8674Cda39A0c169401db4252",
+                "0xE2e73A1c69ecF83F464EFCE6A5be353a37cA09b2",
+                "0x4537e328Bf7e4eFA29D05CAeA260D7fE26af9D74",
+                "0x7122d7661c4564b7C6Cd4878B06766489a6028A2",
+                "0x9C58BAcC331c9aa871AFD802DB6379a98e80CEdb",
+                "0x4d18815D14fe5c3304e87B3FA18318baa5c23820",
+                "0x2F0E755Efe6b58238A67DB420Ff3513Ec1fb31eF",
+                "0xbf65bfcb5da067446CeE6A706ba3Fe2fB1a9fdFd",
+            ],
+        },
         # TODO: Move StarkNet out of EVMNetwork
         23448594291968334: {
             "name": "starknet-mainnet",
