@@ -136,7 +136,7 @@ class EvmBaseUser(JsonRpcUser):
                 {
                     "from": tx_data["from"],
                     "to": tx_data["to"],
-                    "value": tx_data["value"],
+                    "value": "0x0",
                 },
                 ["trace"],
             ]
