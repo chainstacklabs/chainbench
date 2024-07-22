@@ -18,6 +18,7 @@ locust-plugins = {extras = ["dashboards"], version = "^4.4.2"}
 tenacity = "^8.2.2"
 base58 = "^2.1.1"
 solders = "^0.21.0"
+websocket-client = "^1.8.0"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23.1,<25.0"

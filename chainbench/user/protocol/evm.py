@@ -8,7 +8,8 @@ from chainbench.test_data import (
     Tx,
     TxHash,
 )
-from chainbench.user.http import JsonRpcUser, RpcCall
+from chainbench.user.jsonrpc import JsonRpcUser
+from chainbench.util.jsonrpc import RpcCall
 from chainbench.user.tag import tag
 from chainbench.util.rng import RNG
 

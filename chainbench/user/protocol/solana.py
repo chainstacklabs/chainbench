@@ -4,7 +4,8 @@ import re
 from solders.message import Message
 
 from chainbench.test_data import Account, BlockNumber, SolanaTestData, TxHash
-from chainbench.user.http import JsonRpcUser, RpcCall
+from chainbench.user.jsonrpc import JsonRpcUser
+from chainbench.util.jsonrpc import RpcCall
 from chainbench.util.rng import RNG
 
 

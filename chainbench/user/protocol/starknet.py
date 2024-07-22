@@ -2,7 +2,7 @@ import typing as t
 
 from chainbench.test_data import StarkNetTestData
 from chainbench.test_data.blockchain import Account, TxHash
-from chainbench.user.http import JsonRpcUser
+from chainbench.user.jsonrpc import JsonRpcUser
 from chainbench.util.rng import RNG
 
 
