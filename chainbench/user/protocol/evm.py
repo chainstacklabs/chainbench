@@ -569,7 +569,7 @@ class EvmUser(EvmRpcMethods):
 
     @tag("trace")
     def trace_replay_block_transactions_task(self) -> None:
-        self.make_rpc_call(self.trace_replay_transaction())
+        self.make_rpc_call(self.trace_replay_block_transactions())
 
     @tag("trace")
     def trace_replay_transaction_task(self) -> None:
