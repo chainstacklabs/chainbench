@@ -6,7 +6,6 @@ from locust.contrib.fasthttp import ResponseContextManager
 
 from chainbench.test_data import TestData
 from chainbench.util.jsonrpc import expand_to_list
-from chainbench.util.rng import RNGManager
 
 
 class HttpUser(FastHttpUser):
@@ -15,7 +14,6 @@ class HttpUser(FastHttpUser):
     abstract = True
     test_data: TestData = TestData()
     logger = logging.getLogger(__name__)
-    rng = RNGManager()
 
     connection_timeout = 120
     network_timeout = 360

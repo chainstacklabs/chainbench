@@ -11,12 +11,13 @@ from chainbench.test_data import (
 from chainbench.user.jsonrpc import JsonRpcUser
 from chainbench.util.jsonrpc import RpcCall
 from chainbench.user.tag import tag
-from chainbench.util.rng import RNG
+from chainbench.util.rng import RNG, RNGManager
 
 
-class EvmBaseUser(JsonRpcUser):
+class EvmBaseUser:
     abstract = True
     test_data = EvmTestData()
+    rng = RNGManager()
 
     _default_trace_timeout = "120s"
 
@@ -395,7 +396,7 @@ class EvmRpcMethods(EvmBaseUser):
         return RpcCall(method="web3_sha3", params=[self.test_data.get_random_tx_hash(self.rng.get_rng())])
 
 
-class EvmUser(EvmRpcMethods):
+class EvmUser(EvmRpcMethods, JsonRpcUser):
     abstract = True
 
     @staticmethod
