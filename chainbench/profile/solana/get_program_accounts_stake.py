@@ -1,7 +1,7 @@
 from locust import task
 
-from chainbench.user.protocol.solana import SolanaUser
 from chainbench.user.http import RpcCall
+from chainbench.user.protocol.solana import SolanaUser
 
 
 class GetProgramAccounts(SolanaUser):
@@ -16,9 +16,10 @@ class GetProgramAccounts(SolanaUser):
                         "encoding": "jsonParsed",
                         "commitment": "finalized",
                         "filters": [
-                            {"memcmp": {"bytes": "2K9XJAj3VtojUhyKdXVfGnueSvnyFNfSACkn1CwgBees", "offset": 12}}],
+                            {"memcmp": {"bytes": "2K9XJAj3VtojUhyKdXVfGnueSvnyFNfSACkn1CwgBees", "offset": 12}}
+                        ],
                     },
                 ],
             ),
-            name="getProgramAccounts_stake"
+            name="getProgramAccounts_stake",
         )
