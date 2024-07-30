@@ -1,7 +1,7 @@
 from locust import task
 
-from chainbench.user.protocol.solana import SolanaUser
 from chainbench.user.http import RpcCall
+from chainbench.user.protocol.solana import SolanaUser
 
 
 class GetProgramAccounts(SolanaUser):
@@ -12,8 +12,8 @@ class GetProgramAccounts(SolanaUser):
                 method="getProgramAccounts",
                 params=[
                     "SharkXwkS3h24fJ2LZvgG5tPbsH3BKQYuAtKdqskf1f",
-                    {"encoding": "base64", "commitment": "confirmed"}
+                    {"encoding": "base64", "commitment": "confirmed"},
                 ],
             ),
-            name="getProgramAccounts_shark"
+            name="getProgramAccounts_shark",
         )
