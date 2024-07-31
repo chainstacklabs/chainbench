@@ -3,11 +3,11 @@ import random
 import time
 
 import gevent
-import orjson as json
+from msgspec import json
 import websocket
 from gevent import Greenlet
 from locust import User
-from orjson import JSONDecodeError
+from json import JSONDecodeError
 from websocket import WebSocket
 
 
@@ -82,7 +82,7 @@ class WssUser(User):
 
     def on_message(self, message):
         try:
-            response = json.loads(message)
+            response = json.decode(message)
             if "method" in response:
                 self.check_subscriptions(response, message)
             else:
@@ -93,7 +93,8 @@ class WssUser(User):
                 name="JSONDecodeError",
                 response_time=None,
                 response_length=len(message),
-                exception=None,
+                exception=JSONDecodeError,
+                response=message,
             )
 
     def check_requests(self, response, message):
@@ -140,6 +141,6 @@ class WssUser(User):
 
     def send(self, body, name):
         self._requests.update({body["id"]: {"name": name, "start_time": time.time_ns()}})
-        json_body = json.dumps(body)
+        json_body = json.encode(body)
         logging.debug(f"WSS: {json_body}")
         self._ws.send(json_body)
