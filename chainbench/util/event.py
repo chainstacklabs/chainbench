@@ -188,7 +188,9 @@ def on_init(environment: Environment, **_kwargs):
                 print(f"Initializing test data for {test_data_class_name}")
                 if environment.host:
                     if environment.host.startswith("wss"):
-                        user_test_data.init_http_client("https://nd-195-027-150.p2pify.com/681543cc4d120809ae5a1c973ac798e8")
+                        user_test_data.init_http_client(
+                            "https://nd-195-027-150.p2pify.com/681543cc4d120809ae5a1c973ac798e8"
+                        )
                     else:
                         user_test_data.init_http_client(environment.host)
                 # if isinstance(user_test_data, EvmTestData):

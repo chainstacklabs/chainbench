@@ -9,8 +9,8 @@ from chainbench.test_data import (
     TxHash,
 )
 from chainbench.user.jsonrpc import JsonRpcUser
-from chainbench.util.jsonrpc import RpcCall
 from chainbench.user.tag import tag
+from chainbench.util.jsonrpc import RpcCall
 from chainbench.util.rng import RNG, RNGManager
 
 

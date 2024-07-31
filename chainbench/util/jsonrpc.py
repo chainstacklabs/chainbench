@@ -1,6 +1,7 @@
-import orjson as json
 import random
 import typing as t
+
+import orjson as json
 
 
 class RpcCall:

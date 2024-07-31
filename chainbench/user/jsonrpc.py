@@ -5,7 +5,12 @@ from locust import tag, task
 from locust.contrib.fasthttp import ResponseContextManager
 
 from chainbench.user.http import HttpUser
-from chainbench.util.jsonrpc import RpcCall, generate_request_body, generate_batch_request_body, expand_rpc_calls
+from chainbench.util.jsonrpc import (
+    RpcCall,
+    expand_rpc_calls,
+    generate_batch_request_body,
+    generate_request_body,
+)
 
 
 class JsonRpcUser(HttpUser):

@@ -1,8 +1,9 @@
-import orjson as json
 import logging
 import typing as t
 from argparse import Namespace
 from dataclasses import dataclass
+
+import orjson as json
 
 from chainbench.util.rng import RNG, get_rng
 

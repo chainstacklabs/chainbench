@@ -84,5 +84,3 @@ class HttpUser(FastHttpUser):
         with self.client.request("GET", path, params=params, name=name, catch_response=True) as response:
             self.check_http_error(response)
             return response
-
-

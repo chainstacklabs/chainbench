@@ -1,9 +1,6 @@
-import random
-
 from locust import constant_pacing, task
 
-from chainbench.user import WssUser, SolanaUser
-
+from chainbench.user import SolanaUser, WssUser
 
 # TODO: Update Oasis profile to new format and update tutorial in documentation
 

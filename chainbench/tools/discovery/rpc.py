@@ -1,9 +1,9 @@
-import orjson as json
 import os
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
 
+import orjson as json
 from tenacity import retry, retry_if_exception_type, wait_exponential
 
 from chainbench.util.http import HttpClient, HttpErrorLevel

@@ -1,14 +1,14 @@
-import orjson as json
 import logging
 import typing as t
 from base64 import b64encode
 from enum import IntEnum
 from functools import cached_property
-from orjson import JSONDecodeError
 from secrets import token_hex
 
+import orjson as json
 from geventhttpclient import URL, HTTPClient
 from geventhttpclient.response import HTTPSocketPoolResponse
+from orjson import JSONDecodeError
 
 logger = logging.getLogger(__name__)
 
@@ -142,7 +142,7 @@ class HttpClient:
             headers.update({"Accept": "application/json"})
         headers.update(self._general_headers)
         if isinstance(data, dict):
-            body = json.dumps(data).encode("utf-8")
+            body = json.dumps(data)
         elif isinstance(data, bytes):
             body = data
         else:

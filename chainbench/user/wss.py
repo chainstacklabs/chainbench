@@ -1,13 +1,13 @@
-import orjson as json
 import logging
 import random
 import time
-from orjson import JSONDecodeError
 
-import websocket
 import gevent
+import orjson as json
+import websocket
 from gevent import Greenlet
 from locust import User
+from orjson import JSONDecodeError
 from websocket import WebSocket
 
 
@@ -47,21 +47,38 @@ class WssUser(User):
 
     def subscribe(self, method: str):
         request_id = random.Random().randint(0, 1000000)
-        self.send({"id": request_id, "jsonrpc": "2.0", "method": method,
-                   "params": ["all", {
-                       "commitment": "confirmed",
-                       "encoding": "jsonParsed",
-                       "showRewards": True,
-                       "transactionDetails": "full",
-                       "maxSupportedTransactionVersion": 0
-                   }]}, "block_subscribe")
+        self.send(
+            {
+                "id": request_id,
+                "jsonrpc": "2.0",
+                "method": method,
+                "params": [
+                    "all",
+                    {
+                        "commitment": "confirmed",
+                        "encoding": "jsonParsed",
+                        "showRewards": True,
+                        "transactionDetails": "full",
+                        "maxSupportedTransactionVersion": 0,
+                    },
+                ],
+            },
+            "block_subscribe",
+        )
         self._requests[request_id].update({"subscription": method})
 
     def unsubscribe_all(self):
         subscription_ids = list(self.subscriptions.keys())
         for subscription_id in subscription_ids:
-            self.send({"id": random.Random().randint(0, 1000000), "jsonrpc": "2.0", "method": "blockUnsubscribe",
-                       "params": [subscription_id]}, "block_unsubscribe")
+            self.send(
+                {
+                    "id": random.Random().randint(0, 1000000),
+                    "jsonrpc": "2.0",
+                    "method": "blockUnsubscribe",
+                    "params": [subscription_id],
+                },
+                "block_unsubscribe",
+            )
 
     def on_message(self, message):
         try:
@@ -106,7 +123,8 @@ class WssUser(User):
                     self.environment.events.request.fire(
                         request_type="WSS Sub",
                         name="blockNotification",
-                        response_time=time.time().__round__() - response["params"]["result"]["value"]["block"]["blockTime"],
+                        response_time=time.time().__round__()
+                        - response["params"]["result"]["value"]["block"]["blockTime"],
                         response_length=len(message),
                         exception=None,
                     )
