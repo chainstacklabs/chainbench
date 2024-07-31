@@ -3,17 +3,18 @@ import random
 import time
 
 import gevent
-from msgspec import json
-import websocket
+import orjson as json
 from gevent import Greenlet
 from locust import User
-from json import JSONDecodeError
-from websocket import WebSocket
+from orjson import JSONDecodeError
+from tenacity import retry, wait_fixed, retry_if_exception_type, stop_after_attempt
+from websocket import WebSocket, WebSocketConnectionClosedException, create_connection
 
 
 class WssUser(User):
     abstract = True
-
+    logger = logging.getLogger(__name__)
+    
     def __init__(self, environment):
         super().__init__(environment)
         self._ws: WebSocket | None = None
@@ -34,11 +35,13 @@ class WssUser(User):
     def on_stop(self) -> None:
         self._running = False
         self.unsubscribe_all()
-        logging.debug("Unsubscribed from all subscriptions")
+        self.logger.debug("Unsubscribed from all subscriptions")
 
     def connect(self, host: str, **kwargs):
-        self._ws = websocket.create_connection(host, **kwargs)
+        self._ws = create_connection(host, **kwargs)
         self._ws_greenlet = gevent.spawn(self.receive_loop)
+        if self._ws is not None:
+            self.logger.info(f"Connected to {host}")
 
     def subscribe_all(self):
         subscribe_methods = ["blockSubscribe"]
@@ -82,7 +85,7 @@ class WssUser(User):
 
     def on_message(self, message):
         try:
-            response = json.decode(message)
+            response = json.loads(message)
             if "method" in response:
                 self.check_subscriptions(response, message)
             else:
@@ -99,12 +102,12 @@ class WssUser(User):
 
     def check_requests(self, response, message):
         if "id" not in response:
-            logging.error("Received message without id")
-            logging.error(response)
+            self.logger.error("Received message without id")
+            self.logger.error(response)
             return
         if response["id"] not in self._requests:
-            logging.error("Received message with unknown id")
-            logging.error(response)
+            self.logger.error("Received message with unknown id")
+            self.logger.error(response)
             return
         request = self._requests.pop(response["id"])
         if request["name"] == "blockSubscribe":
@@ -131,16 +134,27 @@ class WssUser(User):
                     )
 
     def receive_loop(self):
-        while self._running:
-            logging.debug(f"self.requests: {self._requests}")
-            message = self._ws.recv()
-            logging.debug(f"WSR: {message}")
-            self.on_message(message)
-        else:
-            self._ws.close()
+        try:
+            while self._running:
+                message = self._ws.recv()
+                self.logger.debug(f"WSR: {message}")
+                self.on_message(message)
+            else:
+                self._ws.close()
+        except WebSocketConnectionClosedException:
+            self.environment.events.request.fire(
+                request_type="WS",
+                name="WebSocket Connection",
+                response_time=None,
+                response_length=0,
+                exception=WebSocketConnectionClosedException,
+            )
+            self._running = False
+            self.logger.error("Connection closed by server, trying to reconnect...")
+            self.on_start()
 
     def send(self, body, name):
         self._requests.update({body["id"]: {"name": name, "start_time": time.time_ns()}})
-        json_body = json.encode(body)
-        logging.debug(f"WSS: {json_body}")
+        json_body = json.dumps(body)
+        self.logger.debug(f"WSS: {json_body}")
         self._ws.send(json_body)

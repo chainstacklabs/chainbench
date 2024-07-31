@@ -29,7 +29,7 @@ def generate_request_body(
     }
 
 
-def generate_batch_request_body(rpc_calls: list[RpcCall], version: str = "2.0") -> str:
+def generate_batch_request_body(rpc_calls: list[RpcCall], version: str = "2.0") -> bytes:
     """Generate a batch JSON-RPC request body."""
     return json.dumps(
         [
