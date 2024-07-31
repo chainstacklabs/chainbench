@@ -1,10 +1,10 @@
-import json
+import orjson as json
 import logging
 import typing as t
 from base64 import b64encode
 from enum import IntEnum
 from functools import cached_property
-from json import JSONDecodeError
+from orjson import JSONDecodeError
 from secrets import token_hex
 
 from geventhttpclient import URL, HTTPClient

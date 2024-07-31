@@ -1,7 +1,7 @@
 import csv
 import logging
 from datetime import datetime, timedelta
-from json import JSONDecodeError
+from orjson import JSONDecodeError
 from pathlib import Path
 from time import sleep
 

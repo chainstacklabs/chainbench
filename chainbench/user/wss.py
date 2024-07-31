@@ -1,8 +1,8 @@
-import json
+import orjson as json
 import logging
 import random
 import time
-from json import JSONDecodeError
+from orjson import JSONDecodeError
 
 import websocket
 import gevent
@@ -50,7 +50,7 @@ class WssUser(User):
         self.send({"id": request_id, "jsonrpc": "2.0", "method": method,
                    "params": ["all", {
                        "commitment": "confirmed",
-                       "encoding": "base64",
+                       "encoding": "jsonParsed",
                        "showRewards": True,
                        "transactionDetails": "full",
                        "maxSupportedTransactionVersion": 0
