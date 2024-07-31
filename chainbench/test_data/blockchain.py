@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 import orjson as json
 from gevent.lock import Semaphore as GeventSemaphore
+from orjson.orjson import OPT_SORT_KEYS
 from tenacity import retry, stop_after_attempt
 
 from chainbench.util.http import HttpClient
@@ -91,7 +92,7 @@ class BlockchainData(t.Generic[B]):
         self.block_numbers: list[BlockNumber] = []
 
     def to_json(self) -> str:
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True)
+        return json.dumps(self, default=lambda o: o.__dict__, option=OPT_SORT_KEYS).decode("utf-8")
 
     def push_block(self, block: B) -> None:
         if block.block_number in self.block_numbers:
