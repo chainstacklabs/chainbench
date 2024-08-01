@@ -29,14 +29,14 @@ def generate_request_body(
     }
 
 
-def generate_batch_request_body(rpc_calls: list[RpcCall], version: str = "2.0") -> bytes:
+def generate_batch_request_body(rpc_calls: list[RpcCall], version: str = "2.0") -> str:
     """Generate a batch JSON-RPC request body."""
     return json.dumps(
         [
             generate_request_body(rpc_calls[i].method, rpc_calls[i].params, request_id=i, version=version)
             for i in range(1, len(rpc_calls))
         ]
-    )
+    ).decode("utf-8")
 
 
 def expand_rpc_calls(rpc_calls_weighted: dict[t.Callable[[], RpcCall], int]) -> list[RpcCall]:

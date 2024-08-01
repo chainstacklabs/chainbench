@@ -1,20 +1,25 @@
 import logging
 import random
 import time
+import typing
 
 import gevent
+import jsonpath_ng
 import orjson as json
 from gevent import Greenlet
 from locust import User
 from orjson import JSONDecodeError
-from tenacity import retry, wait_fixed, retry_if_exception_type, stop_after_attempt
 from websocket import WebSocket, WebSocketConnectionClosedException, create_connection
+
+
+def jsonpath_get_values(path, json_data) -> list[typing.Any]:
+    return [match.value for match in jsonpath_ng.parse(path).find(json_data)]
 
 
 class WssUser(User):
     abstract = True
     logger = logging.getLogger(__name__)
-    
+
     def __init__(self, environment):
         super().__init__(environment)
         self._ws: WebSocket | None = None
@@ -85,11 +90,16 @@ class WssUser(User):
 
     def on_message(self, message):
         try:
-            response = json.loads(message)
-            if "method" in response:
-                self.check_subscriptions(response, message)
-            else:
-                self.check_requests(response, message)
+            if jsonpath_get_values("id", message):
+                self.check_requests(message)
+            elif blockTime := jsonpath_get_values("params.result.value.block.blockTime", message):
+                self.environment.events.request.fire(
+                    request_type="WSS Sub",
+                    name="blockNotification",
+                    response_time=time.time().__round__() - blockTime[0].value,
+                    response_length=len(message),
+                    exception=None,
+                )
         except JSONDecodeError:
             self.environment.events.request.fire(
                 request_type="WSS",
@@ -100,11 +110,8 @@ class WssUser(User):
                 response=message,
             )
 
-    def check_requests(self, response, message):
-        if "id" not in response:
-            self.logger.error("Received message without id")
-            self.logger.error(response)
-            return
+    def check_requests(self, message):
+        response = json.loads(message)
         if response["id"] not in self._requests:
             self.logger.error("Received message with unknown id")
             self.logger.error(response)
@@ -119,19 +126,6 @@ class WssUser(User):
             response_length=len(message),
             exception=None,
         )
-
-    def check_subscriptions(self, response, message):
-        if response["method"] == "blockNotification":
-            if "params" in response:
-                if "subscription" in response["params"]:
-                    self.environment.events.request.fire(
-                        request_type="WSS Sub",
-                        name="blockNotification",
-                        response_time=time.time().__round__()
-                        - response["params"]["result"]["value"]["block"]["blockTime"],
-                        response_length=len(message),
-                        exception=None,
-                    )
 
     def receive_loop(self):
         try:
