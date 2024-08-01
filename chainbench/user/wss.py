@@ -1,19 +1,41 @@
 import logging
 import random
 import time
-import typing
 
 import gevent
-import jsonpath_ng
-import orjson as json
+import msgspec.json
+import orjson
 from gevent import Greenlet
 from locust import User
+from msgspec import Struct, json
 from orjson import JSONDecodeError
 from websocket import WebSocket, WebSocketConnectionClosedException, create_connection
 
 
-def jsonpath_get_values(path, json_data) -> list[typing.Any]:
-    return [match.value for match in jsonpath_ng.parse(path).find(json_data)]
+class Block(Struct):
+    blockTime: int
+
+
+class JValue(Struct):
+    block: Block = None
+
+
+class JResult(Struct):
+    value: JValue
+
+
+class JParams(Struct):
+    result: JResult
+
+
+class JsonRpcMessage(Struct):
+    jsonrpc: str
+    method: str = None
+    params: JParams = None
+    id: int = None
+
+
+loads = msgspec.json.Decoder(JsonRpcMessage).decode
 
 
 class WssUser(User):
@@ -90,13 +112,14 @@ class WssUser(User):
 
     def on_message(self, message):
         try:
-            if jsonpath_get_values("id", message):
+            parsed_json: JsonRpcMessage = loads(message)
+            if parsed_json.id is not None:
                 self.check_requests(message)
-            elif blockTime := jsonpath_get_values("params.result.value.block.blockTime", message):
+            elif blockTime := parsed_json.params.result.value.block.blockTime:
                 self.environment.events.request.fire(
                     request_type="WSS Sub",
                     name="blockNotification",
-                    response_time=time.time().__round__() - blockTime[0].value,
+                    response_time=time.time().__round__() - blockTime,
                     response_length=len(message),
                     exception=None,
                 )
@@ -111,7 +134,7 @@ class WssUser(User):
             )
 
     def check_requests(self, message):
-        response = json.loads(message)
+        response = orjson.loads(message)
         if response["id"] not in self._requests:
             self.logger.error("Received message with unknown id")
             self.logger.error(response)
@@ -131,7 +154,8 @@ class WssUser(User):
         try:
             while self._running:
                 message = self._ws.recv()
-                self.logger.debug(f"WSR: {message}")
+                self.logger.debug(f"WSR")
+                # self.logger.debug(f"WSR: {message}")
                 self.on_message(message)
             else:
                 self._ws.close()
@@ -149,6 +173,6 @@ class WssUser(User):
 
     def send(self, body, name):
         self._requests.update({body["id"]: {"name": name, "start_time": time.time_ns()}})
-        json_body = json.dumps(body)
+        json_body = orjson.dumps(body)
         self.logger.debug(f"WSS: {json_body}")
         self._ws.send(json_body)
