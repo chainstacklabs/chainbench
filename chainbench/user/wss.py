@@ -93,7 +93,7 @@ class WssUser(User):
                     },
                 ],
             },
-            "block_subscribe",
+            "blockSubscribe",
         )
         self._requests[request_id].update({"subscription": method})
 
@@ -107,7 +107,7 @@ class WssUser(User):
                     "method": "blockUnsubscribe",
                     "params": [subscription_id],
                 },
-                "block_unsubscribe",
+                "blockUnsubscribe",
             )
 
     def on_message(self, message):
