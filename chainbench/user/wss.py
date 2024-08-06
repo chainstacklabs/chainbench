@@ -12,26 +12,9 @@ from orjson import JSONDecodeError
 from websocket import WebSocket, WebSocketConnectionClosedException, create_connection
 
 
-class Block(Struct):
-    blockTime: int
-
-
-class JValue(Struct):
-    block: Block = None
-
-
-class JResult(Struct):
-    value: JValue
-
-
-class JParams(Struct):
-    result: JResult
-
-
 class JsonRpcMessage(Struct):
     jsonrpc: str
     method: str = None
-    params: JParams = None
     id: int = None
 
 
@@ -115,11 +98,11 @@ class WssUser(User):
             parsed_json: JsonRpcMessage = loads(message)
             if parsed_json.id is not None:
                 self.check_requests(message)
-            elif blockTime := parsed_json.params.result.value.block.blockTime:
+            elif parsed_json.method is not None:
                 self.environment.events.request.fire(
                     request_type="WSS Sub",
-                    name="blockNotification",
-                    response_time=time.time().__round__() - blockTime,
+                    name=parsed_json.method,
+                    response_time=None,
                     response_length=len(message),
                     exception=None,
                 )
