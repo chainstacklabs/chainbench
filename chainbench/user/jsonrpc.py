@@ -9,7 +9,6 @@ from chainbench.util.jsonrpc import (
     RpcCall,
     expand_rpc_calls,
     generate_batch_request_body,
-    generate_request_body,
 )
 
 
@@ -99,15 +98,14 @@ class JsonRpcUser(HttpUser):
         path: str = "",
     ) -> None:
         """Make a JSON-RPC call."""
-        if rpc_call is not None:
-            method = rpc_call.method
-            params = rpc_call.params
+        if rpc_call is None:
+            rpc_call = RpcCall(method, params)
 
         if name == "" and method is not None:
             name = method
 
         with self.client.request(
-            "POST", self.rpc_path + path, json=generate_request_body(method, params), name=name, catch_response=True
+            "POST", self.rpc_path + path, json=rpc_call.request_body(), name=name, catch_response=True
         ) as response:
             self.check_http_error(response)
             self.check_json_rpc_response(response, name=name)

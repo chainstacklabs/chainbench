@@ -3,7 +3,7 @@ from chainbench.util.event import setup_event_listeners
 
 from .common import get_subclass_tasks
 from .http import HttpUser
-from .wss import WssUser
+from .wss import WssJrpcUser
 
 # importing plugins here as all profiles depend on it
 import locust_plugins  # isort: skip  # noqa
@@ -16,6 +16,6 @@ __all__ = [
     "HttpUser",
     "SolanaUser",
     "StarkNetUser",
-    "WssUser",
+    "WssJrpcUser",
     "get_subclass_tasks",
 ]

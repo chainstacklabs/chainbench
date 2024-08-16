@@ -1,40 +1,44 @@
 import random
 import typing as t
-
-import msgspec.json
 import orjson as json
 
 
 class RpcCall:
-    def __init__(self, method: str, params: list[t.Any] | dict | None = None) -> None:
+    def __init__(self, method: str, params: list[t.Any] | dict | None = None, request_id: int = None) -> None:
+        self._request_id = request_id
         self.method = method
         self.params = params
 
+    @property
+    def request_id(self) -> int:
+        if self._request_id is None:
+            self._request_id = random.Random().randint(1, 100000000)
+        return self._request_id
 
-def generate_request_body(
-    method: str | None = None, params: list | dict | None = None, request_id: int | None = None, version: str = "2.0"
-) -> dict:
-    """Generate a JSON-RPC request body."""
+    def request_body(self, request_id: int = None) -> dict:
+        """Generate a JSON-RPC request body."""
+        if self.params is None:
+            self.params = []
 
-    if params is None:
-        params = []
+        if type(self.params) is dict:
+            self.params = [self.params]
 
-    if request_id is None:
-        request_id = random.randint(1, 100000000)
+        if request_id:
+            self._request_id = request_id
 
-    return {
-        "jsonrpc": version,
-        "method": method,
-        "params": params,
-        "id": request_id,
-    }
+        return {
+            "jsonrpc": "2.0",
+            "method": self.method,
+            "params": self.params,
+            "id": self._request_id,
+        }
 
 
-def generate_batch_request_body(rpc_calls: list[RpcCall], version: str = "2.0") -> str:
+def generate_batch_request_body(rpc_calls: list[RpcCall]) -> str:
     """Generate a batch JSON-RPC request body."""
     return json.dumps(
         [
-            generate_request_body(rpc_calls[i].method, rpc_calls[i].params, request_id=i, version=version)
+            rpc_calls[i].request_body(i)
             for i in range(1, len(rpc_calls))
         ]
     ).decode("utf-8")
