@@ -1697,6 +1697,71 @@ MarkupSafe = ">=2.1.1"
 watchdog = ["watchdog (>=2.3)"]
 
 [[package]]
+name = "wsaccel"
+version = "0.6.6"
+description = "Accelerator for ws4py and AutobahnPython"
+optional = false
+python-versions = "*"
+files = [
+    {file = "wsaccel-0.6.6-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:670857dd7a95a900bbb338d3a51b59d9cabc4797dbefa93ae56cbc249dedf8f3"},
+    {file = "wsaccel-0.6.6-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d1377c8458ad4d21fc756dcffe9d768c68944bd09b278a1846758719c8e00288"},
+    {file = "wsaccel-0.6.6-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:4c1a5937edaf38532597df61ce089deaef33417b4396484deff6f2b1fa22c62b"},
+    {file = "wsaccel-0.6.6-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:10a8eba84ef89b24e09bfdd94f74c90679810ea9508986178f2d858f55040029"},
+    {file = "wsaccel-0.6.6-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:458b1576f8e3ff650aae35301cb717504c7fe7f1414565d8a4a19489d83df316"},
+    {file = "wsaccel-0.6.6-cp310-cp310-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f069d60be03312ece51b75d0ea6839c41625930feaef8acd94716edaef74d053"},
+    {file = "wsaccel-0.6.6-cp310-cp310-musllinux_1_1_aarch64.whl", hash = "sha256:62f3c7920167261cebf7b2ddd1d4a3e0e3b43f762dd9740ef71a1f2530081b3f"},
+    {file = "wsaccel-0.6.6-cp310-cp310-musllinux_1_1_i686.whl", hash = "sha256:3aae728bdb5ec46442f7f4062bde6c62e2382a32ccd1fd8b3138b638021a2a36"},
+    {file = "wsaccel-0.6.6-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:51ce50e3c7c7a1fc69f3b7920238d9cf9673d48d1402dc5ee71eb8426457ddc5"},
+    {file = "wsaccel-0.6.6-cp310-cp310-win32.whl", hash = "sha256:d20505d3c0cbc7d34efcf9e7cc5b8f5f1dc4b055f0be09e15f528f387d72a633"},
+    {file = "wsaccel-0.6.6-cp310-cp310-win_amd64.whl", hash = "sha256:273cd5cd584c02f5026b0609430d8ba9e7f5b6d01bd0a6309cab258fed1d5f8d"},
+    {file = "wsaccel-0.6.6-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:70139bf54c26b8a7e5158bd7dc03cd0cc3af55facf6b63c55384610fc711c3ea"},
+    {file = "wsaccel-0.6.6-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:9c0ee2fc0e4cacb333e4ca00f7f55457c715d84244a8f034fdcb851abc3635ca"},
+    {file = "wsaccel-0.6.6-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:414d9d802b59f5f41bbc2f001e2a9228957007c3684e33e64479e76b22909af3"},
+    {file = "wsaccel-0.6.6-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f899f79d0881be740396efca9c01a776473c4f0eb59861a55c2c6e32b6781a74"},
+    {file = "wsaccel-0.6.6-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d87200bbdf9759826dad33c2c322ccd2954b93431db707b83a80886f0b5910e5"},
+    {file = "wsaccel-0.6.6-cp311-cp311-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:a918d4e0b4042715a311706cd91aa5dcc1cf9bba5090cf7c2884769abb39c9cf"},
+    {file = "wsaccel-0.6.6-cp311-cp311-musllinux_1_1_aarch64.whl", hash = "sha256:bcd6b7f5f8b6fc8378ad3d30f328b5091fbdc62b8b46bd952dacd5a64688707f"},
+    {file = "wsaccel-0.6.6-cp311-cp311-musllinux_1_1_i686.whl", hash = "sha256:e5a758e1a9916df05053334978ed74c3241fa665ad789f8b962e977131e076ca"},
+    {file = "wsaccel-0.6.6-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:c2a1a929512a9f82504aa739d4790e3c78c800abd07c3b9bd1e046228c5a967e"},
+    {file = "wsaccel-0.6.6-cp311-cp311-win32.whl", hash = "sha256:00445ea583128055896c359aa0fad1bcbc44bc85b7857db1e34a06301d232f20"},
+    {file = "wsaccel-0.6.6-cp311-cp311-win_amd64.whl", hash = "sha256:ab1a1ee11161a9b882ebf6553bb1401713e86e72547a6f2d8f0bc467f672c911"},
+    {file = "wsaccel-0.6.6-cp312-cp312-macosx_10_9_universal2.whl", hash = "sha256:4b3cafeb2f69e2b9606755da0098b2b0e70a6f37cb5f374d195b92d12d605f30"},
+    {file = "wsaccel-0.6.6-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:7d5c4535d153979c1196d7a23389a8e93129b738a4bb839fb1e77d9f2b08bb41"},
+    {file = "wsaccel-0.6.6-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:59a77171798eac6ba372c4dc935a5ea98fe46461c5b70554de50bf500c735dd9"},
+    {file = "wsaccel-0.6.6-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:bc51bae5016d2ef69cf8a71d5009f0f90dd043bcf1867f8d5b7cf7dab2d790c8"},
+    {file = "wsaccel-0.6.6-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e0440f6c8a0334336c76536c8f9985db0ac5f430afe5ca5827a4f2c4aaba11df"},
+    {file = "wsaccel-0.6.6-cp312-cp312-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:610245b574804b4432c8aad906cc9c3c6c7315977290d8d323aee3f95b267651"},
+    {file = "wsaccel-0.6.6-cp312-cp312-musllinux_1_1_aarch64.whl", hash = "sha256:b5a2a6e53bf9b184f70a63dfd595af7d534db29691e2a11324e720212ada7953"},
+    {file = "wsaccel-0.6.6-cp312-cp312-musllinux_1_1_i686.whl", hash = "sha256:fd06a4c6539de32cf669da1629bd6837c6ac84a2454cc78a043441f18f8aeb5a"},
+    {file = "wsaccel-0.6.6-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:7bf2731f53907e89f4fd152149d3ce02c35f7c5c3755eedcad09d4f793ff75f8"},
+    {file = "wsaccel-0.6.6-cp312-cp312-win32.whl", hash = "sha256:3e7b37678d316bb00126f97961bc1f4774fc7680dafa23bdea40a15beaf6a6bb"},
+    {file = "wsaccel-0.6.6-cp312-cp312-win_amd64.whl", hash = "sha256:5b9b7cbee58ea12da45e817a01f20ba45ebd37d258aee4ab11106b91980961a3"},
+    {file = "wsaccel-0.6.6-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:229c27d182591e76028d8fa2b4cc73286e18b7c882f34aa47d75a1c065b5514a"},
+    {file = "wsaccel-0.6.6-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:587d3bbd9a9b8bf38fb8dcc32f59e23a60096da8900bbb1512fbc65fdf06c992"},
+    {file = "wsaccel-0.6.6-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:09999ae0727897e47c958150311de25eba28dc52a0b5568a7d7a35b54e536e73"},
+    {file = "wsaccel-0.6.6-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:c21b7101b156a91df598e73dbc1b1a6c85224d609351f72991aa68f69aca873a"},
+    {file = "wsaccel-0.6.6-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:47b9c529dbabf0b647b091486f8f473abc10c927e897253a0038830b5aa57494"},
+    {file = "wsaccel-0.6.6-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:60d7a1c6e3aa5f6cc144a789d5313a861f2fd860bf62e0a468eef2262bd805a0"},
+    {file = "wsaccel-0.6.6-cp38-cp38-musllinux_1_1_aarch64.whl", hash = "sha256:79a5cc1b3172601ac874ca048e9cf7ecb6209b61b6c3543822ac7640851c58a7"},
+    {file = "wsaccel-0.6.6-cp38-cp38-musllinux_1_1_i686.whl", hash = "sha256:4f28a380eda05efbaae39701828d501539520938e1316ce4dc94bb0020cdfba1"},
+    {file = "wsaccel-0.6.6-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:d68c0638777d24ed1dfbef67b89894b887f0b24aac7e0106dad236337b6212ec"},
+    {file = "wsaccel-0.6.6-cp38-cp38-win32.whl", hash = "sha256:fe774891fe89ce6e2e570501bf9af9cb8760b42991b3b588159ac38d8f058adf"},
+    {file = "wsaccel-0.6.6-cp38-cp38-win_amd64.whl", hash = "sha256:4cd7f5f376efd07d93eeb4d0848c1b5b2805c93cee734cd79f2903cfd4d8a9a4"},
+    {file = "wsaccel-0.6.6-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:56eae811dc5a13f4a0e7c1e8d567132846f7f320c4fa80964d5def7b98873eae"},
+    {file = "wsaccel-0.6.6-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:73a5bb52cbbd19b19dd87232f2cead62c01fa7895b42f08ec266c847d4703561"},
+    {file = "wsaccel-0.6.6-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:0dd4a5e4c4b80c9d2b0b037b552a576193d3f6e9e812347763907217d92c2702"},
+    {file = "wsaccel-0.6.6-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0e2638c5e69df9e86e12310a26eadc3bf6c536eb32304496e4a58914e735b303"},
+    {file = "wsaccel-0.6.6-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0718cb37e17b258eb5e5804ae4d86dcc63073a6be5090c7c5e8993c0e0ec754c"},
+    {file = "wsaccel-0.6.6-cp39-cp39-manylinux_2_5_i686.manylinux1_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:238298b9c5b9b821aa94703bbbf34e0e92a4ae67f08f2b82a28ecb293fbade73"},
+    {file = "wsaccel-0.6.6-cp39-cp39-musllinux_1_1_aarch64.whl", hash = "sha256:1ba9afd0613b852c119a93d7dbd1ab02244b41f8ea619a117bdb0926ebfcc845"},
+    {file = "wsaccel-0.6.6-cp39-cp39-musllinux_1_1_i686.whl", hash = "sha256:ca7ecf0a24ece61540c9b12488e60224c43de4b9ad21218074b5e998ea3219b2"},
+    {file = "wsaccel-0.6.6-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:8acad029668184e2a4dc3ebeefca4c0b71cb5d1081ebd933b674d6a0fc790f38"},
+    {file = "wsaccel-0.6.6-cp39-cp39-win32.whl", hash = "sha256:90bb18a1b440230ef40f918449c4ca3219625500cba0423489a258a732e5e0b6"},
+    {file = "wsaccel-0.6.6-cp39-cp39-win_amd64.whl", hash = "sha256:3798ba3af378753fa5166b68462dc11ad740ba47a321699d923d4eedaf50c20b"},
+    {file = "wsaccel-0.6.6.tar.gz", hash = "sha256:18efec0a7182587ba97102b4cd8df7b4f665f45d7ca36f19783f5f081ea114ea"},
+]
+
+[[package]]
 name = "zope-event"
 version = "5.0"
 description = "Very basic event publishing system"
@@ -1770,4 +1835,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5945688edff4feca256f9acf43dc575c29dd247b3e65a6082fda4d1008f3bccf"
+content-hash = "11afa278640c190f98cb3334cfa24c630e83a52ceb5a505a62e8564563bbb8a3"

@@ -1,5 +1,6 @@
 import logging
 import time
+from socket import socket
 
 import gevent
 import orjson as json
@@ -7,7 +8,6 @@ from gevent import Greenlet, Timeout
 from locust import User, task
 from orjson import JSONDecodeError
 from websocket import WebSocket, WebSocketConnectionClosedException, create_connection
-from locust.env import Environment
 from chainbench.util.jsonrpc import RpcCall
 
 
@@ -86,8 +86,8 @@ class WssJrpcUser(User):
         self._running = False
         self.logger.debug("Unsubscribed from all subscriptions")
 
-    def connect(self, host: str, **kwargs):
-        self._ws = create_connection(host, **kwargs)
+    def connect(self, host: str):
+        self._ws = create_connection(host, skip_utf8_validation=True)
         self._ws_greenlet = gevent.spawn(self.receive_loop)
 
     def subscribe_all(self):
