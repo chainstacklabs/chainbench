@@ -16,7 +16,7 @@ from chainbench.util.rng import RNG, RNGManager
 
 class EvmBaseUser:
     abstract = True
-    test_data = EvmTestData()
+    test_data: EvmTestData = EvmTestData()
     rng = RNGManager()
 
     _default_trace_timeout = "120s"

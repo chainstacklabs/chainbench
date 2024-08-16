@@ -98,8 +98,10 @@ class JsonRpcUser(HttpUser):
         path: str = "",
     ) -> None:
         """Make a JSON-RPC call."""
-        if rpc_call is None:
+        if rpc_call is None and method is not None:
             rpc_call = RpcCall(method, params)
+        else:
+            raise ValueError("Either rpc_call or method must be provided")
 
         if name == "" and method is not None:
             name = method

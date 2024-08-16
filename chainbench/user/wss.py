@@ -5,18 +5,15 @@ import gevent
 import orjson as json
 from gevent import Greenlet, Timeout
 from locust import User, task
+from locust.env import Environment
 from orjson import JSONDecodeError
 from websocket import WebSocket, WebSocketConnectionClosedException, create_connection
+
 from chainbench.util.jsonrpc import RpcCall
 
 
 class WSSubscription:
-    def __init__(
-            self,
-            subscribe_method: str,
-            subscribe_params: dict | list,
-            unsubscribe_method: str
-    ):
+    def __init__(self, subscribe_method: str, subscribe_params: dict | list, unsubscribe_method: str):
         self.subscribe_rpc_call: RpcCall = RpcCall(subscribe_method, subscribe_params)
         self.unsubscribe_method: str = unsubscribe_method
         self.subscribed: bool = False
@@ -38,7 +35,7 @@ class WSSubscription:
 
 
 class WSRequest:
-    def __init__(self, rpc_call: RpcCall, start_time: int, subscription_index: int = None):
+    def __init__(self, rpc_call: RpcCall, start_time: int, subscription_index: int | None = None):
         self.rpc_call = rpc_call
         self.start_time = start_time
         self.subscription_index = subscription_index
@@ -52,7 +49,7 @@ class WssJrpcUser(User):
     subscriptions: list[WSSubscription] = []
     subscription_ids_to_index: dict[str | int, int] = {}
 
-    def __init__(self, environment):
+    def __init__(self, environment: Environment):
         super().__init__(environment)
         self._ws: WebSocket | None = None
         self._ws_greenlet: Greenlet | None = None
@@ -108,7 +105,7 @@ class WssJrpcUser(User):
         # Override this method to return the name of the notification if this is not correct
         return parsed_response["method"]
 
-    def on_message(self, message):
+    def on_message(self, message: str | bytes):
         try:
             parsed_json: dict = json.loads(message)
             if "error" in parsed_json:
@@ -181,15 +178,24 @@ class WssJrpcUser(User):
             self.logger.error("Connection closed by server, trying to reconnect...")
             self.on_start()
 
-    def send(self, rpc_call: RpcCall = None, method: str = None, params: dict | list = None, subscription_index: int = None):
-        self.logger.debug(f"Sending: {rpc_call or method}")
-        rpc = {
-            (None, None): None,
-            (None, method): RpcCall(method, params),
-            (rpc_call, None): rpc_call,
-        }
+    def send(
+        self,
+        rpc_call: RpcCall | None = None,
+        method: str | None = None,
+        params: dict | list | None = None,
+        subscription_index: int | None = None,
+    ):
+        def _get_args():
+            if rpc_call:
+                return rpc_call
+            elif method:
+                return RpcCall(method, params)
+            else:
+                raise ValueError("Either rpc_call or method must be provided")
 
-        rpc_call = rpc[(rpc_call, method)]
+        rpc_call = _get_args()
+        self.logger.debug(f"Sending: {rpc_call or method}")
+
         if rpc_call is None:
             raise ValueError("Either rpc_call or method must be provided")
 
@@ -202,4 +208,5 @@ class WssJrpcUser(User):
         )
         json_body = json.dumps(rpc_call.request_body())
         self.logger.debug(f"WSReq: {json_body}")
-        self._ws.send(json_body)
+        if self._ws:
+            self._ws.send(json_body)
