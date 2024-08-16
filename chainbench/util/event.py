@@ -187,59 +187,54 @@ def on_init(environment: Environment, **_kwargs):
                 logger.info(f"Initializing test data for {test_data_class_name}")
                 print(f"Initializing test data for {test_data_class_name}")
                 if environment.host:
-                    if environment.host.startswith("wss"):
-                        user_test_data.init_http_client(
-                            "https://nd-195-027-150.p2pify.com/681543cc4d120809ae5a1c973ac798e8"
-                        )
-                    else:
-                        user_test_data.init_http_client(environment.host)
-                # if isinstance(user_test_data, EvmTestData):
-                #     chain_id: ChainId = user_test_data.fetch_chain_id()
-                #     user_test_data.init_network(chain_id)
-                #     logger.info(f"Target endpoint network is {user_test_data.network.name}")
-                #     print(f"Target endpoint network is {user_test_data.network.name}")
-                #     test_data["chain_id"] = {test_data_class_name: chain_id}
+                    user_test_data.init_http_client(environment.host)
+                if isinstance(user_test_data, EvmTestData):
+                    chain_id: ChainId = user_test_data.fetch_chain_id()
+                    user_test_data.init_network(chain_id)
+                    logger.info(f"Target endpoint network is {user_test_data.network.name}")
+                    print(f"Target endpoint network is {user_test_data.network.name}")
+                    test_data["chain_id"] = {test_data_class_name: chain_id}
                 if environment.parsed_options:
                     user_test_data.init_data(environment.parsed_options)
                 test_data[test_data_class_name] = user_test_data.data.to_json()
                 send_msg_to_workers(environment.runner, "test_data", test_data)
-                # print("Fetching blocks...")
-                # if environment.parsed_options.use_latest_blocks:
-                #     print(f"Using latest {user_test_data.data.size.blocks_len} blocks as test data")
-                #     logger.info(f"Using latest {user_test_data.data.size.blocks_len} blocks as test data")
-                #     for block_number in range(
-                #         user_test_data.data.block_range.start, user_test_data.data.block_range.end + 1
-                #     ):
-                #         block = None
-                #         try:
-                #             block = user_test_data.fetch_block(block_number)
-                #         except (BlockNotFoundError, InvalidBlockError):
-                #             pass
-                #         while block is None:
-                #             try:
-                #                 block = user_test_data.fetch_latest_block()
-                #             except (BlockNotFoundError, InvalidBlockError):
-                #                 pass
-                #         user_test_data.data.push_block(block)
-                #         block_data = {test_data_class_name: block.to_json()}
-                #         send_msg_to_workers(environment.runner, "block_data", block_data)
-                #         print(user_test_data.data.stats(), end="\r")
-                #     else:
-                #         print(user_test_data.data.stats(), end="\r")
-                #         print("\n")  # new line after progress display upon exiting loop
-                # else:
-                #     while user_test_data.data.size.blocks_len > len(user_test_data.data.blocks):
-                #         try:
-                #             block = user_test_data.fetch_random_block(user_test_data.data.block_numbers)
-                #         except (BlockNotFoundError, InvalidBlockError):
-                #             continue
-                #         user_test_data.data.push_block(block)
-                #         block_data = {test_data_class_name: block.to_json()}
-                #         send_msg_to_workers(environment.runner, "block_data", block_data)
-                #         print(user_test_data.data.stats(), end="\r")
-                #     else:
-                #         print(user_test_data.data.stats(), end="\r")
-                #         print("\n")  # new line after progress display upon exiting loop
+                print("Fetching blocks...")
+                if environment.parsed_options.use_latest_blocks:
+                    print(f"Using latest {user_test_data.data.size.blocks_len} blocks as test data")
+                    logger.info(f"Using latest {user_test_data.data.size.blocks_len} blocks as test data")
+                    for block_number in range(
+                        user_test_data.data.block_range.start, user_test_data.data.block_range.end + 1
+                    ):
+                        block = None
+                        try:
+                            block = user_test_data.fetch_block(block_number)
+                        except (BlockNotFoundError, InvalidBlockError):
+                            pass
+                        while block is None:
+                            try:
+                                block = user_test_data.fetch_latest_block()
+                            except (BlockNotFoundError, InvalidBlockError):
+                                pass
+                        user_test_data.data.push_block(block)
+                        block_data = {test_data_class_name: block.to_json()}
+                        send_msg_to_workers(environment.runner, "block_data", block_data)
+                        print(user_test_data.data.stats(), end="\r")
+                    else:
+                        print(user_test_data.data.stats(), end="\r")
+                        print("\n")  # new line after progress display upon exiting loop
+                else:
+                    while user_test_data.data.size.blocks_len > len(user_test_data.data.blocks):
+                        try:
+                            block = user_test_data.fetch_random_block(user_test_data.data.block_numbers)
+                        except (BlockNotFoundError, InvalidBlockError):
+                            continue
+                        user_test_data.data.push_block(block)
+                        block_data = {test_data_class_name: block.to_json()}
+                        send_msg_to_workers(environment.runner, "block_data", block_data)
+                        print(user_test_data.data.stats(), end="\r")
+                    else:
+                        print(user_test_data.data.stats(), end="\r")
+                        print("\n")  # new line after progress display upon exiting loop
                 logger.info("Test data is ready")
                 send_msg_to_workers(environment.runner, "release_lock", {})
                 user_test_data.release_lock()

@@ -1,6 +1,5 @@
 import logging
 import time
-from socket import socket
 
 import gevent
 import orjson as json
@@ -166,7 +165,7 @@ class WssJrpcUser(User):
         try:
             while self._running:
                 message = self._ws.recv()
-                self.logger.debug(f"WSR: {message}")
+                self.logger.debug(f"WSResp: {message}")
                 self.on_message(message)
             else:
                 self._ws.close()
@@ -202,5 +201,5 @@ class WssJrpcUser(User):
             {rpc_call.request_id: WSRequest(rpc_call, start_time=time.time_ns(), subscription_index=subscription_index)}
         )
         json_body = json.dumps(rpc_call.request_body())
-        self.logger.debug(f"WSS: {json_body}")
+        self.logger.debug(f"WSReq: {json_body}")
         self._ws.send(json_body)
