@@ -210,6 +210,6 @@ class WssJrpcUser(User):
             {rpc_call.request_id: WSRequest(rpc_call, start_time=time.time_ns(), subscription_index=subscription_index)}
         )
         json_body = json.dumps(rpc_call.request_body())
-        self.logger.debug(f"WSReq: {json_body}")
+        self.logger.debug(f"WSReq: {json_body.decode('utf-8')}")
         if self._ws:
             self._ws.send(json_body)
