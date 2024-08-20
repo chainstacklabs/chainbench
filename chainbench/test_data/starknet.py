@@ -1,6 +1,7 @@
-import json
 import logging
 import typing as t
+
+import orjson as json
 
 from .blockchain import (
     Account,

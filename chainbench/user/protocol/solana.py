@@ -4,13 +4,15 @@ import re
 from solders.message import Message
 
 from chainbench.test_data import Account, BlockNumber, SolanaTestData, TxHash
-from chainbench.user.http import JsonRpcUser, RpcCall
-from chainbench.util.rng import RNG
+from chainbench.user.jsonrpc import JrpcHttpUser
+from chainbench.util.jsonrpc import RpcCall
+from chainbench.util.rng import RNG, RNGManager
 
 
-class SolanaBaseUser(JsonRpcUser):
+class SolanaBaseUser(JrpcHttpUser):
     abstract = True
     test_data = SolanaTestData()
+    rng = RNGManager()
     rpc_error_code_exclusions = [-32007]
 
     def _create_random_transaction_message(self, rng: RNG) -> Message:

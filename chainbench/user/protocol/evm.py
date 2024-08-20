@@ -8,14 +8,16 @@ from chainbench.test_data import (
     Tx,
     TxHash,
 )
-from chainbench.user.http import JsonRpcUser, RpcCall
+from chainbench.user.jsonrpc import JrpcHttpUser
 from chainbench.user.tag import tag
-from chainbench.util.rng import RNG
+from chainbench.util.jsonrpc import RpcCall
+from chainbench.util.rng import RNG, RNGManager
 
 
-class EvmBaseUser(JsonRpcUser):
+class EvmBaseUser(JrpcHttpUser):
     abstract = True
-    test_data = EvmTestData()
+    test_data: EvmTestData = EvmTestData()
+    rng = RNGManager()
 
     _default_trace_timeout = "120s"
 

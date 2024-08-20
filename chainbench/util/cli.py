@@ -156,7 +156,7 @@ class LocustOptions:
         """Generate worker command."""
         command = (
             f"locust -f {self.profile_path} --worker --master-host {self.host} --master-port {self.port} "
-            f"--logfile {self.results_path}/worker_{worker_id}.log --loglevel {self.log_level}"
+            f"--logfile {self.results_path}/worker_{worker_id}.log --loglevel {self.log_level} --stop-timeout 30"
         )
         return self.get_extra_options(command)
 

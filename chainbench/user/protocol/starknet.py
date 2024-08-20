@@ -2,11 +2,11 @@ import typing as t
 
 from chainbench.test_data import StarkNetTestData
 from chainbench.test_data.blockchain import Account, TxHash
-from chainbench.user.http import JsonRpcUser
+from chainbench.user.jsonrpc import JrpcHttpUser
 from chainbench.util.rng import RNG
 
 
-class StarkNetUser(JsonRpcUser):
+class StarkNetUser(JrpcHttpUser):
     abstract = True
     test_data = StarkNetTestData()
 

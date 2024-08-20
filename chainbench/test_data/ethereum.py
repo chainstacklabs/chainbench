@@ -1,9 +1,9 @@
-import json
 import logging
 import typing as t
 from argparse import Namespace
 from dataclasses import dataclass
 
+import orjson as json
 from tenacity import retry, stop_after_attempt, wait_fixed
 
 from chainbench.test_data.blockchain import (

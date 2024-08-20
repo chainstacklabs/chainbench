@@ -1,6 +1,6 @@
 from locust import task
 
-from chainbench.user.http import RpcCall
+from chainbench.user.jsonrpc import RpcCall
 from chainbench.user.protocol.solana import SolanaUser
 
 
