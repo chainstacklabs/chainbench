@@ -8,13 +8,13 @@ from chainbench.test_data import (
     Tx,
     TxHash,
 )
-from chainbench.user.jsonrpc import JsonRpcUser
+from chainbench.user.jsonrpc import JrpcHttpUser
 from chainbench.user.tag import tag
 from chainbench.util.jsonrpc import RpcCall
 from chainbench.util.rng import RNG, RNGManager
 
 
-class EvmBaseUser:
+class EvmBaseUser(JrpcHttpUser):
     abstract = True
     test_data: EvmTestData = EvmTestData()
     rng = RNGManager()
@@ -396,7 +396,7 @@ class EvmRpcMethods(EvmBaseUser):
         return RpcCall(method="web3_sha3", params=[self.test_data.get_random_tx_hash(self.rng.get_rng())])
 
 
-class EvmUser(EvmRpcMethods, JsonRpcUser):
+class EvmUser(EvmRpcMethods):
     abstract = True
 
     @staticmethod

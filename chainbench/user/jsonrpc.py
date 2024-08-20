@@ -12,7 +12,7 @@ from chainbench.util.jsonrpc import (
 )
 
 
-class JsonRpcUser(HttpUser):
+class JrpcHttpUser(HttpUser):
     """Extension of HttpUser to provide JsonRPC support."""
 
     abstract = True

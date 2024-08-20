@@ -5,6 +5,7 @@ from locust import task
 
 from chainbench.test_data.ethereum import EthBeaconTestData
 from chainbench.user.http import HttpUser
+from chainbench.user.wss import WSSubscription
 
 logger = logging.getLogger(__name__)
 
@@ -329,3 +330,8 @@ class TestEthMethod(EthBeaconUser):
     @task
     def run_task(self) -> None:
         self.method_to_task_function(self.environment.parsed_options.method)()
+
+
+class EthSubscribe(WSSubscription):
+    def __init__(self, params: dict | list):
+        super().__init__("eth_subscribe", params, "eth_unsubscribe")

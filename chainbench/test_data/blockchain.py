@@ -47,7 +47,7 @@ class Block:
     block_number: BlockNumber
 
     def to_json(self) -> str:
-        return json.dumps(self.__dict__)
+        return json.dumps(self.__dict__).decode("utf-8")
 
 
 @dataclass

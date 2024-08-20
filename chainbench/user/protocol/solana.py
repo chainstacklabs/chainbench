@@ -4,12 +4,12 @@ import re
 from solders.message import Message
 
 from chainbench.test_data import Account, BlockNumber, SolanaTestData, TxHash
-from chainbench.user.jsonrpc import JsonRpcUser
+from chainbench.user.jsonrpc import JrpcHttpUser
 from chainbench.util.jsonrpc import RpcCall
 from chainbench.util.rng import RNG, RNGManager
 
 
-class SolanaBaseUser(JsonRpcUser):
+class SolanaBaseUser(JrpcHttpUser):
     abstract = True
     test_data = SolanaTestData()
     rng = RNGManager()

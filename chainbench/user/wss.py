@@ -56,6 +56,9 @@ class WssJrpcUser(User):
         self._requests: dict[int, WSRequest] = {}
         self._running: bool = False
 
+    def get_subscription(self, subscription_id: str | int):
+        return self.subscriptions[self.subscription_ids_to_index[subscription_id]]
+
     @task
     def dummy_task(self):
         gevent.sleep(3600)
