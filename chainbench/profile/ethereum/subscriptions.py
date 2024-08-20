@@ -1,8 +1,8 @@
-from chainbench.user import EvmUser, WssJrpcUser
+from chainbench.user import WssJrpcUser
 from chainbench.user.protocol.ethereum import EthSubscribe
 
 
-class EthSubscriptions(WssJrpcUser, EvmUser):
+class EthSubscriptions(WssJrpcUser):
     subscriptions = [
         EthSubscribe(["newHeads"]),
         # logs subscription for approve method signature

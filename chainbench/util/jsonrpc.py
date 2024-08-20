@@ -31,7 +31,7 @@ class RpcCall:
             "jsonrpc": "2.0",
             "method": self.method,
             "params": self.params,
-            "id": self._request_id,
+            "id": self.request_id,
         }
 
 

@@ -165,7 +165,7 @@ class WssJrpcUser(User):
         try:
             while self._running:
                 message = self._ws.recv()
-                self.logger.debug(f"WSResp: {message}")
+                self.logger.debug(f"WSResp: {message.strip()}")
                 self.on_message(message)
             else:
                 self._ws.close()

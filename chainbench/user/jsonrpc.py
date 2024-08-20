@@ -98,13 +98,14 @@ class JrpcHttpUser(HttpUser):
         path: str = "",
     ) -> None:
         """Make a JSON-RPC call."""
-        if rpc_call is None and method is not None:
-            rpc_call = RpcCall(method, params)
+        if rpc_call is None:
+            if method is None:
+                raise ValueError("Either rpc_call or method must be provided")
+            else:
+                rpc_call = RpcCall(method, params)
+                name = method
         else:
-            raise ValueError("Either rpc_call or method must be provided")
-
-        if name == "" and method is not None:
-            name = method
+            name = rpc_call.method
 
         with self.client.request(
             "POST", self.rpc_path + path, json=rpc_call.request_body(), name=name, catch_response=True
