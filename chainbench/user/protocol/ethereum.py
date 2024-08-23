@@ -1,7 +1,7 @@
 import logging
 import typing as t
 
-from locust import task, tag
+from locust import tag, task
 
 from chainbench.test_data.ethereum import EthBeaconTestData
 from chainbench.user.http import HttpUser
