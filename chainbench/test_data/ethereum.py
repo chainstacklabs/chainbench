@@ -149,10 +149,12 @@ class EthBeaconTestData(TestData[EthBeaconBlock]):
                 validators=[EthValidator(index=validator["index"]) for validator in committee["validators"]],
             )
 
-        if isinstance(data, str):
+        if isinstance(data, (str, bytes)):
             data_dict = json.loads(data)
         else:
             data_dict = data
+        logger.debug(f"data_dict type {type(data_dict)}")
+        logger.debug("Data: %s", data_dict)
 
         slot = data_dict["block_number"]
         epoch = slot // 32
