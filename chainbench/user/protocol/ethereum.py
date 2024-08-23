@@ -1,11 +1,12 @@
 import logging
 import typing as t
 
-from locust import task
+from locust import tag, task
 
 from chainbench.test_data.ethereum import EthBeaconTestData
 from chainbench.user.http import HttpUser
 from chainbench.user.wss import WSSubscription
+from chainbench.util.rng import RNGManager
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +14,7 @@ logger = logging.getLogger(__name__)
 class EthBeaconBaseUser(HttpUser):
     abstract = True
     test_data = EthBeaconTestData()
+    rng = RNGManager()
 
     def eth_beacon_blocks_request(
         self,
@@ -327,9 +329,11 @@ class EthBeaconUser(EthBeaconBaseUser):
 
 
 class TestEthMethod(EthBeaconUser):
+    @tag("single")
     @task
     def run_task(self) -> None:
-        self.method_to_task_function(self.environment.parsed_options.method)()
+        self.logger.info(f"Running task {self.environment.parsed_options.method}")
+        self.method_to_task_function(self.environment.parsed_options.method)(self)
 
 
 class EthSubscribe(WSSubscription):
