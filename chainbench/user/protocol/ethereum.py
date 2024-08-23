@@ -332,7 +332,6 @@ class TestEthMethod(EthBeaconUser):
     @tag("single")
     @task
     def run_task(self) -> None:
-        self.logger.info(f"Running task {self.environment.parsed_options.method}")
         self.method_to_task_function(self.environment.parsed_options.method)(self)
 
 
