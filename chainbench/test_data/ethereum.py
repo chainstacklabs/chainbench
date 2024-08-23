@@ -153,8 +153,6 @@ class EthBeaconTestData(TestData[EthBeaconBlock]):
             data_dict = json.loads(data)
         else:
             data_dict = data
-        logger.debug(f"data_dict type {type(data_dict)}")
-        logger.debug("Data: %s", data_dict)
 
         slot = data_dict["block_number"]
         epoch = slot // 32
