@@ -364,6 +364,33 @@ class EvmNetwork:
                 "0xbf65bfcb5da067446CeE6A706ba3Fe2fB1a9fdFd",
             ],
         },
+        534352: {
+            "name": "scroll-mainnet",
+            "start_block": 1,
+            "contract_addresses": [
+                "0xf55BEC9cafDbE8730f096Aa55dad6D22d44099Df",
+                "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
+                "0xf610A9dfB7C89644979b4A0f27063E9e7d7Cda32",
+                "0x3C1BCa5a656e69edCD0D4E36BEbb3FcDAcA60Cf1",
+                "0xcA77eB3fEFe3725Dc33bccB54eDEFc3D9f764f97",
+                "0x434cdA25E8a2CA5D9c1C449a8Cb6bCbF719233E8",
+                "0x01f0a31698C4d065659b9bdC21B3610292a1c506",
+                "0x79379C0E09a41d7978f883a56246290eE9a8c4d3",
+                "0x53878B874283351D26d206FA512aEcE1Bef6C0dD",
+                "0x1b896893dfc86bb67Cf57767298b9073D2c1bA2c",
+            ],
+        },
+        534351: {
+            "name": "scroll-sepolia-testnet",
+            "start_block": 1,
+            "contract_addresses": [
+                "0x5300000000000000000000000000000000000004",
+                "0xD9692f1748aFEe00FACE2da35242417dd05a8615",
+                "0x231d45b53C905c3d6201318156BDC725c9c3B9B1",
+                "0x6D5871D41F9c38BBa419D28b001260fC9c7071Ba",
+                "0x186C0C26c45A8DA1Da34339ee513624a9609156d",
+            ],
+        },
         # TODO: Move StarkNet out of EVMNetwork
         23448594291968334: {
             "name": "starknet-mainnet",
