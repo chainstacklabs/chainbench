@@ -23,6 +23,8 @@ class EvmDebugTraceProfile(EvmUser):
         EvmUser.debug_trace_block_by_hash: 6,
         EvmUser.debug_trace_block_by_number: 6,
         EvmUser.debug_get_raw_receipts: 1,
+        EvmUser.debug_storage_range_at: 1,
+        EvmUser.debug_trace_block: 1,
     }
 
     tasks = EvmUser.expand_tasks(rpc_calls)
