@@ -322,7 +322,30 @@ class EvmRpcMethods(EvmBaseUser):
         return RpcCall(method="debug_traceBadBlock", params=[self.test_data.get_random_block_hash(self.rng.get_rng())])
 
     def debug_trace_block(self) -> RpcCall:
-        return RpcCall(method="debug_traceBlock", params=self._block_params_factory())
+        return RpcCall(
+            method="debug_traceBlock",
+            params=[
+                "0xf9036cf90224a071186c550133ded9590e8ab51136f315dc258ad601bbac062aacf506bbf2edffa01dcc4de8dec75d7aab85"
+                "b567b6ccd41ad312451b948a7413f0a142fd40d4934794a4b000000000000000000073657175656e636572a0686a9910da075d"
+                "d39e8a68979d3027a36403cd09a7c435bc22a2919c85b2852ca0a2ba0585dbe8234916933d1763c7df54c93cb28045470a1392"
+                "b4105351198f97a0d9da07a58821dd91f1ab783e20ab822c09faa19baa8c8ee4365596856d559e10b901000000000000000000"
+                "000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000"
+                "000020000000000000000000000000000000000000000000000000400000000000000000000000000000000080100000000000"
+                "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002"
+                "000000000000000000000000000000000000000000000000000000000000200000002000000000000000000000000000000000"
+                "0000200000000000000010000010000000000000000800000000000000000000000000000000000000000000018406b98aab87"
+                "04000000000000830babdb8464b7f075a0751711edf20569a455e8a526f9c4dec4768c135fb345a964a257bc72bbe9a3e0a000"
+                "00000000014a6e00000000010e8119000000000000000a00000000000000008800000000000f00198405f5e100f90141b88c6a"
+                "f88982a4b1b8846bf6a42d00000000000000000000000000000000000000000000000000000000000000000000000000000000"
+                "0000000000000000000000000000000000000000010e8119000000000000000000000000000000000000000000000000000000"
+                "0006b98aab0000000000000000000000000000000000000000000000000000000000000001b8b102f8ae82a4b1088084080bef"
+                "c0830ec8bc94ff970a61a04b1ca14834a43f5de4533ebddb5cc880b844095ea7b300000000000000000000000053bf833a5d6c"
+                "4dda888f69c22c88c9f356a416140000000000000000000000000000000000000000000000000000000000c5bcdfc001a0a2a8"
+                "c4eb9756429430d1b9c2ed32ec76c075211cac98a4c142014ec15aef5f09a02c3d9d670f4c8ed9eca5b035b4ea366f0753e8a0"
+                "680b2b84dd5444c1cf0d06f6c0",
+                {"tracer": "callTracer", "timeout": "10s"},
+            ],
+        )
 
     def debug_trace_block_by_hash(self) -> RpcCall:
         return RpcCall(
@@ -336,13 +359,16 @@ class EvmRpcMethods(EvmBaseUser):
         return RpcCall(method="debug_traceCall", params=self._debug_trace_call_params_factory(self.rng.get_rng()))
 
     def debug_storage_range_at(self) -> RpcCall:
+        block = self.test_data.get_random_block(self.rng.get_rng())
+        contract = block.txs[0]["to"]
         return RpcCall(
             method="debug_storageRangeAt",
             params=[
-                self.test_data.get_random_block_hash(self.rng.get_rng()),
-                self.test_data.get_random_account(self.rng.get_rng()),
-                hex(self.rng.get_rng().random.randint(0, 20)),
-                hex(self.rng.get_rng().random.randint(0, 20)),
+                block.block_hash,
+                0,
+                contract,
+                "0x00000000000000000000000000000000",
+                self.rng.get_rng().random.randint(1, 20),
             ],
         )
 

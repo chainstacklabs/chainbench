@@ -29,7 +29,6 @@ class ArbitrumProfile(EvmUser):
         EvmUser.eth_max_priority_fee_per_gas: 5,
         EvmUser.web3_client_version: 3,
         EvmUser.debug_trace_block_by_hash: 3,
-        EvmUser.net_listening: 2,
         EvmUser.net_version: 2,
         EvmUser.eth_syncing: 1,
         EvmUser.eth_fee_history: 1,
