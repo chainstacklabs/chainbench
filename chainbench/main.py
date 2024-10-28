@@ -1,4 +1,3 @@
-import logging
 import os
 import shlex
 import subprocess
@@ -33,8 +32,6 @@ SPAWN_RATE = 10
 LOG_LEVEL = "INFO"
 DEFAULT_PROFILE = "ethereum.general"
 NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
-
-logger = logging.getLogger(__name__)
 
 
 @click.group(
@@ -107,6 +104,12 @@ def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
     callback=validate_profile,
     help="Profile to run",
     show_default=True,
+)
+@click.option(
+    "-s",
+    "--shape",
+    default=None,
+    help="Shape of load pattern",
 )
 @click.option("-H", "--host", default=MASTER_HOST, help="Host to run on", show_default=True)
 @click.option("-P", "--port", default=MASTER_PORT, help="Port to run on", show_default=True)
@@ -188,6 +191,7 @@ def start(
     ctx: Context,
     profile: str,
     profile_dir: Path | None,
+    shape: str | None,
     host: str,
     port: int,
     workers: int,
@@ -248,12 +252,12 @@ def start(
         sys.exit(1)
 
     if test_by_directory:
-        from locust.argument_parser import find_locustfiles
+        from locust.argument_parser import parse_locustfile_paths
         from locust.util.load_locustfile import load_locustfile
 
         user_classes = {}
         test_data_types = set()
-        for locustfile in find_locustfiles([profile_path.__str__()], True):
+        for locustfile in parse_locustfile_paths([profile_path.__str__()]):
             _, _user_classes, _ = load_locustfile(locustfile)
             for key, value in _user_classes.items():
                 user_classes[key] = value
@@ -285,6 +289,13 @@ def start(
     else:
         click.echo(f"Testing profile: {profile}")
         test_plan = profile
+
+    if shape is not None:
+        shapes_dir = get_base_path(__file__) / "shapes"
+        shape_path = get_profile_path(shapes_dir, shape)
+        click.echo(f"Using load shape: {shape}")
+    else:
+        shape_path = None
 
     results_dir = Path(results_dir).resolve()
     results_path = ensure_results_dir(profile=profile, parent_dir=results_dir, run_id=run_id)
@@ -331,6 +342,7 @@ def start(
         target=target,
         custom_tags=custom_tags,
         exclude_tags=custom_exclude_tags,
+        shape_path=shape_path,
         timescale=timescale,
         pg_host=pg_host,
         pg_port=pg_port,
@@ -478,6 +490,14 @@ def clients() -> None:
 def profiles(profile_dir: Path) -> None:
     for profile in get_profiles(profile_dir):
         click.echo(profile)
+
+
+@_list.command(
+    help="Lists all available load shapes.",
+)
+def shapes() -> None:
+    for shape in get_profiles(get_base_path(__file__) / "shapes"):
+        click.echo(shape)
 
 
 @_list.command(

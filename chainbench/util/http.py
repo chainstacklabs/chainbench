@@ -49,7 +49,6 @@ class Response(HTTPSocketPoolResponse):
             logger.error("Response is not json: %s", self.content)
             raise
         else:
-            logger.debug(f"Response: {self.content}")
             return data
 
     def check_http_error(self, request_uri: str = "", error_level: HttpErrorLevel = HttpErrorLevel.ClientError) -> None:

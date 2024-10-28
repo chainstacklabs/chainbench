@@ -58,11 +58,6 @@ class HttpUser(FastHttpUser):
             self.logger.critical(f"Redirect error: {response.url}")
 
     def check_http_error(self, response: ResponseContextManager) -> None:
-        if response.request is not None:
-            self.logger.debug(f"Request: {response.request.method} {response.request.url_split}")
-            if response.request.body is not None:
-                self.logger.debug(f"{response.request.body}")
-
         """Check the response for errors."""
         if response.status_code != 200:
             self.logger.error(f"Request failed with {response.status_code} code")

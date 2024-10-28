@@ -110,7 +110,10 @@ class EthBeaconUser(EthBeaconBaseUser):
 
     @classmethod
     def method_to_task_function(cls, method: str) -> t.Callable:
-        return getattr(cls, f"{method}_task")
+        if not method.endswith("task"):
+            return getattr(cls, f"{method}_task")
+        else:
+            return getattr(cls, method)
 
     def eth_v1_beacon_states_head_fork_task(self):
         self.get(
