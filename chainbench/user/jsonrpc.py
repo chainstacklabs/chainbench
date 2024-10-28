@@ -1,3 +1,4 @@
+import logging
 import random
 import typing as t
 
@@ -94,7 +95,7 @@ class JrpcHttpUser(HttpUser):
         rpc_call: RpcCall | None = None,
         method: str | None = None,
         params: list[t.Any] | dict | None = None,
-        name: str = "",
+        name: str | None = None,
         path: str = "",
     ) -> None:
         """Make a JSON-RPC call."""
@@ -103,8 +104,7 @@ class JrpcHttpUser(HttpUser):
                 raise ValueError("Either rpc_call or method must be provided")
             else:
                 rpc_call = RpcCall(method, params)
-                name = method
-        else:
+        if name is None:
             name = rpc_call.method
 
         with self.client.request(
@@ -112,6 +112,10 @@ class JrpcHttpUser(HttpUser):
         ) as response:
             self.check_http_error(response)
             self.check_json_rpc_response(response, name=name)
+            if logging.getLogger("locust").level == logging.DEBUG:
+                self.logger.debug(f"jsonrpc: {rpc_call.method} - params: {rpc_call.params}, response: {response.text}")
+            else:
+                self.logger.info(f"jsonrpc: {rpc_call.method} - params: {rpc_call.params}")
 
     def make_batch_rpc_call(self, rpc_calls: list[RpcCall], name: str = "", path: str = "") -> None:
         """Make a Batch JSON-RPC call."""

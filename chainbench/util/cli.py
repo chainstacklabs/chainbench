@@ -30,10 +30,10 @@ def get_profile_path(base_path: Path, profile: str) -> Path:
 
 def get_profiles(profile_dir: Path) -> list[str]:
     """Get list of profiles in given directory."""
-    from locust.argument_parser import find_locustfiles
+    from locust.argument_parser import parse_locustfile_paths
 
     result = []
-    for locustfile in find_locustfiles([profile_dir.__str__()], True):
+    for locustfile in parse_locustfile_paths([profile_dir.__str__()]):
         locustfile_path = Path(locustfile).relative_to(profile_dir)
         if locustfile_path.parent.__str__() != ".":
             result.append(".".join(locustfile_path.parts[:-1]) + "." + locustfile_path.parts[-1][:-3])
@@ -121,6 +121,7 @@ class LocustOptions:
     custom_tags: list[str]
     exclude_tags: list[str]
     target: str
+    shape_path: Path | None = None
     headless: bool = False
     timescale: bool = False
     pg_host: str | None = None
@@ -136,8 +137,9 @@ class LocustOptions:
 
     def get_master_command(self) -> str:
         """Generate master command."""
+        profile_args = f"{self.profile_path},{self.shape_path}" if self.shape_path else self.profile_path
         command = (
-            f"locust -f {self.profile_path} --master "
+            f"locust -f {profile_args} --master "
             f"--master-bind-host {self.host} --master-bind-port {self.port} "
             f"--web-host {self.host} "
             f"-u {self.users} -r {self.spawn_rate} --run-time {self.test_time} "
@@ -154,8 +156,9 @@ class LocustOptions:
 
     def get_worker_command(self, worker_id: int = 0) -> str:
         """Generate worker command."""
+        profile_args = f"{self.profile_path},{self.shape_path}" if self.shape_path else self.profile_path
         command = (
-            f"locust -f {self.profile_path} --worker --master-host {self.host} --master-port {self.port} "
+            f"locust -f {profile_args} --worker --master-host {self.host} --master-port {self.port} "
             f"--logfile {self.results_path}/worker_{worker_id}.log --loglevel {self.log_level} --stop-timeout 30"
         )
         return self.get_extra_options(command)

@@ -112,7 +112,9 @@ This will run a load test with a general BSC profile.
 
 ### Parameters and Flags
 - `-p, --profile`: Specifies the profile to use for the benchmark. Available profiles can be found in the profile directory. Sample usage `-p bsc.general`
+- `-s, --shape`: Specifies the shape of the load pattern. List available shapes with `chainbench list shapes`.
 - `-u, --users`: Sets the number of simulated users to use for the benchmark.
+- `-r, --spawn-rate`: Sets the spawn rate of users per second.
 - `-w, --workers`: Sets the number of worker threads to use for the benchmark.
 - `-t, --test-time`: Sets the duration of the test to run.
 - `--target`: Specifies the target blockchain node URL that the benchmark will connect to.
@@ -154,6 +156,15 @@ Here's an example of how to run a load test for Ethereum using the `evm.light` p
 ```shell
 chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit
 ```
+
+## Load Pattern Shapes
+Load pattern shapes are used to define how the load will be distributed over time. You may specify the shape of the load pattern using the `-s` or `--shape` flag.
+This is an optional flag and if not specified, the default shape will be used. The default shape is `ramp-up` which means the load will increase linearly over time at
+the spawn-rate until the specified number of users is reached, after that it will maintain the number of users until test duration is over.
+
+Other available shapes are:
+- `step` - The load will increase in steps. `--spawn-rate` flag is required to specify the step size. The number of steps will be calculated based on `--users` divided by `--spawn-rate`. The duration of each step will be calculated based on `--test-time` divided by the number of steps.
+- `spike` - The load will run in a spike pattern. The load will ramp up to 10% of the total users for 40% of the test duration and then spike to 100% of the total users as specified by `--users` for 20% of test duration and then reduce back to 10% of total users until the test duration is over.
 
 ### Test Data Size
 You may specify the test data size using the `--size` flag. This will determine how much data is used in the test.
