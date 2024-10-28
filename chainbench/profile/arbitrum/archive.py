@@ -7,7 +7,7 @@ from locust import constant_pacing
 from chainbench.user.protocol.evm import EvmUser
 
 
-class AvalancheArchiveProfile(EvmUser):
+class ArbitrumArchiveProfile(EvmUser):
     wait_time = constant_pacing(1)
     rpc_calls = {
         EvmUser.eth_call_task: 676,
