@@ -252,12 +252,12 @@ def start(
         sys.exit(1)
 
     if test_by_directory:
-        from locust.argument_parser import find_locustfiles
+        from locust.argument_parser import parse_locustfile_paths
         from locust.util.load_locustfile import load_locustfile
 
         user_classes = {}
         test_data_types = set()
-        for locustfile in find_locustfiles([profile_path.__str__()], True):
+        for locustfile in parse_locustfile_paths([profile_path.__str__()]):
             _, _user_classes, _ = load_locustfile(locustfile)
             for key, value in _user_classes.items():
                 user_classes[key] = value
