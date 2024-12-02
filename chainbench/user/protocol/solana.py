@@ -91,6 +91,9 @@ class SolanaBaseUser(JrpcHttpUser):
             {"commitment": "processed"},
         ]
 
+    def _random_token_account_params_factory(self, rng: RNG) -> list[Account | dict]:
+        return [self.test_data.get_random_token_account(rng)]
+
     def _get_signature_statuses_params_factory(self, rng: RNG) -> list[list[TxHash] | dict]:
         return [
             [self.test_data.get_random_tx_hash(rng) for _ in range(2, 2 + rng.random.randint(0, 3))],
@@ -420,11 +423,10 @@ class SolanaRpcMethods(SolanaBaseUser):
             method="getSupply",
         )
 
-    # TODO: Fix "Invalid param: not a Token account" and "Invalid param: could not find account" errors
     def get_token_account_balance(self) -> RpcCall:
         return RpcCall(
             method="getTokenAccountBalance",
-            params=self._random_account_params_factory(self.rng.get_rng()),
+            params=self._random_token_account_params_factory(self.rng.get_rng()),
         )
 
     def get_token_accounts_by_delegate(self) -> RpcCall:
