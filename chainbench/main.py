@@ -385,13 +385,13 @@ def start(
         )
 
     if list(test_data_types)[0] == "SolanaTestData":
-        user_class = SolanaUser
+        user: type[SolanaUser] | type[EvmUser] = SolanaUser
     else:
-        user_class = EvmUser
+        user = EvmUser
 
     unique_monitors: set[str] = set(monitor)
     for m in unique_monitors:
-        p = Process(target=monitors[m], args=(user_class, target, results_path, test_time))
+        p = Process(target=monitors[m], args=(user, target, results_path, test_time))
         click.echo(f"Starting monitor {m}")
         p.start()
         ctx.obj.monitors.append(p)
