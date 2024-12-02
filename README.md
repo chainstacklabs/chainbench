@@ -195,12 +195,12 @@ Chainbench will keep the test data up to date by running a background process th
 
 ### Monitors
 Monitors are separate processes that run during the test to collect or process some additional data and metrics relevant to the test.
-For example, head-lag-monitor will collect the latest block information from the node under test, check the timestamp and compare it to current time to calculate how much the node lags behind.
+For example, sync-lag-monitor will collect the latest block information from the node under test, check the timestamp and compare it to current time to calculate how much the node lags behind.
 You may include monitors in your test by using the `-m` or `--monitor` option and specifying the name of the monitor. At the moment, monitors only work in headless mode.
 
 Here's an example:
 ```shell
-chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit -m head-lag-monitor
+chainbench start --profile evm.light --users 50 --workers 2 --test-time 12h --target https://node-url --headless --autoquit -m sync-lag-monitor
 ```
 
 

@@ -8,8 +8,10 @@ from pathlib import Path
 import click
 import gevent.pool
 from click import Context, Parameter
+from locust.argument_parser import parse_locustfile_paths
+from locust.util.load_locustfile import load_locustfile
 
-from chainbench.user import get_subclass_tasks
+from chainbench.user import EvmUser, SolanaUser, get_subclass_tasks
 from chainbench.user.common import all_method_classes, all_methods
 from chainbench.util.cli import (
     ContextData,
@@ -148,7 +150,7 @@ def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
     default=[],
     help="Add a monitor to collect additional data or metrics. "
     "You may specify this option multiple times for different monitors",
-    type=click.Choice(["head-lag-monitor"], case_sensitive=False),
+    type=click.Choice(["sync-lag-monitor"], case_sensitive=False),
     multiple=True,
 )
 @click.option(
@@ -251,18 +253,16 @@ def start(
         click.echo(f"Profile path {profile_path} does not exist.")
         sys.exit(1)
 
-    if test_by_directory:
-        from locust.argument_parser import parse_locustfile_paths
-        from locust.util.load_locustfile import load_locustfile
+    user_classes = {}
+    for locustfile in parse_locustfile_paths([profile_path.__str__()]):
+        _, _user_classes, _ = load_locustfile(locustfile)
+        for key, value in _user_classes.items():
+            user_classes[key] = value
+    test_data_types = set()
+    for user_class in user_classes.values():
+        test_data_types.add(type(getattr(user_class, "test_data")).__name__)
 
-        user_classes = {}
-        test_data_types = set()
-        for locustfile in parse_locustfile_paths([profile_path.__str__()]):
-            _, _user_classes, _ = load_locustfile(locustfile)
-            for key, value in _user_classes.items():
-                user_classes[key] = value
-        for user_class in user_classes.values():
-            test_data_types.add(type(getattr(user_class, "test_data")).__name__)
+    if test_by_directory:
         if len(test_data_types) > 1:
             click.echo(
                 "Error occurred: Multiple test data types detected. "
@@ -384,9 +384,14 @@ def start(
             tags=["loudspeaker"],
         )
 
+    if list(test_data_types)[0] == "SolanaTestData":
+        user_class = SolanaUser
+    else:
+        user_class = EvmUser
+
     unique_monitors: set[str] = set(monitor)
     for m in unique_monitors:
-        p = Process(target=monitors[m], args=(target, results_path, test_time))
+        p = Process(target=monitors[m], args=(user_class, target, results_path, test_time))
         click.echo(f"Starting monitor {m}")
         p.start()
         ctx.obj.monitors.append(p)
@@ -505,7 +510,7 @@ def shapes() -> None:
 )
 def methods() -> None:
     for method_class in all_method_classes:
-        click.echo(f"\nMethods for {method_class.__name__}:")
+        click.echo(f"\nMethods for {method_class.__name__}: ")
         task_list = get_subclass_tasks(method_class)
         for task in task_list:
             click.echo(f"- {method_class.task_to_method(task.name)}")
