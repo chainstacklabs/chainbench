@@ -32,8 +32,7 @@ This project allows you to benchmark your blockchain infrastructure. It uses [Lo
 
 ## Project Details
 
-Chainbench lets you to easily define profiles for any EVM-compatible chain. It also includes full support for Solana, as well as partial support for Starknet.
-You can use not only hard-coded values but also real chain data to generate dynamic call parameters.
+Chainbench allows easy profile definition for any EVM-compatible blockchain and Solana, including partial support for Starknet. You can use both hard-coded values and real chain data for dynamic call parameters.
 
 Main features:
 - Built-in profiles for Ethereum, Binance Smart Chain, Polygon, Solana, Base, Arbitrum, Avalanche, Fantom, Gnosis, Oasis, Optimism, Ronin and Starknet, as well as some generic EVM-based profiles
