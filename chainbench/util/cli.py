@@ -41,6 +41,15 @@ def get_profiles(profile_dir: Path) -> list[str]:
             result.append(locustfile_path.parts[0][:-3])
     return result
 
+def validate_profile_path(profile_path: Path) -> None:
+    """Validate profile path."""
+    abs_profile_path = profile_path.resolve()
+    if not profile_path.resolve().exists():
+        raise FileNotFoundError(f"Profile file not found: {profile_path}")
+    profiles = get_profiles(abs_profile_path.parent)
+    if profile_path.stem.removesuffix(".py") not in profiles:
+        raise ValueError(f"Profile file not found: {profile_path}")
+
 
 def generate_unique_dir_name() -> str:
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

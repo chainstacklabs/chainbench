@@ -84,6 +84,19 @@ def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
     return value
 
 
+def validate_profile_path(ctx: Context, param: Parameter, value: str) -> str:
+    if value is not None:
+        if "profile_dir" or "profile" in ctx.params:
+            click.echo("WARNING: Profile and Profile Directory options are ignored when --profile-path flag is used.")
+        if "method" in ctx.params:
+            click.echo("WARNING: Profile and Profile Directory options are ignored when method argument is used.")
+        """Validate profile path."""
+        abs_profile_path = Path(value).resolve()
+        if not abs_profile_path.exists():
+            raise FileNotFoundError(f"Profile path not found: {abs_profile_path}")
+        profile_exists(abs_profile_path.name.removesuffix(".py"), abs_profile_path.parent)
+    return value
+
 @cli.command(
     help="Start a load test on the specified method. "
     "Alternatively, you can specify a profile to run using the --profile option instead. "
@@ -105,6 +118,14 @@ def validate_profile(ctx: Context, param: Parameter, value: str) -> str:
     default=None,
     callback=validate_profile,
     help="Profile to run",
+    show_default=True,
+)
+@click.option(
+    "--profile-path",
+    default=None,
+    callback=validate_profile_path,
+    type=click.Path(exists=True, dir_okay=False, file_okay=True, path_type=Path),
+    help="Path to profile locustfile to be run. Overrides --profile and --profile-dir options.",
     show_default=True,
 )
 @click.option(
@@ -193,6 +214,7 @@ def start(
     ctx: Context,
     profile: str,
     profile_dir: Path | None,
+    profile_path: Path | None,
     shape: str | None,
     host: str,
     port: int,
@@ -243,18 +265,20 @@ def start(
         profile_dir = get_base_path(__file__) / "profile"
 
     if method:
-        profile_path = Path(all_methods[method])
+        final_profile_path = Path(all_methods[method])
+    elif profile_path:
+        final_profile_path = profile_path
     elif profile:
-        profile_path = get_profile_path(profile_dir, profile)
+        final_profile_path = get_profile_path(profile_dir, profile)
     else:
-        profile_path = profile_dir
+        final_profile_path = profile_dir
 
-    if not profile_path.exists():
-        click.echo(f"Profile path {profile_path} does not exist.")
+    if not final_profile_path.exists():
+        click.echo(f"Profile path {final_profile_path} does not exist.")
         sys.exit(1)
 
     user_classes = {}
-    for locustfile in parse_locustfile_paths([profile_path.__str__()]):
+    for locustfile in parse_locustfile_paths([final_profile_path.__str__()]):
         _, _user_classes, _ = load_locustfile(locustfile)
         for key, value in _user_classes.items():
             user_classes[key] = value
@@ -273,7 +297,7 @@ def start(
             for test_data_type in test_data_types:
                 click.echo(test_data_type)
             sys.exit(1)
-        profile = profile_path.name
+        profile = final_profile_path.name
         if not headless:
             enable_class_picker = True
 
@@ -329,7 +353,7 @@ def start(
         custom_exclude_tags.extend(["batch", "batch_single"])
 
     locust_options = LocustOptions(
-        profile_path=profile_path,
+        profile_path=final_profile_path,
         host=host,
         port=port,
         test_time=test_time,
