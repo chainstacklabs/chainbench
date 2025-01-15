@@ -41,6 +41,7 @@ def get_profiles(profile_dir: Path) -> list[str]:
             result.append(locustfile_path.parts[0][:-3])
     return result
 
+
 def validate_profile_path(profile_path: Path) -> None:
     """Validate profile path."""
     abs_profile_path = profile_path.resolve()

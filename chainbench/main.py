@@ -97,6 +97,7 @@ def validate_profile_path(ctx: Context, param: Parameter, value: str) -> str:
         profile_exists(abs_profile_path.name.removesuffix(".py"), abs_profile_path.parent)
     return value
 
+
 @cli.command(
     help="Start a load test on the specified method. "
     "Alternatively, you can specify a profile to run using the --profile option instead. "
