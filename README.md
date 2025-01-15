@@ -32,11 +32,11 @@ This project allows you to benchmark your blockchain infrastructure. It uses [Lo
 
 ## Project Details
 
-Chainbench lets you to easily define profiles for any EVM-compatible chain. 
+Chainbench lets you to easily define profiles for any EVM-compatible chain. It also includes full support for Solana, as well as partial support for Starknet.
 You can use not only hard-coded values but also real chain data to generate dynamic call parameters.
 
 Main features:
-- Built-in profiles for Ethereum, Binance Smart Chain, Polygon, Oasis, Avalanche and Solana
+- Built-in profiles for Ethereum, Binance Smart Chain, Polygon, Solana, Base, Arbitrum, Avalanche, Fantom, Gnosis, Oasis, Optimism, Ronin and Starknet, as well as some generic EVM-based profiles
 - Support for custom profiles
 - Dynamic call params generation using real chain data
 - Headless and web UI modes
@@ -112,6 +112,7 @@ This will run a load test with a general BSC profile.
 
 ### Parameters and Flags
 - `-p, --profile`: Specifies the profile to use for the benchmark. Available profiles can be found in the profile directory. Sample usage `-p bsc.general`
+- `-d` or `--profile-dir`: Specifies the base directory to use which contain profiles, supporting up to one-level of subdirectories.
 - `-s, --shape`: Specifies the shape of the load pattern. List available shapes with `chainbench list shapes`.
 - `-u, --users`: Sets the number of simulated users to use for the benchmark.
 - `-r, --spawn-rate`: Sets the spawn rate of users per second.
