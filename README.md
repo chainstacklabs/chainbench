@@ -110,19 +110,20 @@ This will run a load test with a general BSC profile.
 
 
 ### Parameters and Flags
-- `-p, --profile`: Specifies the profile to use for the benchmark. Available profiles can be found in the profile directory. Sample usage `-p bsc.general`
-- `-d` or `--profile-dir`: Specifies the base directory to use which contain profiles, supporting up to one-level of subdirectories.
-- `-s, --shape`: Specifies the shape of the load pattern. List available shapes with `chainbench list shapes`.
-- `-u, --users`: Sets the number of simulated users to use for the benchmark.
-- `-r, --spawn-rate`: Sets the spawn rate of users per second.
-- `-w, --workers`: Sets the number of worker threads to use for the benchmark.
-- `-t, --test-time`: Sets the duration of the test to run.
+- `-p`, `--profile`: Specifies the profile to use for the benchmark. Available profiles can be found in the profile directory. Sample usage `-p bsc.general`
+- `-d`, `--profile-dir`: Specifies the base directory to use which contain profiles, supporting up to one-level of subdirectories.
+- `--profile-path`: Specifies the full path to the profile file to use for the benchmark. Overrides `--profile` and `--profile-dir` options.
+- `-s`, `--shape`: Specifies the shape of the load pattern. List available shapes with `chainbench list shapes`.
+- `-u`, `--users`: Sets the number of simulated users to use for the benchmark.
+- `-r`, `--spawn-rate`: Sets the spawn rate of users per second.
+- `-w`, `--workers`: Sets the number of worker threads to use for the benchmark.
+- `-t`, `--test-time`: Sets the duration of the test to run.
 - `--target`: Specifies the target blockchain node URL that the benchmark will connect to.
 - `--headless`: Runs the benchmark in headless mode, meaning that no graphical user interface (GUI) will be displayed during the test. This is useful for running the test on a remote server or when the GUI is not needed.
 - `--autoquit`: Tells the Chainbench tool to automatically quit after the test has finished. This is useful for running the benchmark in an automated environment where manual intervention is not desired.
 - `--help`: Displays the help message.
 - `--debug-trace-methods`: Enables tasks tagged with debug or trace to be executed
-- `-E, --exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times.
+- `-E`, `--exclude-tags`: Exclude tasks tagged with custom tags from the test. You may specify this option multiple times.
 - `--use-latest-blocks`: Use latest blocks for test data generation and runs a background process to update the test data with latest blocks.
 - `--size`: Specifies the test data size. Available values are XS, S, M, L, XL. Default is S.
 - `--batch`: Runs the test using batch requests. This will send multiple requests in a single batch request. The number of requests in a batch can be specified using the `--batch-size` flag. Default batch size is 10.
