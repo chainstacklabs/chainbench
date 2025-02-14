@@ -469,6 +469,7 @@ class EvmTestData(TestData[EvmBlock]):
             "latest",
             "earliest",
             "pending",
+            "finalized",
         ]:
             raise ValueError("Invalid block number")
         result: dict[str, t.Any] = self.client.make_rpc_call("eth_getBlockByNumber", [block_number, True])
