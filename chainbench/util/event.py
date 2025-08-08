@@ -31,7 +31,7 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         "--size",
         type=str,
         default=None,
-        help="Set the size of the test data. e.g. --size S",
+        help="Set the size of the test data. e.g. --size S.",
         include_in_web_ui=False,
     )
     parser.add_argument(
@@ -48,7 +48,14 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         type=str,
         default="eth_blockNumber",
         choices=list(all_methods.keys()),
-        help="Test a specific method",
+        help="Test a specific method.",
+        include_in_web_ui=True,
+    )
+    parser.add_argument(
+        "--ref-url",
+        type=str,
+        default=None,
+        help="Set the reference node url to be used for retrieving test data before test starts. If empty, defaults to target url.",
         include_in_web_ui=True,
     )
 
@@ -187,15 +194,15 @@ def on_init(environment: Environment, **_kwargs):
                         continue
                     logger.info(f"Initializing test data for {test_data_class_name}")
                     print(f"Initializing test data for {test_data_class_name}")
-                    if environment.host:
-                        user_test_data.init_http_client(environment.host)
-                    if isinstance(user_test_data, EvmTestData):
-                        chain_id: ChainId = user_test_data.fetch_chain_id()
-                        user_test_data.init_network(chain_id)
-                        logger.info(f"Target endpoint network is {user_test_data.network.name}")
-                        print(f"Target endpoint network is {user_test_data.network.name}")
-                        test_data["chain_id"] = {test_data_class_name: chain_id}
                     if environment.parsed_options:
+                        ref_node_url = environment.parsed_options.ref_url if environment.parsed_options.ref_url is not None else environment.host
+                        user_test_data.init_http_client(ref_node_url)
+                        if isinstance(user_test_data, EvmTestData):
+                            chain_id: ChainId = user_test_data.fetch_chain_id()
+                            user_test_data.init_network(chain_id)
+                            logger.info(f"Target endpoint network is {user_test_data.network.name}")
+                            print(f"Target endpoint network is {user_test_data.network.name}")
+                            test_data["chain_id"] = {test_data_class_name: chain_id}
                         user_test_data.init_data(environment.parsed_options)
                         test_data[test_data_class_name] = user_test_data.data.to_json()
                         send_msg_to_workers(environment.runner, "test_data", test_data)
