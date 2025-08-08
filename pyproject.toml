@@ -23,11 +23,11 @@ orjson = "^3.10.10"
 wsaccel = "^0.6.7"
 
 [tool.poetry.group.dev.dependencies]
-black = ">=23.1,<25.0"
-mypy = "^1.2.0"
+black = "^24.10.0"
+mypy = "^1.15.0"
 pre-commit = "^3.2.2"
-flake8 = "^6.0.0"
-isort = "^5.12.0"
+flake8 = "^6.1.0"
+isort = "^5.13.2"
 flake8-pyproject = "^1.2.3"
 
 [tool.poetry.scripts]

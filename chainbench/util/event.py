@@ -200,7 +200,8 @@ def on_init(environment: Environment, **_kwargs):
                             if environment.parsed_options.ref_url is not None
                             else environment.host
                         )
-                        user_test_data.init_http_client(ref_node_url)
+                        if ref_node_url is not None:
+                            user_test_data.init_http_client(ref_node_url)
                         if isinstance(user_test_data, EvmTestData):
                             chain_id: ChainId = user_test_data.fetch_chain_id()
                             user_test_data.init_network(chain_id)
