@@ -55,7 +55,7 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         "--ref-url",
         type=str,
         default=None,
-        help="Set the reference node url to be used for retrieving test data before test starts. If empty, defaults to target url.",
+        help="Reference node url used for fetching test data before test starts. If empty, defaults to target url.",
         include_in_web_ui=True,
     )
 
@@ -195,7 +195,11 @@ def on_init(environment: Environment, **_kwargs):
                     logger.info(f"Initializing test data for {test_data_class_name}")
                     print(f"Initializing test data for {test_data_class_name}")
                     if environment.parsed_options:
-                        ref_node_url = environment.parsed_options.ref_url if environment.parsed_options.ref_url is not None else environment.host
+                        ref_node_url = (
+                            environment.parsed_options.ref_url
+                            if environment.parsed_options.ref_url is not None
+                            else environment.host
+                        )
                         user_test_data.init_http_client(ref_node_url)
                         if isinstance(user_test_data, EvmTestData):
                             chain_id: ChainId = user_test_data.fetch_chain_id()

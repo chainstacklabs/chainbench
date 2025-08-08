@@ -210,7 +210,11 @@ def validate_profile_path(ctx: Context, param: Parameter, value: str) -> str:
 @click.option("--pg-password", default=None, help="PG password")
 @click.option("--use-latest-blocks", is_flag=True, help="Uses latest blocks for test data")
 @click.option("--size", default=None, help="Set the size of the test data. e.g. --size S")
-@click.option("--ref-url", default=None, help="Reference Node URL for retrieving test data before test starts. If not specified, target url is used instead.")
+@click.option(
+    "--ref-url",
+    default=None,
+    help="Reference Node URL for retrieving test data before test starts. If not specified, target url is used.",
+)
 @click.pass_context
 def start(
     ctx: Context,
@@ -282,7 +286,7 @@ def start(
 
     user_classes = {}
     for locustfile in parse_locustfile_paths([final_profile_path.__str__()]):
-        _user_classes, _  = load_locustfile(locustfile)
+        _user_classes, _ = load_locustfile(locustfile)
         for key, value in _user_classes.items():
             user_classes[key] = value
     test_data_types = set()
