@@ -144,6 +144,7 @@ class LocustOptions:
     method: str | None = None
     enable_class_picker: bool = False
     batch_size: int | None = None
+    ref_url: str | None = None
 
     def get_master_command(self) -> str:
         """Generate master command."""
@@ -203,6 +204,9 @@ class LocustOptions:
 
         if self.batch_size is not None:
             command += f" --batch-size {self.batch_size}"
+
+        if self.ref_url is not None:
+            command += f" --ref-url {self.ref_url}"
         return command
 
 
