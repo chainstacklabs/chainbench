@@ -17,7 +17,7 @@ click = "^8.1.6"
 locust-plugins = {extras = ["dashboards"], version = "^4.5.3"}
 tenacity = "^9.0.0"
 base58 = "^2.1.1"
-solders = "^0.22.0"
+solders = "^0.26.0"
 websocket-client = "^1.8.0"
 orjson = "^3.10.10"
 wsaccel = "^0.6.7"

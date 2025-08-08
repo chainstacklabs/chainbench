@@ -1,5 +1,5 @@
 # build stage
-FROM python:3.10-buster AS venv
+FROM python:3.10-bookworm AS venv
 
 # copy files
 COPY pyproject.toml poetry.lock ./
@@ -14,7 +14,7 @@ RUN python -m venv --copies /app/venv
 RUN . /app/venv/bin/activate && $HOME/.local/bin/poetry install --no-directory --without dev --no-root --compile
 
 # runtime stage
-FROM python:3.10-slim-buster as prod
+FROM python:3.10-slim-bookworm as prod
 
 COPY --from=venv /app/venv /app/venv/
 ENV PATH /app/venv/bin:$PATH
