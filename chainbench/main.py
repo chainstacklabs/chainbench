@@ -8,6 +8,7 @@ from pathlib import Path
 import click
 import gevent.pool
 from click import Context, Parameter
+from gevent.libev.corecext import callback
 from locust.argument_parser import parse_locustfile_paths
 from locust.util.load_locustfile import load_locustfile
 
@@ -215,8 +216,8 @@ def validate_profile_path(ctx: Context, param: Parameter, value: str) -> str:
     default=None,
     help="Reference Node URL for retrieving test data before test starts. If not specified, target url is used.",
 )
-@click.option("--start-block", default=None, help="Start block for test data")
-@click.option("--end-block", default=None, help="End block for test data")
+@click.option("--start-block", default=None, help="Start block for test data", type=int)
+@click.option("--end-block", default=None, help="End block for test data", type=int)
 @click.pass_context
 def start(
     ctx: Context,
@@ -254,6 +255,13 @@ def start(
     start_block: int | None = None,
     end_block: int | None = None,
 ) -> None:
+    if start_block is not None or end_block is not None:
+        if start_block is None or end_block is None:
+            raise ValueError("Both start-block and end-block are required for specifying custom block range.")
+        else:
+            if end_block < start_block:
+                raise ValueError("end-block must be greater than start-block.")
+
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
         notifier = Notifier(topic=notify)
