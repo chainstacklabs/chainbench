@@ -174,7 +174,13 @@ class TestData(t.Generic[B]):
         return self.fetch_block(block_number)
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
-        raise NotImplementedError
+        if parsed_options.start_block is not None:
+            self.start_block_number = parsed_options.start_block
+        else:
+            self.start_block_number = 1
+        if parsed_options.end_block is not None:
+            self.end_block_number = parsed_options.end_block
+        return self.data.block_range
 
     def get_block_from_data(self, data: dict[str, t.Any] | str) -> B:
         raise NotImplementedError
@@ -210,9 +216,17 @@ class TestData(t.Generic[B]):
     def start_block_number(self) -> BlockNumber:
         return self.data.block_range.start
 
+    @start_block_number.setter
+    def start_block_number(self, value: BlockNumber) -> None:
+        self.data.block_range.start = value
+
     @property
     def end_block_number(self) -> BlockNumber:
         return self.data.block_range.end
+
+    @end_block_number.setter
+    def end_block_number(self, value: BlockNumber) -> None:
+        self.data.block_range.end = value
 
 
 class SmartContract:

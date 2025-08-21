@@ -145,6 +145,8 @@ class LocustOptions:
     enable_class_picker: bool = False
     batch_size: int | None = None
     ref_url: str | None = None
+    start_block: int | None = None
+    end_block: int | None = None
 
     def get_master_command(self) -> str:
         """Generate master command."""
@@ -198,6 +200,11 @@ class LocustOptions:
 
         if self.use_latest_blocks:
             command += " --use-latest-blocks True"
+        else:
+            if self.start_block is not None:
+                command += f" --start-block {self.start_block}"
+            if self.end_block is not None:
+                command += f" --end-block {self.end_block}"
 
         if self.method is not None:
             command += f" --method {self.method}"

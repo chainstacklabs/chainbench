@@ -134,13 +134,12 @@ class EthBeaconTestData(TestData[EthBeaconBlock]):
         return int(self.fetch_block_header("head")["slot"])
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
-        end_block_number = self.fetch_latest_block_number()
+        super()._get_start_and_end_blocks(parsed_options)
         if parsed_options.use_latest_blocks:
-            start_block_number = end_block_number - self.data.size.blocks_len + 1
-        else:
-            start_block_number = 1
-        logger.info("Using blocks from %s to %s as test data", start_block_number, end_block_number)
-        return BlockRange(start_block_number, end_block_number)
+            self.end_block_number = self.fetch_latest_block_number()
+            self.start_block_number = self.end_block_number - self.data.size.blocks_len + 1
+        logger.info("Using blocks from %s to %s as test data", self.start_block_number, self.end_block_number)
+        return self.data.block_range
 
     def get_block_from_data(self, data: dict[str, t.Any] | str) -> EthBeaconBlock:
         def get_committee(committee: dict[str, t.Any]) -> EthCommittee:

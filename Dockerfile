@@ -19,7 +19,7 @@ FROM python:3.10-slim-bookworm as prod
 COPY --from=venv /app/venv /app/venv/
 ENV PATH /app/venv/bin:$PATH
 
-RUN apt-get update && apt-get install -y tini htop nano
+RUN apt-get update && apt-get install -y tini htop nano curl
 
 WORKDIR /app
 COPY . ./

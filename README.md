@@ -128,6 +128,8 @@ This will run a load test with a general BSC profile.
 - `--size`: Specifies the test data size. Available values are XS, S, M, L, XL. Default is S.
 - `--batch`: Runs the test using batch requests. This will send multiple requests in a single batch request. The number of requests in a batch can be specified using the `--batch-size` flag. Default batch size is 10.
 - `--ref-url`: Specifies the reference blockchain node URL that will be used to fetch test data from before the benchmark starts.
+- `--start-block`: Starting block number to use when generating test data. Must be used together with `--end-block`.
+- `--end-block`: Ending block number to use when generating test data. Must be greater than `--start-block`. Note: if `--use-latest-blocks` is set, this custom range is ignored.
 
 You may also run `chainbench start --help` for the full list of parameters and flags.
 

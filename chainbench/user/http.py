@@ -61,6 +61,7 @@ class HttpUser(FastHttpUser):
         """Check the response for errors."""
         if response.status_code != 200:
             self.logger.error(f"Request failed with {response.status_code} code")
+            self.logger.error(f"Request body of failed request: {response.request.body if response.request else ''}")
             self.logger.debug(
                 f"Request to {response.url} failed with HTTP Error {response.status_code} code: {response.text}"
             )

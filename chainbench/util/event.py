@@ -41,7 +41,6 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         help="Set the batch size for batch requests. Default is 10.",
         include_in_web_ui=True,
     )
-
     # TODO - limit choices to the methods that are available in the selected user class
     parser.add_argument(
         "--method",
@@ -57,6 +56,20 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         default=None,
         help="Reference node url used for fetching test data before test starts. If empty, defaults to target url.",
         include_in_web_ui=True,
+    )
+    parser.add_argument(
+        "--start-block",
+        type=int,
+        default=None,
+        help="Starting block number to be used for fetching test data.",
+        include_in_web_ui=False,
+    )
+    parser.add_argument(
+        "--end-block",
+        type=int,
+        default=None,
+        help="Last block number to be used for fetching test data.",
+        include_in_web_ui=False,
     )
 
 
