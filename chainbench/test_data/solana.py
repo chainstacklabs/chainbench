@@ -98,24 +98,24 @@ class SolanaTestData(TestData[SolanaBlock]):
         return slot
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
-        end_block_number = self.fetch_latest_block_number()
+        super()._get_start_and_end_blocks(parsed_options)
         earliest_available_block_number = self._fetch_first_available_block()
-
+        latest_block_number = self.fetch_latest_block_number()
         # factor in run_time and add 10% buffer to ensure blocks used in test data are
         # not removed from the ledger
         earliest_available_block_number += int((parsed_options.run_time / self.BLOCK_TIME) * 1.1)
-        start_block_number = earliest_available_block_number
-
         if parsed_options.use_latest_blocks:
-            start_block_number = end_block_number - self.data.size.blocks_len + 1
-
-        if start_block_number < earliest_available_block_number:
-            raise ValueError(
-                f"Earliest available block (with buffer) is {earliest_available_block_number}, "
-                f"but start block is {start_block_number}"
-            )
-
-        return BlockRange(start_block_number, end_block_number)
+            self.end_block_number = latest_block_number
+            self.start_block_number = self.end_block_number - self.data.size.blocks_len + 1
+        if self.start_block_number < earliest_available_block_number:
+            logger.warning("start_block is before earliest_available_block_number,"
+                           "setting to earliest_available_block_number.")
+            self.start_block_number = earliest_available_block_number
+        if self.end_block_number > latest_block_number:
+            logger.warning("end_block is after latest_block_number,"
+                           "setting to latest_block_number.")
+            self.end_block_number = latest_block_number
+        return self._data.block_range
 
     def get_random_block_hash(self, rng: RNG | None = None) -> BlockHash:
         if rng is None:

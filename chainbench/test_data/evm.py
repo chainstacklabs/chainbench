@@ -482,13 +482,28 @@ class EvmTestData(TestData[EvmBlock]):
         return self.fetch_block("latest")
 
     def _get_start_and_end_blocks(self, parsed_options: Namespace) -> BlockRange:
-        end_block_number = self.fetch_latest_block_number()
-        if parsed_options.use_latest_blocks:
-            start_block_number = end_block_number - self.data.size.blocks_len + 1
+        latest_block_number = self.fetch_latest_block_number()
+        if parsed_options.start_block is not None:
+            self.start_block_number = parsed_options.start_block
         else:
-            start_block_number = self.network.start_block
-            logger.info("Using blocks from %s to %s as test data", start_block_number, end_block_number)
-        return BlockRange(start_block_number, end_block_number)
+            self.start_block_number = self.network.start_block
+        if parsed_options.end_block is not None:
+            self.end_block_number = parsed_options.end_block
+        else:
+            self.end_block_number = latest_block_number
+        if parsed_options.use_latest_blocks:
+            self.end_block_number = latest_block_number
+            self.start_block_number = self.end_block_number - self.data.size.blocks_len + 1
+        if self.start_block_number < 0:
+            logger.warning("start_block is before genesis block,"
+                           "setting to 0.")
+            self.start_block_number = 0
+        if self.end_block_number > latest_block_number:
+            logger.warning(f"end_block {self.end_block_number} is after latest_block_number {latest_block_number},"
+                           "setting to latest_block_number.")
+            self.end_block_number = latest_block_number
+        logger.info("Using blocks from %s to %s as test data", self.start_block_number, self.end_block_number)
+        return self._data.block_range
 
     def get_random_block_hash(self, rng: RNG | None = None) -> BlockHash:
         if rng is None:

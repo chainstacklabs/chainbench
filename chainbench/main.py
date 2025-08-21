@@ -215,6 +215,8 @@ def validate_profile_path(ctx: Context, param: Parameter, value: str) -> str:
     default=None,
     help="Reference Node URL for retrieving test data before test starts. If not specified, target url is used.",
 )
+@click.option("--start-block", default=None, help="Start block for test data")
+@click.option("--end-block", default=None, help="End block for test data")
 @click.pass_context
 def start(
     ctx: Context,
@@ -249,6 +251,8 @@ def start(
     size: str | None,
     method: str | None = None,
     ref_url: str | None = None,
+    start_block: int | None = None,
+    end_block: int | None = None,
 ) -> None:
     if notify:
         click.echo(f"Notify when test is finished using topic: {notify}")
@@ -386,6 +390,8 @@ def start(
         enable_class_picker=enable_class_picker,
         batch_size=batch_size,
         ref_url=ref_url,
+        start_block=start_block,
+        end_block=end_block,
     )
     # Start the Locust master
     master_command = locust_options.get_master_command()
