@@ -180,8 +180,7 @@ class TestData(t.Generic[B]):
             self.start_block_number = 1
         if parsed_options.end_block is not None:
             self.end_block_number = parsed_options.end_block
-        return self._data.block_range
-
+        return self.data.block_range
 
     def get_block_from_data(self, data: dict[str, t.Any] | str) -> B:
         raise NotImplementedError
@@ -228,6 +227,7 @@ class TestData(t.Generic[B]):
     @end_block_number.setter
     def end_block_number(self, value: BlockNumber) -> None:
         self.data.block_range.end = value
+
 
 class SmartContract:
     def __init__(self, address: str):

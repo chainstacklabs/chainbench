@@ -108,14 +108,14 @@ class SolanaTestData(TestData[SolanaBlock]):
             self.end_block_number = latest_block_number
             self.start_block_number = self.end_block_number - self.data.size.blocks_len + 1
         if self.start_block_number < earliest_available_block_number:
-            logger.warning("start_block is before earliest_available_block_number,"
-                           "setting to earliest_available_block_number.")
+            logger.warning(
+                "start_block is before earliest_available_block_number," "setting to earliest_available_block_number."
+            )
             self.start_block_number = earliest_available_block_number
         if self.end_block_number > latest_block_number:
-            logger.warning("end_block is after latest_block_number,"
-                           "setting to latest_block_number.")
+            logger.warning("end_block is after latest_block_number," "setting to latest_block_number.")
             self.end_block_number = latest_block_number
-        return self._data.block_range
+        return self.data.block_range
 
     def get_random_block_hash(self, rng: RNG | None = None) -> BlockHash:
         if rng is None:

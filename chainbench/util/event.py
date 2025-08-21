@@ -72,6 +72,7 @@ def cli_custom_arguments(parser: LocustArgumentParser):
         include_in_web_ui=False,
     )
 
+
 def send_msg_to_workers(master_runner: MasterRunner, msg_type: str, data: dict[str, t.Any]):
     for i, worker in enumerate(master_runner.clients):
         master_runner.send_message(msg_type, {"data": (data, i)}, worker)

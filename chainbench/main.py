@@ -8,7 +8,6 @@ from pathlib import Path
 import click
 import gevent.pool
 from click import Context, Parameter
-from gevent.libev.corecext import callback
 from locust.argument_parser import parse_locustfile_paths
 from locust.util.load_locustfile import load_locustfile
 

@@ -139,7 +139,7 @@ class EthBeaconTestData(TestData[EthBeaconBlock]):
             self.end_block_number = self.fetch_latest_block_number()
             self.start_block_number = self.end_block_number - self.data.size.blocks_len + 1
         logger.info("Using blocks from %s to %s as test data", self.start_block_number, self.end_block_number)
-        return self._data.block_range
+        return self.data.block_range
 
     def get_block_from_data(self, data: dict[str, t.Any] | str) -> EthBeaconBlock:
         def get_committee(committee: dict[str, t.Any]) -> EthCommittee:
