@@ -85,10 +85,9 @@ class EvmBaseUser(JrpcHttpUser):
             {"tracer": "callTracer", "timeout": self._default_trace_timeout},
         ]
 
-    @staticmethod
-    def _trace_replay_block_transaction_params_factory() -> list[str | list[str]]:
+    def _trace_replay_block_transaction_params_factory(self, rng: RNG) -> list[str | list[str]]:
         return [
-            "latest",
+            hex(self.test_data.get_random_block_number(rng)),
             ["vmTrace", "trace", "stateDiff"],
         ]
 
@@ -403,7 +402,8 @@ class EvmRpcMethods(EvmBaseUser):
 
     def trace_replay_block_transactions(self) -> RpcCall:
         return RpcCall(
-            method="trace_replayBlockTransactions", params=self._trace_replay_block_transaction_params_factory()
+            method="trace_replayBlockTransactions",
+            params=self._trace_replay_block_transaction_params_factory(self.rng.get_rng()),
         )
 
     def trace_replay_transaction(self) -> RpcCall:
