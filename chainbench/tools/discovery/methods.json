@@ -222,7 +222,7 @@
       "base"
     ]
   },
-  "anvil_anvil_dropTransaction": {
+  "anvil_dropTransaction": {
     "clients": [
       "reth"
     ]
@@ -1781,6 +1781,7 @@
   "eth_chainId": {
     "clients": [
       "eth",
+      "erigon",
       "zksync",
       "geth",
       "bsc",
@@ -1791,11 +1792,6 @@
       "avalanchego/ext/bc/C/rpc",
       "optimism",
       "base"
-    ]
-  },
-  "eth_chainID/eth_chainId": {
-    "clients": [
-      "erigon"
     ]
   },
   "eth_coinbase": {
@@ -2807,7 +2803,7 @@
       "reth"
     ]
   },
-  "hardhat_hardhat_dropTransaction": {
+  "hardhat_dropTransaction": {
     "clients": [
       "reth"
     ]
