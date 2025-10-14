@@ -52,6 +52,11 @@
       "besu"
     ]
   },
+  "admin_clearTxpool": {
+    "clients": [
+      "reth"
+    ]
+  },
   "admin_datadir": {
     "clients": [
       "geth",
@@ -124,6 +129,7 @@
       "nethermind",
       "erigon",
       "besu",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -214,6 +220,176 @@
       "bor",
       "optimism",
       "base"
+    ]
+  },
+  "anvil_dropTransaction": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_autoImpersonateAccount": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_dumpState": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_enableTraces": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_getAutomine": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_impersonateAccount": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_increaseTime": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_loadState": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_metadata": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_mine": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_mine_detailed": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_nodeInfo": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_removeBlockTimestampInterval": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_removePoolTransactions": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_reset": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_revert": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setAutomine": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setBalance": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setBlockGasLimit": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setBlockTimestampInterval": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setChainId": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setCode": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setCoinbase": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setIntervalMining": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setLoggingEnabled": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setMinGasPrice": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setNextBlockBaseFeePerGas": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setNextBlockTimestamp": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setNonce": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setRpcUrl": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setStorageAt": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_setTime": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_snapshot": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "anvil_stopImpersonatingAccount": {
+    "clients": [
+      "reth"
     ]
   },
   "avax.export": {
@@ -565,7 +741,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_backtraceAt": {
@@ -575,7 +752,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_blockProfile": {
@@ -585,7 +763,13 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
+    ]
+  },
+  "debug_chainConfig": {
+    "clients": [
+      "reth"
     ]
   },
   "debug_chaindbCompact": {
@@ -595,7 +779,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_chaindbProperty": {
@@ -605,7 +790,13 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
+    ]
+  },
+  "debug_codeByHash": {
+    "clients": [
+      "reth"
     ]
   },
   "debug_cpuProfile": {
@@ -615,7 +806,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_dbAncient": {
@@ -625,7 +817,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_dbAncients": {
@@ -635,7 +828,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_dbGet": {
@@ -645,7 +839,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_deleteChainSlice": {
@@ -660,7 +855,23 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
+    ]
+  },
+  "debug_executePayload": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "debug_executionWitness": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "debug_executionWitnessByBlockHash": {
+    "clients": [
+      "reth"
     ]
   },
   "debug_freeOSMemory": {
@@ -670,7 +881,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_freezeClient": {
@@ -680,7 +892,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_gcStats": {
@@ -690,7 +903,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_getAccessibleState": {
@@ -700,7 +914,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_getBadBlocks": {
@@ -744,7 +959,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_getModifiedAccountsByNumber": {
@@ -755,7 +971,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_getRawBlock": {
@@ -810,6 +1027,11 @@
       "base"
     ]
   },
+  "debug_getRawTransactions": {
+    "clients": [
+      "reth"
+    ]
+  },
   "debug_getSyncStage": {
     "clients": [
       "nethermind"
@@ -822,7 +1044,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_insertReceipts": {
@@ -837,7 +1060,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_memStats": {
@@ -847,7 +1071,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_metrics": {
@@ -867,7 +1092,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_preimage": {
@@ -877,7 +1103,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_printBlock": {
@@ -887,12 +1114,18 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_resetHead": {
     "clients": [
       "nethermind"
+    ]
+  },
+  "debug_seedHash": {
+    "clients": [
+      "reth"
     ]
   },
   "debug_setBlockProfileRate": {
@@ -902,7 +1135,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_setGCPercent": {
@@ -912,7 +1146,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_setHead": {
@@ -922,7 +1157,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_setMutexProfileFraction": {
@@ -932,7 +1168,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_setTrieFlushInterval": {
@@ -942,7 +1179,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_stacks": {
@@ -952,7 +1190,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_standardTraceBadBlockToFile": {
@@ -962,7 +1201,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_standardTraceBlockToFile": {
@@ -973,7 +1213,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_startCPUProfile": {
@@ -983,7 +1224,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_startGoTrace": {
@@ -993,7 +1235,13 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
+    ]
+  },
+  "debug_stateRootWithUpdates": {
+    "clients": [
+      "reth"
     ]
   },
   "debug_stopCPUProfile": {
@@ -1003,7 +1251,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_stopGoTrace": {
@@ -1013,7 +1262,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_storageRangeAt": {
@@ -1025,7 +1275,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_traceBadBlock": {
@@ -1035,7 +1286,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_traceBlock": {
@@ -1104,7 +1356,8 @@
   },
   "debug_traceCallMany": {
     "clients": [
-      "erigon"
+      "erigon",
+      "reth"
     ]
   },
   "debug_traceChain": {
@@ -1159,7 +1412,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_vmodule": {
@@ -1169,7 +1423,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_writeBlockProfile": {
@@ -1179,7 +1434,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_writeMemProfile": {
@@ -1189,7 +1445,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "debug_writeMutexProfile": {
@@ -1199,7 +1456,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "eea_sendRawTransaction": {
@@ -1213,6 +1471,7 @@
       "zksync",
       "geth",
       "bsc",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1237,6 +1496,7 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1249,6 +1509,7 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1261,9 +1522,25 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
+    ]
+  },
+  "engine_getBlobsV1": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "engine_getBlobsV2": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "engine_getClientVersionV1": {
+    "clients": [
+      "reth"
     ]
   },
   "engine_getPayloadBodiesByHashV1": {
@@ -1272,6 +1549,7 @@
       "zksync",
       "geth",
       "bsc",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1283,6 +1561,7 @@
       "zksync",
       "geth",
       "bsc",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1295,6 +1574,7 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1307,6 +1587,7 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1319,9 +1600,20 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
+    ]
+  },
+  "engine_getPayloadV4": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "engine_getPayloadV5": {
+    "clients": [
+      "reth"
     ]
   },
   "engine_newPayloadV1": {
@@ -1331,6 +1623,7 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1343,6 +1636,7 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -1355,9 +1649,15 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
+    ]
+  },
+  "engine_newPayloadV4": {
+    "clients": [
+      "reth"
     ]
   },
   "erigon_BlockNumber": {
@@ -1419,6 +1719,11 @@
       "avalanchego/ext/bc/C/rpc"
     ]
   },
+  "eth_blobBaseFee": {
+    "clients": [
+      "reth"
+    ]
+  },
   "eth_blockNumber": {
     "clients": [
       "eth",
@@ -1453,22 +1758,30 @@
   },
   "eth_callBundle": {
     "clients": [
-      "erigon"
+      "erigon",
+      "reth"
     ]
   },
   "eth_callMany": {
     "clients": [
-      "erigon"
+      "erigon",
+      "reth"
     ]
   },
-  "eth_chainID/eth_chainId": {
+  "eth_cancelBundle": {
     "clients": [
-      "erigon"
+      "reth"
+    ]
+  },
+  "eth_cancelPrivateTransaction": {
+    "clients": [
+      "reth"
     ]
   },
   "eth_chainId": {
     "clients": [
       "eth",
+      "erigon",
       "zksync",
       "geth",
       "bsc",
@@ -1496,6 +1809,11 @@
       "base"
     ]
   },
+  "eth_config": {
+    "clients": [
+      "reth"
+    ]
+  },
   "eth_createAccessList": {
     "clients": [
       "eth",
@@ -1504,6 +1822,7 @@
       "bsc",
       "nethermind",
       "erigon",
+      "reth",
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
@@ -1534,6 +1853,7 @@
       "bsc",
       "nethermind",
       "erigon",
+      "reth",
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
@@ -1557,7 +1877,13 @@
   },
   "eth_getAccount": {
     "clients": [
-      "nethermind"
+      "nethermind",
+      "reth"
+    ]
+  },
+  "eth_getAccountInfo": {
+    "clients": [
+      "reth"
     ]
   },
   "eth_getAssetBalance": {
@@ -1623,7 +1949,8 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "eth_getBlockTransactionCountByHash": {
@@ -1717,7 +2044,8 @@
       "bsc",
       "bor",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "eth_getHeaderByNumber": {
@@ -1726,7 +2054,8 @@
       "bsc",
       "bor",
       "optimism",
-      "base"
+      "base",
+      "reth"
     ]
   },
   "eth_getLogs": {
@@ -1767,12 +2096,24 @@
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "optimism",
-      "base"
+      "base",
+      "reth"
+    ]
+  },
+  "eth_getRawTransactionByBlockHashAndIndex": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "eth_getRawTransactionByBlockNumberAndIndex": {
+    "clients": [
+      "reth"
     ]
   },
   "eth_getRawTransactionByHash": {
     "clients": [
-      "erigon"
+      "erigon",
+      "reth"
     ]
   },
   "eth_getStorageAt": {
@@ -1837,6 +2178,11 @@
       "avalanchego/ext/bc/C/rpc",
       "optimism",
       "base"
+    ]
+  },
+  "eth_getTransactionBySenderAndNonce": {
+    "clients": [
+      "reth"
     ]
   },
   "eth_getTransactionCount": {
@@ -1922,7 +2268,8 @@
   "eth_getWork": {
     "clients": [
       "erigon",
-      "besu"
+      "besu",
+      "reth"
     ]
   },
   "eth_hashrate": {
@@ -1939,6 +2286,7 @@
       "geth",
       "bsc",
       "erigon",
+      "reth",
       "bor",
       "avalanchego/ext/bc/C/rpc",
       "avalanchego/ext/bc/C/rpc",
@@ -2024,6 +2372,21 @@
       "erigon"
     ]
   },
+  "eth_sendBundle": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "eth_sendPrivateRawTransaction": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "eth_sendPrivateTransaction": {
+    "clients": [
+      "reth"
+    ]
+  },
   "eth_sendRawTransaction": {
     "clients": [
       "eth",
@@ -2038,6 +2401,16 @@
       "avalanchego/ext/bc/C/rpc",
       "optimism",
       "base"
+    ]
+  },
+  "eth_sendRawTransactionConditional": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "eth_sendRawTransactionSync": {
+    "clients": [
+      "reth"
     ]
   },
   "eth_sendTransaction": {
@@ -2080,16 +2453,28 @@
       "base"
     ]
   },
+  "eth_signTypedData": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "eth_simulateV1": {
+    "clients": [
+      "reth"
+    ]
+  },
   "eth_submitHashrate": {
     "clients": [
       "erigon",
-      "besu"
+      "besu",
+      "reth"
     ]
   },
   "eth_submitWork": {
     "clients": [
       "erigon",
-      "besu"
+      "besu",
+      "reth"
     ]
   },
   "eth_subscribe": {
@@ -2098,6 +2483,7 @@
       "bsc",
       "nethermind",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
@@ -2141,9 +2527,35 @@
       "bsc",
       "nethermind",
       "erigon",
+      "reth",
       "bor",
       "optimism",
       "base"
+    ]
+  },
+  "flashbots_validateBuilderSubmissionV1": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "flashbots_validateBuilderSubmissionV2": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "flashbots_validateBuilderSubmissionV3": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "flashbots_validateBuilderSubmissionV4": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "flashbots_validateBuilderSubmissionV5": {
+    "clients": [
+      "reth"
     ]
   },
   "getAccountInfo": {
@@ -2176,17 +2588,17 @@
       "solana"
     ]
   },
-  "getBlockTime": {
-    "clients": [
-      "solana"
-    ]
-  },
   "getBlocks": {
     "clients": [
       "solana"
     ]
   },
   "getBlocksWithLimit": {
+    "clients": [
+      "solana"
+    ]
+  },
+  "getBlockTime": {
     "clients": [
       "solana"
     ]
@@ -2301,12 +2713,12 @@
       "solana"
     ]
   },
-  "getSignatureStatuses": {
+  "getSignaturesForAddress": {
     "clients": [
       "solana"
     ]
   },
-  "getSignaturesForAddress": {
+  "getSignatureStatuses": {
     "clients": [
       "solana"
     ]
@@ -2384,6 +2796,86 @@
   "getVoteAccounts": {
     "clients": [
       "solana"
+    ]
+  },
+  "hardhat_getAutomine": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_dropTransaction": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_impersonateAccount": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_metadata": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_mine": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_reset": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setBalance": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setCode": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setCoinbase": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setLoggingEnabled": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setMinGasPrice": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setNextBlockBaseFeePerGas": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setNonce": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setPrevRandao": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_setStorageAt": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "hardhat_stopImpersonatingAccount": {
+    "clients": [
+      "reth"
     ]
   },
   "ibft_discardValidatorVote": {
@@ -2478,6 +2970,31 @@
     "clients": [
       "geth",
       "bsc"
+    ]
+  },
+  "mev_sendBundle": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "mev_simBundle": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "miner_setExtra": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "miner_setGasLimit": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "miner_setGasPrice": {
+    "clients": [
+      "reth"
     ]
   },
   "miner_start": {
@@ -2611,13 +3128,13 @@
       "base"
     ]
   },
-  "opp2p_peerStats": {
+  "opp2p_peers": {
     "clients": [
       "optimism",
       "base"
     ]
   },
-  "opp2p_peers": {
+  "opp2p_peerStats": {
     "clients": [
       "optimism",
       "base"
@@ -2681,6 +3198,71 @@
     "clients": [
       "optimism",
       "base"
+    ]
+  },
+  "ots_getApiLevel": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getBlockDetails": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getBlockDetailsByHash": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getBlockTransactions": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getContractCreator": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getHeaderByNumber": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getInternalOperations": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getTransactionBySenderAndNonce": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_getTransactionError": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_hasCode": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_searchTransactionsAfter": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_searchTransactionsBefore": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "ots_traceTransaction": {
+    "clients": [
+      "reth"
     ]
   },
   "parity_clearEngineSigner": {
@@ -2933,12 +3515,12 @@
       "avalanchego/ext/bc/P"
     ]
   },
-  "platform.getBlockchainStatus": {
+  "platform.getBlockchains": {
     "clients": [
       "avalanchego/ext/bc/P"
     ]
   },
-  "platform.getBlockchains": {
+  "platform.getBlockchainStatus": {
     "clients": [
       "avalanchego/ext/bc/P"
     ]
@@ -3158,6 +3740,21 @@
       "solana"
     ]
   },
+  "reth_getBalanceChangesInBlock": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "reth_subscribeChainNotifications": {
+    "clients": [
+      "reth"
+    ]
+  },
+  "reth_unsubscribeChainNotifications": {
+    "clients": [
+      "reth"
+    ]
+  },
   "rpc_modules": {
     "clients": [
       "besu",
@@ -3350,6 +3947,11 @@
       "reth"
     ]
   },
+  "trace_blockOpcodeGas": {
+    "clients": [
+      "reth"
+    ]
+  },
   "trace_call": {
     "clients": [
       "nethermind",
@@ -3402,6 +4004,11 @@
       "nethermind",
       "erigon",
       "besu",
+      "reth"
+    ]
+  },
+  "trace_transactionOpcodeGas": {
+    "clients": [
       "reth"
     ]
   },
