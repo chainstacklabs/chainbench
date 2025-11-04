@@ -104,6 +104,14 @@ class SolanaTestData(TestData[SolanaBlock]):
         # factor in run_time and add 10% buffer to ensure blocks used in test data are
         # not removed from the ledger
         earliest_available_block_number += int((parsed_options.run_time / self.BLOCK_TIME) * 1.1)
+        if parsed_options.start_block is not None:
+            self.start_block_number = parsed_options.start_block
+        else:
+            self.start_block_number = earliest_available_block_number
+        if parsed_options.end_block is not None:
+            self.end_block_number = parsed_options.end_block
+        else:
+            self.end_block_number = latest_block_number
         if parsed_options.use_latest_blocks:
             self.end_block_number = latest_block_number
             self.start_block_number = self.end_block_number - self.data.size.blocks_len + 1
