@@ -25,9 +25,9 @@ If you add or update dependencies:
 
 ## 3. Coding Conventions
 
-* Follow Black formatting (120 character line length).
+* Follow Black formatting (120-character line length).
 * Use isort for import sorting (Black-compatible profile).
-* Follow Flake8 linting rules (E203 ignored for Black compatibility).
+* Follow Flake8 linting rules (ignore E203 and W503 for Black compatibility).
 * Use type hints where appropriate.
 * Keep MyPy checks passing.
 
@@ -35,16 +35,20 @@ If you add or update dependencies:
 
 Before completing any task, run these quality checks:
 
-| Command                  | Purpose                                    |
-| ------------------------ | ------------------------------------------ |
-| `poetry run black .`     | Format code to project standards          |
-| `poetry run isort .`     | Sort imports                               |
-| `poetry run flake8`      | Run linting checks                        |
-| `poetry run mypy .`      | Run type checking                         |
+| Command                  | Purpose                          |
+| ------------------------ |----------------------------------|
+| `poetry run black .`     | Format code to project standards |
+| `poetry run isort .`     | Sort imports                     |
+| `poetry run flake8`      | Run linting checks               |
+| `poetry run mypy .`      | Run type checks                  |
 
 Or use pre-commit hooks:
 ```bash
 poetry run pre-commit run --all-files
+```
+If running pre-commit hooks for the first time, run this first:
+```bash
+poetry run pre-commit install
 ```
 
 ## 5. Testing Guidelines
@@ -66,7 +70,7 @@ Test changes progressively:
 
 When creating or modifying profiles:
 
-* Place custom profiles in appropriate subdirectories.
+* Place custom profiles in the canonical directory: `chainbench/profile/<network>/…`
 * Follow existing profile structure and conventions.
 * Include docstrings explaining profile purpose.
 * Test with small data sizes first (`--size XS`).
@@ -90,10 +94,12 @@ When creating or modifying profiles:
 
 ## 9. Useful Commands Recap
 
-| Command                                           | Purpose                               |
-| ------------------------------------------------- | ------------------------------------- |
-| `poetry install`                                  | Install all dependencies              |
+| Command                                          | Purpose                               |
+| ------------------------------------------------ | ------------------------------------- |
+| `poetry install`                                 | Install all dependencies              |
 | `poetry run chainbench --help`                   | Show all available commands           |
+| `poetry run chainbench start --help`             | Show options for running a benchmark  |
+| `poetry run chainbench --version`                | Show CLI version                      |
 | `poetry run chainbench list methods`             | List supported RPC methods            |
 | `poetry run chainbench list profiles`            | List available profiles               |
 | `poetry run chainbench list shapes`              | List load pattern shapes              |

@@ -251,3 +251,7 @@ If you don't specify the `--clients` option, the tool will default to Ethereum J
 
 ## License
 This project is licensed under the [Apache 2.0 License](LICENSE).
+
+## Development
+- [Contributing](CONTRIBUTING.md)
+- [Agents](AGENTS.md)
