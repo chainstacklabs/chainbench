@@ -408,6 +408,14 @@ class EvmNetwork:
                 "0x47bb061C0204Af921F43DC73C7D7768d2672DdEE",
             ],
         },
+        998: {
+            "name": "hyperliquid-testnet",
+            "start_block": 1,
+            "contract_addresses": [
+                "0x72B0e1c7251511c076c6c7De4864DF06Ec24AC7B",
+                "0x928e4e3dFb1c39a6deE26506Cde76875E3a25ea4",
+            ],
+        },
     }
 
 
