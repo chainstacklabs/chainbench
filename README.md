@@ -170,6 +170,13 @@ Other available shapes are:
 - `step` - The load will increase in steps. `--spawn-rate` flag is required to specify the step size. The number of steps will be calculated based on `--users` divided by `--spawn-rate`. The duration of each step will be calculated based on `--test-time` divided by the number of steps.
 - `spike` - The load will run in a spike pattern. The load will ramp up to 10% of the total users for 40% of the test duration and then spike to 100% of the total users as specified by `--users` for 20% of test duration and then reduce back to 10% of total users until the test duration is over.
 
+Use the following command to list all shapes in chainbench/shapes
+```shell
+chainbench list shapes
+```
+You may add your own custom shapes by copying one of the existing shapes in chainbench/shapes and modifying them to fit your requirements.
+
+
 ### Test Data Size
 You may specify the test data size using the `--size` flag. This will determine how much data is used in the test.
 Take note that larger data size will result in longer test data generation time before the test starts.
