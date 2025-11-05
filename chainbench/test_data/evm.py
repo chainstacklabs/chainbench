@@ -397,6 +397,17 @@ class EvmNetwork:
             "start_block": 100000,
             "contract_addresses": [],
         },
+        999: {
+            "name": "hyperliquid-mainnet",
+            "start_block": 1,
+            "contract_addresses": [
+                "0x7f5aB8f7974FCcd857163E5DA649Eb2588201dF1",
+                "0x5555555555555555555555555555555555555555",
+                "0xfFaa4a3D97fE9107Cef8a3F48c069F577Ff76cC1",
+                "0x5748ae796AE46A4F1348a1693de4b50560485562",
+                "0x47bb061C0204Af921F43DC73C7D7768d2672DdEE",
+            ],
+        },
     }
 
 
