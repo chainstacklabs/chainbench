@@ -416,6 +416,11 @@ class EvmNetwork:
                 "0x928e4e3dFb1c39a6deE26506Cde76875E3a25ea4",
             ],
         },
+        763374: {
+            "name": "surge-testnet",
+            "start_block": 1,
+            "contract_addresses": [],
+        },
     }
 
 
