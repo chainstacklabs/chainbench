@@ -39,10 +39,6 @@ class SolProgram:
                     "encoding": "base64",
                     # "commitment": self.get_random_commitment(),
                     "commitment": "finalized", # hardcoded to finalized for now...
-                    "dataSlice": {
-                        "offset": 0,
-                        "length": 16
-                    }
                 }
         if filters is not None:
             config["filters"] = filters
@@ -58,50 +54,36 @@ class SolProgram:
 stake_program = SolProgram(
     address="Stake11111111111111111111111111111111111111",
     name="stake",
-    filter_bytes=["KlEIdCea2Sk=", "1gRdtuwdnY8=", "EDxxgSjTMKE=", "5tH6d9cuU1I=", "8PZxLJhlpGY=", "MZsSLiiDWbQ=", "vV/xHxU3/UQ="],
-    offset=12
 )
 
 hyperlane_program = SolProgram(
     address="E588QtVUvresuXq2KoNEwAmoifCzYGpRBdHByN9KQMbi",
     name="hyperlane",
-    filter_bytes=["SGouAADURn4RAAAAAN9b5Q==", "SAXQAwD4X4ATAAAAAEur6g==", "RCYVAgAAAAAAqcz6g47Dpw==", "SNA3BACwBuUTAAAAANllrA==", "SBBXAgBVQLISAAAAAA7Suw=="],
-    offset=8
 )
 
 derp_program = SolProgram(
     address="DERP2sf1Nak1R7s5HVgQD9WcQM1X9CKh5Ru5PNafAsPg",
     name="derp",
-    filter_bytes=["AH17119gpMI=", "mi+XRgiAzuc=", "YZydvcJJCA8=", ],
-    offset=0
 )
 
 jupiter_program = SolProgram(
     address="PERPHjGBqRHArX4DySjwM6UJHiR3sWAatqfdBS2qQJu",
     name="jupiter",
-    filter_bytes=["nBgxGb+hnXE=", "JvRlEb/wcjw=", "hNpHpIy1d2A=", "LKDGGmzRPdw=", "tAKIBM2ctxk=", "0E8ZDGwQ9Bs="],
-    offset=8
 )
 
 whirlpools_program = SolProgram(
     address="whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
     name="whirlpools",
-    filter_bytes=["AGABAAAAAAA=", "AAAAAKdSbY0=", "AIgGAAAAAAA=", "oDUAAAAAAAA=", "AMACAAAAAAA=", "ybQ8WL8BjqQ="],
-    offset=8
 )
 
 meteora_dlmm_program = SolProgram(
     address="LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
     name="meteora_dlmm",
-    filter_bytes=["9P////////8=", "CwAAAAAAAAA=", "crGmppy8dsU=", "FQAAAAAAAAA=", "tFlOyyi2l30=", "5P////////8="],
-    offset=8
 )
 
 byreal_program = SolProgram(
     address="REALQqNEomY6cQGZJUGwywTBD2UmDT32rZcNnfxQ5N2",
     name="byreal",
-    filter_bytes=["/gQu8broD5g=", "/p/l1dc7Yh4=", "/wQu8broD5g=", "/y8FhezHWec=", "/em4Nj2MfbY=", "acEauExBB/o="],
-    offset=8
 )
 
 meteora_pools_program = SolProgram(
@@ -112,22 +94,16 @@ meteora_pools_program = SolProgram(
 raydium_program = SolProgram(
     address="CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",
     name="raydium",
-    filter_bytes=["izFdJVLyvnc=", "Xaxx7B6DSEA=", "+2fqeyM2Fgg=", "/nTnAJwTH4U=", "/TmA0EzfeJI=", "/h8sSv5cosk="],
-    offset=0
 )
 
 pancakeswap_program = SolProgram(
     address="HpNfyc2Saw7RKkQd8nEL4khUcuPhQ7WwY1B2qjx8jxFq",
     name="pancakeswap",
-    filter_bytes=["/g8v5TUg7Y4=", "/7a/3HmNTEA=", "/TKV+aeUlGk=", "/7a/3HmNTEA=", "/xfBfJmKcQg=", "/zKV+aeUlGk="],
-    offset=0
 )
 
 ore_program = SolProgram(
     address="oreV2ZymfyeXgNgBdqMkumTqqAprVqgBWQfoYkrtKWQ",
     name="ore",
-    filter_bytes=["CG+Rg7YASun0nieD5b7psw==", "GfIZMI88YqHyH2NFakVsmQ==", "9G5FkSGQRbb343CTJLC1wA==", "KnUYQIOAS2D3W2DjjmZkNw==", "inwdx9HkQG+MvZtoEPpDHw=="],
-    offset=8
 )
 
 class SolanaGPAUser(SolanaUser):
@@ -140,41 +116,47 @@ class SolanaGPAUser(SolanaUser):
 
 
 class GPAStake(SolanaGPAUser):
-    weight = 58
+    weight = 1
+    wait_time = constant_pacing(1)
     @task
     def get_program_accounts_stake_task(self) -> None:
         self.call_gpa(stake_program)
 
 class GPAHyper(SolanaGPAUser):
-    weight = 55
+    weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_hyperlane_task(self) -> None:
         self.call_gpa(hyperlane_program)
 
 class GPADerp(SolanaGPAUser):
-    weight = 13
+    weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_derp_task(self) -> None:
         self.call_gpa(derp_program)
 
 class GPAJupiter(SolanaGPAUser):
-    weight = 4
+    weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_jupiter_task(self) -> None:
         self.call_gpa(jupiter_program)
 
 class GPAWhirl(SolanaGPAUser):
-    weight = 2
+    weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_whirlpools_task(self) -> None:
         self.call_gpa(whirlpools_program)
 
 class GPAMetDLMM(SolanaGPAUser):
-    weight = 2
+    weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_meteora_dlmm_task(self) -> None:
@@ -182,6 +164,7 @@ class GPAMetDLMM(SolanaGPAUser):
 
 class GPAByreal(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_byreal_task(self) -> None:
@@ -189,6 +172,7 @@ class GPAByreal(SolanaGPAUser):
 
 class GPAMetPools(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_meteora_pools_task(self) -> None:
@@ -203,6 +187,7 @@ class GPAMetPools(SolanaGPAUser):
 
 class GPAPancake(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_pancakeswap_task(self) -> None:
@@ -210,6 +195,7 @@ class GPAPancake(SolanaGPAUser):
 
 class GPAOre(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(1)
 
     @task
     def get_program_accounts_ore_task(self) -> None:

@@ -140,41 +140,48 @@ class SolanaGPAUser(SolanaUser):
 
 
 class GPAStake(SolanaGPAUser):
-    weight = 58
+    weight = 1
+    wait_time = constant_pacing(10)
+
     @task
     def get_program_accounts_stake_task(self) -> None:
         self.call_gpa(stake_program)
 
 class GPAHyper(SolanaGPAUser):
-    weight = 55
+    weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_hyperlane_task(self) -> None:
         self.call_gpa(hyperlane_program)
 
 class GPADerp(SolanaGPAUser):
-    weight = 13
+    weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_derp_task(self) -> None:
         self.call_gpa(derp_program)
 
 class GPAJupiter(SolanaGPAUser):
-    weight = 4
+    weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_jupiter_task(self) -> None:
         self.call_gpa(jupiter_program)
 
 class GPAWhirl(SolanaGPAUser):
-    weight = 2
+    weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_whirlpools_task(self) -> None:
         self.call_gpa(whirlpools_program)
 
 class GPAMetDLMM(SolanaGPAUser):
-    weight = 2
+    weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_meteora_dlmm_task(self) -> None:
@@ -182,6 +189,7 @@ class GPAMetDLMM(SolanaGPAUser):
 
 class GPAByreal(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_byreal_task(self) -> None:
@@ -189,13 +197,14 @@ class GPAByreal(SolanaGPAUser):
 
 class GPAMetPools(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_meteora_pools_task(self) -> None:
         self.call_gpa(meteora_pools_program)
 
 # class GPARaydium(SolanaGPAUser):
-#     weight = 1
+#     weight = 10
 
     # @task
     # def get_program_accounts_raydium_task(self) -> None:
@@ -203,6 +212,7 @@ class GPAMetPools(SolanaGPAUser):
 
 class GPAPancake(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_pancakeswap_task(self) -> None:
@@ -210,6 +220,7 @@ class GPAPancake(SolanaGPAUser):
 
 class GPAOre(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_ore_task(self) -> None:

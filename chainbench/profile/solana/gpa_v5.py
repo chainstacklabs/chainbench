@@ -141,12 +141,14 @@ class SolanaGPAUser(SolanaUser):
 
 class GPAStake(SolanaGPAUser):
     weight = 58
+    wait_time = constant_pacing(10)
     @task
     def get_program_accounts_stake_task(self) -> None:
         self.call_gpa(stake_program)
 
 class GPAHyper(SolanaGPAUser):
     weight = 55
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_hyperlane_task(self) -> None:
@@ -154,6 +156,7 @@ class GPAHyper(SolanaGPAUser):
 
 class GPADerp(SolanaGPAUser):
     weight = 13
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_derp_task(self) -> None:
@@ -161,6 +164,7 @@ class GPADerp(SolanaGPAUser):
 
 class GPAJupiter(SolanaGPAUser):
     weight = 4
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_jupiter_task(self) -> None:
@@ -168,6 +172,7 @@ class GPAJupiter(SolanaGPAUser):
 
 class GPAWhirl(SolanaGPAUser):
     weight = 2
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_whirlpools_task(self) -> None:
@@ -175,6 +180,7 @@ class GPAWhirl(SolanaGPAUser):
 
 class GPAMetDLMM(SolanaGPAUser):
     weight = 2
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_meteora_dlmm_task(self) -> None:
@@ -182,6 +188,7 @@ class GPAMetDLMM(SolanaGPAUser):
 
 class GPAByreal(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_byreal_task(self) -> None:
@@ -189,6 +196,7 @@ class GPAByreal(SolanaGPAUser):
 
 class GPAMetPools(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_meteora_pools_task(self) -> None:
@@ -203,6 +211,7 @@ class GPAMetPools(SolanaGPAUser):
 
 class GPAPancake(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_pancakeswap_task(self) -> None:
@@ -210,6 +219,7 @@ class GPAPancake(SolanaGPAUser):
 
 class GPAOre(SolanaGPAUser):
     weight = 1
+    wait_time = constant_pacing(10)
 
     @task
     def get_program_accounts_ore_task(self) -> None:

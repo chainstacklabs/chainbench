@@ -28,11 +28,11 @@ class SolProgram:
     def get_rpc_call(self):
         filters = [
             {
-                "memcmp": {
-                    "bytes": self.get_random_filter(),
-                    "offset": self.offset,
-                    "encoding": "base64",
-                }
+                # "memcmp": {
+                #     "bytes": self.get_random_filter(),
+                #     "offset": self.offset,
+                #     "encoding": "base64",
+                # }
             }
         ] if self.filter_bytes is not None and self.offset is not None else None
         config: dict = {
