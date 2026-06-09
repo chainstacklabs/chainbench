@@ -421,6 +421,11 @@ class EvmNetwork:
             "start_block": 1,
             "contract_addresses": [],
         },
+        560048: {
+            "name": "ethereum-hoodi-testnet",
+            "start_block": 1,
+            "contract_addresses": [],
+        },
     }
 
 
