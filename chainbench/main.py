@@ -11,6 +11,7 @@ from click import Context, Parameter
 from locust.argument_parser import parse_locustfile_paths
 from locust.util.load_locustfile import load_locustfile
 
+from chainbench.grpc import grpc as grpc_group
 from chainbench.user import EvmUser, SolanaUser, get_subclass_tasks
 from chainbench.user.common import all_method_classes, all_methods
 from chainbench.util.cli import (
@@ -43,6 +44,9 @@ NOTIFY_URL_TEMPLATE = "https://ntfy.sh/{topic}"
 @click.pass_context
 def cli(ctx: Context):
     ctx.obj = ContextData()
+
+
+cli.add_command(grpc_group)
 
 
 def validate_method(ctx: Context, param: Parameter, value: str) -> str:

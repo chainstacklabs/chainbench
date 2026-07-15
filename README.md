@@ -256,6 +256,31 @@ chainbench list clients
 ```
 If you don't specify the `--clients` option, the tool will default to Ethereum JSON-RPC Specification (eth).
 
+### Solana Yellowstone gRPC benchmarks
+
+`chainbench grpc` benchmarks Solana Yellowstone (Geyser) gRPC endpoints. It delegates
+to the bundled [`chainbench-grpc`](https://github.com/CSFeo/chainbench-grpc) binary
+(shipped on `PATH` in the Docker image), so flags after the mode are passed straight
+through to that tool:
+
+```shell
+# absolute latency of a single endpoint
+chainbench grpc latency --url https://grpc.example.com --token YOUR_TOKEN
+
+# compare two endpoints (win rate + relative latency)
+chainbench grpc race -u https://ep1 -t t1 -u https://ep2 -t t2 --transactions 5000
+
+# stream throughput / slot lifecycle / full report
+chainbench grpc throughput --url https://grpc.example.com --duration 60
+chainbench grpc slots --url https://grpc.example.com --target-slots 100
+
+# the binary renders its own help
+chainbench grpc latency --help
+```
+
+Modes: `race`, `latency`, `throughput`, `slots`, `full`. When running outside the
+Docker image, install the `chainbench-grpc` binary and ensure it is on `PATH`.
+
 ## License
 This project is licensed under the [Apache 2.0 License](LICENSE).
 
