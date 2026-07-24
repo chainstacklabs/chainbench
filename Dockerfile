@@ -1,12 +1,11 @@
 # chainbench-grpc (Solana Yellowstone gRPC tool) build stage.
-# Builds the Rust binary from a pinned ref so `chainbench grpc` can shell out to
-# it. protoc is vendored by the crate, so no extra system deps are needed.
-# NOTE: assumes the repo is reachable anonymously. If it stays private, pass a
-# token via BuildKit secret (`--mount=type=secret,id=gh_token`) instead.
+# Builds the Rust binary from a pinned tag of the public chainstacklabs/chainbench-grpc
+# repo so `chainbench grpc` can shell out to it. protoc is vendored by the crate,
+# so no extra system deps are needed.
 FROM rust:1.90-bookworm AS grpc
 ARG CHAINBENCH_GRPC_REF=v0.4.0
 RUN git clone --depth 1 --branch "${CHAINBENCH_GRPC_REF}" \
-      https://github.com/CSFeo/chainbench-grpc /src \
+      https://github.com/chainstacklabs/chainbench-grpc /src \
     && cd /src \
     && cargo build --release
 
