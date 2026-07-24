@@ -17,7 +17,7 @@ import sys
 import click
 
 GRPC_BIN = "chainbench-grpc"
-GRPC_REPO = "https://github.com/CSFeo/chainbench-grpc"
+GRPC_REPO = "https://github.com/chainstacklabs/chainbench-grpc"
 MODES = ("race", "latency", "throughput", "slots", "full")
 
 

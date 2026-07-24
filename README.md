@@ -259,7 +259,7 @@ If you don't specify the `--clients` option, the tool will default to Ethereum J
 ### Solana Yellowstone gRPC benchmarks
 
 `chainbench grpc` benchmarks Solana Yellowstone (Geyser) gRPC endpoints. It delegates
-to the bundled [`chainbench-grpc`](https://github.com/CSFeo/chainbench-grpc) binary
+to the bundled [`chainbench-grpc`](https://github.com/chainstacklabs/chainbench-grpc) binary
 (shipped on `PATH` in the Docker image), so flags after the mode are passed straight
 through to that tool:
 
