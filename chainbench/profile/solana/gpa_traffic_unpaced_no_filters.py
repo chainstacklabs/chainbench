@@ -1,5 +1,5 @@
 """Solana getProgramAccounts profile: one user class per program, weighted by
-a realistic traffic mix, with dataSlice but no filters. No pacing - each user
+a synthetic heavy-tailed traffic mix, with dataSlice but no filters. No pacing - each user
 issues requests back to back.
 """
 from chainbench.profile.solana._gpa import TRAFFIC_WEIGHTS, create_gpa_users

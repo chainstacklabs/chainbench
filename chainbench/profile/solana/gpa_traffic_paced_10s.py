@@ -1,5 +1,6 @@
 """Solana getProgramAccounts profile: one user class per program, weighted by
-a realistic traffic mix, one request per user every 10s, with filters and dataSlice.
+a synthetic heavy-tailed traffic mix, one request per user every 10s, with
+filters and dataSlice.
 """
 from locust import constant_pacing
 

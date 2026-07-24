@@ -23,12 +23,18 @@ class SolProgram:
         self.address = address
         self.filter_bytes = filter_bytes
         self.offset = offset
-        # Fixed seed so filter selection is reproducible across runs
-        self.rand = Random(0)
+        # Unseeded on purpose: with a fixed seed, every locust worker process
+        # would replay the identical filter-choice sequence in lockstep,
+        # sending duplicate concurrent queries that caches answer artificially fast.
+        self.rand = Random()
 
     @property
     def name(self) -> str:
         return self.address[:5] if self._name is None else self._name
+
+    @property
+    def has_filters(self) -> bool:
+        return self.filter_bytes is not None and self.offset is not None
 
     def get_rpc_call(self, use_filters: bool = True, data_slice: bool = True) -> RpcCall:
         config: dict = {
@@ -37,7 +43,7 @@ class SolProgram:
         }
         if data_slice:
             config["dataSlice"] = {"offset": 0, "length": 16}
-        if use_filters and self.filter_bytes is not None and self.offset is not None:
+        if use_filters and self.has_filters:
             config["filters"] = [
                 {
                     "memcmp": {
@@ -144,6 +150,8 @@ PROGRAMS: dict[str, SolProgram] = {
             offset=8,
         ),
         SolProgram(
+            # No filter set defined: only exercised by the no-filter profiles;
+            # the user factories skip it when use_filters is True.
             address="Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB",
             name="meteora_pools",
         ),
@@ -167,7 +175,6 @@ PROGRAMS: dict[str, SolProgram] = {
                 "/g8v5TUg7Y4=",
                 "/7a/3HmNTEA=",
                 "/TKV+aeUlGk=",
-                "/7a/3HmNTEA=",
                 "/xfBfJmKcQg=",
                 "/zKV+aeUlGk=",
             ],
@@ -203,14 +210,15 @@ TRAFFIC_WEIGHTS: dict[str, int] = {
     "ore": 1,
 }
 
-EQUAL_WEIGHTS: dict[str, int] = {name: 1 for name in TRAFFIC_WEIGHTS}
+# All registered programs (including raydium, which the traffic mix excludes).
+EQUAL_WEIGHTS: dict[str, int] = {name: 1 for name in PROGRAMS}
 
 
 def _gpa_task(program: SolProgram, use_filters: bool, data_slice: bool):
     def gpa_task(user: SolanaUser) -> None:
         user.make_rpc_call(
             program.get_rpc_call(use_filters=use_filters, data_slice=data_slice),
-            name="getProgramAccounts" + program.name.capitalize(),
+            name="getProgramAccounts_" + program.name,
         )
 
     gpa_task.__name__ = f"get_program_accounts_{program.name}_task"
@@ -226,10 +234,15 @@ def create_gpa_users(
     """Create one locust user class per program.
 
     Register the classes in a profile with ``globals().update(create_gpa_users(...))``.
+
+    When ``use_filters`` is True, programs without a filter set are skipped so
+    filtered profiles never fall back to unfiltered full-program scans.
     """
     users: dict[str, type[SolanaUser]] = {}
     for program_name, weight in weights.items():
         program = PROGRAMS[program_name]
+        if use_filters and not program.has_filters:
+            continue
         attrs: dict = {
             "weight": weight,
             "tasks": [_gpa_task(program, use_filters, data_slice)],
@@ -248,10 +261,15 @@ def create_gpa_taskset_user(
     data_slice: bool = True,
     class_name: str = "GetProgramAccounts",
 ) -> type[SolanaUser]:
-    """Create a single user class running all programs as weighted tasks."""
+    """Create a single user class running all programs as weighted tasks.
+
+    When ``use_filters`` is True, programs without a filter set are skipped so
+    filtered profiles never fall back to unfiltered full-program scans.
+    """
     tasks = {
         _gpa_task(PROGRAMS[program_name], use_filters, data_slice): weight
         for program_name, weight in weights.items()
+        if not (use_filters and not PROGRAMS[program_name].has_filters)
     }
     attrs: dict = {"tasks": tasks}
     if wait_time is not None:
