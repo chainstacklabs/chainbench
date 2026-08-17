@@ -26,9 +26,13 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # list of Docker images to use as base name for tags
+          # List of Docker images to use as base name for tags.
+          # Repository variables are not exposed to pull_request runs from a
+          # fork, so vars.DOCKERHUB_ID is empty there and would produce an
+          # invalid tag ("/chainbench:pr-N"), failing the build before it
+          # starts. Fall back to a placeholder name — PR runs never push.
           images: |
-            ${{ vars.DOCKERHUB_ID }}/chainbench
+            ${{ vars.DOCKERHUB_ID || 'chainbench-ci' }}/chainbench
           # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule
