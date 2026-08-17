@@ -1,10 +1,5 @@
 name: Docker
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 on:
   release:
     types: [published]
@@ -26,22 +21,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          # List of Docker images to use as base name for tags.
-          #
-          # Repository variables are not exposed to pull_request runs from a
-          # fork, so vars.DOCKERHUB_ID is empty there and would produce an
-          # invalid tag ("/chainbench:pr-N"), failing the build before it
-          # starts. Fall back to a placeholder name on pull requests, which
-          # never push; releases keep vars.DOCKERHUB_ID so a missing variable
-          # still fails loudly instead of pushing under a placeholder name.
-          #
-          #   pull request + variable set -> the variable
-          #   pull request + variable unset -> chainbench-ci
-          #   release + variable set -> the variable
-          #   release + variable unset -> empty, fails on an invalid tag
+          # vars.DOCKERHUB_ID is empty on pull requests from a fork, which would
+          # yield the invalid tag "/chainbench:pr-N". Such runs never push, so a
+          # placeholder is safe there; releases keep the variable so a missing
+          # one fails at tag validation instead of pushing under a stray name.
           images: |
             ${{ github.event_name == 'pull_request' && (vars.DOCKERHUB_ID || 'chainbench-ci') || vars.DOCKERHUB_ID }}/chainbench
-          # generate Docker tags based on the following events/attributes
           tags: |
             type=schedule
             type=ref,event=branch
@@ -61,7 +46,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Build and push Docker image with Buildx (don't push on PR)
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
