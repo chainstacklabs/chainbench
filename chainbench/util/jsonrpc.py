@@ -24,7 +24,7 @@ class RpcCall:
         if type(self.params) is dict:
             self.params = [self.params]
 
-        if request_id:
+        if request_id is not None:
             self._request_id = request_id
 
         return {
@@ -37,7 +37,7 @@ class RpcCall:
 
 def generate_batch_request_body(rpc_calls: list[RpcCall]) -> str:
     """Generate a batch JSON-RPC request body."""
-    return json.dumps([rpc_calls[i].request_body(i) for i in range(1, len(rpc_calls))]).decode("utf-8")
+    return json.dumps([rpc_call.request_body(i) for i, rpc_call in enumerate(rpc_calls)]).decode("utf-8")
 
 
 def expand_rpc_calls(rpc_calls_weighted: dict[t.Callable[[], RpcCall], int]) -> list[RpcCall]:

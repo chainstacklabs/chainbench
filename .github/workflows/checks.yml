@@ -60,6 +60,8 @@ jobs:
       #----------------------------------------------
       - name: Install project
         run: poetry install --no-interaction
+      - name: Run offline unit tests
+        run: poetry run python -m unittest discover -s tests
       #----------------------------------------------
       #             build the project
       #----------------------------------------------
