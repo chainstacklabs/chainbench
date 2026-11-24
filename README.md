@@ -5,21 +5,21 @@
 </p>
 
 <p align="center">
-  <a target="_blank" href="https://chainstack.com/build-better-with-ethereum/"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Ethereum.svg" /></a>&nbsp;  
-  <a target="_blank" href="https://chainstack.com/build-better-with-bnb-smart-chain/"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/BNB.svg" /></a>&nbsp;
-  <a target="_blank" href="https://chainstack.com/build-better-with-polygon/"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Polygon.svg" /></a>&nbsp;
-  <a target="_blank" href="https://chainstack.com/build-better-with-avalanche/"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Avalanche.svg" /></a>&nbsp;
-  <a target="_blank" href="https://chainstack.com/build-better-with-solana/"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Solana.svg" /></a>&nbsp;
-<a target="_blank" href="https://chainstack.com/build-better-with-starknet/"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Starknet.svg" /></a>&nbsp;
+  <a target="_blank" href="https://chainstack.com/build-better-with-ethereum/?utm_source=github&utm_medium=referral&utm_campaign=chainbench"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Ethereum.svg" /></a>&nbsp;  
+  <a target="_blank" href="https://chainstack.com/build-better-with-bnb-smart-chain/?utm_source=github&utm_medium=referral&utm_campaign=chainbench"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/BNB.svg" /></a>&nbsp;
+  <a target="_blank" href="https://chainstack.com/build-better-with-polygon/?utm_source=github&utm_medium=referral&utm_campaign=chainbench"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Polygon.svg" /></a>&nbsp;
+  <a target="_blank" href="https://chainstack.com/build-better-with-avalanche/?utm_source=github&utm_medium=referral&utm_campaign=chainbench"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Avalanche.svg" /></a>&nbsp;
+  <a target="_blank" href="https://chainstack.com/build-better-with-solana/?utm_source=github&utm_medium=referral&utm_campaign=chainbench"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Solana.svg" /></a>&nbsp;
+<a target="_blank" href="https://chainstack.com/build-better-with-starknet/?utm_source=github&utm_medium=referral&utm_campaign=chainbench"><img src="https://raw.githubusercontent.com/soos3d/blockchain-badges/main/protocols_badges/Starknet.svg" /></a>&nbsp;
 </p>
 
 <p align="center">
-  • <a target="_blank" href="https://chainstack.com/">Homepage</a> •
-  <a target="_blank" href="https://chainstack.com/protocols/">Supported protocols</a> •
-  <a target="_blank" href="https://chainstack.com/blog/">Chainstack blog</a> •
-  <a target="_blank" href="https://docs.chainstack.com/quickstart/">Chainstack docs</a> •
-  <a target="_blank" href="https://docs.chainstack.com/quickstart/">Blockchain API reference</a> • <br> 
-  • <a target="_blank" href="https://console.chainstack.com/user/account/create">Start for free</a> •
+  • <a target="_blank" href="https://chainstack.com/?utm_source=github&utm_medium=referral&utm_campaign=chainbench">Homepage</a> •
+  <a target="_blank" href="https://chainstack.com/protocols/?utm_source=github&utm_medium=referral&utm_campaign=chainbench">Supported protocols</a> •
+  <a target="_blank" href="https://chainstack.com/blog/?utm_source=github&utm_medium=referral&utm_campaign=chainbench">Chainstack blog</a> •
+  <a target="_blank" href="https://docs.chainstack.com/docs/platform-introduction?utm_source=github&utm_medium=referral&utm_campaign=chainbench">Chainstack docs</a> •
+  <a target="_blank" href="https://docs.chainstack.com/reference/blockchain-apis?utm_source=github&utm_medium=referral&utm_campaign=chainbench">Blockchain API reference</a> • <br> 
+  • <a target="_blank" href="https://console.chainstack.com/sign-up?utm_source=github&utm_medium=referral&utm_campaign=chainbench">Start for free</a> •
 </p>
 
 # Chainbench
